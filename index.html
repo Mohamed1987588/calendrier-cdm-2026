@@ -3,152 +3,254 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Coupe du Monde 2026 - Calendrier Interactif</title>
+    <title>Coupe du Monde 2026 - Groupes</title>
     <style>
-        /* Styles généraux */
         body {
             font-family: 'Arial', sans-serif;
             background-color: #f0f2f5;
             color: #333;
             display: flex;
-            justify-content: center;
-            padding: 20px;
+            flex-direction: column;
+            align-items: center;
+            padding: 30px 10px;
+            margin: 0;
         }
-
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+        .header h1 {
+            color: #002366;
+            margin: 0 0 10px 0;
+            font-size: 2.5em;
+        }
+        .header p {
+            color: #666;
+            margin: 0;
+            font-size: 1.2em;
+        }
         .container {
             display: flex;
             flex-wrap: wrap;
-            gap: 20px;
-            max-width: 1200px;
+            gap: 25px;
+            max-width: 1400px;
             justify-content: center;
         }
-
-        /* Style de la carte d'un Groupe */
         .group-card {
             background: white;
-            border-radius: 10px;
-            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
-            padding: 15px;
-            width: 320px;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+            padding: 20px;
+            width: 310px;
         }
-
         .group-letter {
-            font-size: 28px;
-            font-weight: bold;
+            font-size: 32px;
+            font-weight: 900;
             color: #002366;
             text-align: center;
-            margin-bottom: 15px;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid #f0f2f5;
         }
-
-        /* Style d'une ligne de match */
         .match-row {
             margin-bottom: 12px;
             padding-bottom: 12px;
-            border-bottom: 1px solid #eaeaea;
+            border-bottom: 1px solid #f9f9f9;
         }
-        
         .match-row:last-child {
             border-bottom: none;
             margin-bottom: 0;
             padding-bottom: 0;
         }
-
         .date-time {
             font-size: 11px;
-            color: #888;
+            color: #999;
             text-align: center;
-            margin-bottom: 5px;
+            margin-bottom: 8px;
             display: block;
+            font-weight: bold;
         }
-
         .teams-scores {
             display: flex;
             align-items: center;
             justify-content: space-between;
         }
-
         .team {
-            font-size: 14px;
+            font-size: 16px;
             font-weight: bold;
-            width: 80px;
+            width: 75px;
             display: flex;
             align-items: center;
-            gap: 5px;
+            color: #222;
         }
-
         .team.right {
             justify-content: flex-end;
+            text-align: right;
         }
-
-        /* Champs de saisie pour les scores */
         .score-input {
-            width: 35px;
-            height: 25px;
+            width: 38px;
+            height: 28px;
             text-align: center;
-            font-size: 14px;
+            font-size: 16px;
             font-weight: bold;
-            border: 1px solid #ccc;
-            border-radius: 4px;
-            background-color: #f9f9f9;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            background-color: #fafafa;
+            margin: 0 6px;
+            transition: all 0.2s;
+            -moz-appearance: textfield;
         }
-
+        /* Cacher les flèches dans les cases de score (navigateurs Webkit) */
+        .score-input::-webkit-outer-spin-button,
+        .score-input::-webkit-inner-spin-button {
+            -webkit-appearance: none;
+            margin: 0;
+        }
         .score-input:focus {
             outline: none;
             border-color: #002366;
             background-color: #fff;
+            box-shadow: 0 0 0 3px rgba(0,35,102,0.1);
+        }
+        .scores-container {
+            display: flex;
+            align-items: center;
         }
     </style>
 </head>
 <body>
 
-    <div class="container">
-        <div class="group-card">
-            <div class="group-letter">A</div>
-            
-            <div class="match-row">
-                <span class="date-time">11/06 21:00</span>
-                <div class="teams-scores">
-                    <span class="team">🇲🇽 MEX</span>
-                    <input type="number" min="0" class="score-input">
-                    <input type="number" min="0" class="score-input">
-                    <span class="team right">RSA 🇿🇦</span>
-                </div>
-            </div>
+    <div class="header">
+        <h1>Coupe du Monde 2026</h1>
+        <p>Phase de Groupes (A - L) - Calendrier Remplissable</p>
+    </div>
 
-            <div class="match-row">
-                <span class="date-time">12/06 04:00</span>
-                <div class="teams-scores">
-                    <span class="team">🇰🇷 KOR</span>
-                    <input type="number" min="0" class="score-input">
-                    <input type="number" min="0" class="score-input">
-                    <span class="team right">TBD ❔</span>
-                </div>
-            </div>
-            
-            <div class="match-row">
-                <span class="date-time">18/06 18:00</span>
-                <div class="teams-scores">
-                    <span class="team">❔ TBD</span>
-                    <input type="number" min="0" class="score-input">
-                    <input type="number" min="0" class="score-input">
-                    <span class="team right">RSA 🇿🇦</span>
-                </div>
-            </div>
-        </div>
-        <div class="group-card">
-            <div class="group-letter">B</div>
-            
-            <div class="match-row">
-                <span class="date-time">12/06 21:00</span>
-                <div class="teams-scores">
-                    <span class="team">🇨🇦 CAN</span>
-                    <input type="number" min="0" class="score-input">
-                    <input type="number" min="0" class="score-input">
-                    <span class="team right">TBD ❔</span>
-                </div>
-            </div>
-        </div>
-        </div>
+    <!-- Le conteneur où tous les groupes vont apparaître -->
+    <div class="container" id="groups-container"></div>
 
+    <script>
+        // Base de données complète de tous les matchs
+        const allMatches = [
+            // GROUPE A
+            { group: 'A', date: '11/06 21:00', t1: 'MEX', t2: 'RSA' },
+            { group: 'A', date: '12/06 04:00', t1: 'KOR', t2: 'TBD' },
+            { group: 'A', date: '18/06 18:00', t1: 'TBD', t2: 'RSA' },
+            { group: 'A', date: '19/06 03:00', t1: 'MEX', t2: 'KOR' },
+            { group: 'A', date: '25/06 03:00', t1: 'TBD', t2: 'MEX' },
+            { group: 'A', date: '25/06 03:00', t1: 'RSA', t2: 'KOR' },
+            // GROUPE B
+            { group: 'B', date: '12/06 21:00', t1: 'CAN', t2: 'SUI' },
+            { group: 'B', date: '13/06 21:00', t1: 'QAT', t2: 'TBD' },
+            { group: 'B', date: '18/06 21:00', t1: 'SUI', t2: 'TBD' },
+            { group: 'B', date: '20/06 03:00', t1: 'CAN', t2: 'QAT' },
+            { group: 'B', date: '24/06 21:00', t1: 'SUI', t2: 'CAN' },
+            { group: 'B', date: '24/06 21:00', t1: 'TBD', t2: 'QAT' },
+            // GROUPE C
+            { group: 'C', date: '13/06 00:00', t1: 'TBD', t2: 'MAR' },
+            { group: 'C', date: '14/06 03:00', t1: 'HAI', t2: 'SCO' },
+            { group: 'C', date: '19/06 00:00', t1: 'TBD', t2: 'SCO' },
+            { group: 'C', date: '20/06 06:00', t1: 'MAR', t2: 'HAI' },
+            { group: 'C', date: '24/06 00:00', t1: 'SCO', t2: 'MAR' },
+            { group: 'C', date: '24/06 00:00', t1: 'TBD', t2: 'HAI' },
+            // GROUPE D
+            { group: 'D', date: '13/06 03:00', t1: 'BRA', t2: 'TBD' },
+            { group: 'D', date: '14/06 06:00', t1: 'AUS', t2: 'USA' },
+            { group: 'D', date: '19/06 21:00', t1: 'USA', t2: 'TBD' },
+            { group: 'D', date: '21/06 02:00', t1: 'BRA', t2: 'AUS' },
+            { group: 'D', date: '26/06 04:00', t1: 'TBD', t2: 'AUS' },
+            { group: 'D', date: '26/06 04:00', t1: 'USA', t2: 'BRA' },
+            // GROUPE E
+            { group: 'E', date: '14/06 19:00', t1: 'PAR', t2: 'CIV' },
+            { group: 'E', date: '15/06 01:00', t1: 'ECU', t2: 'GER' },
+            { group: 'E', date: '20/06 22:00', t1: 'GER', t2: 'CIV' },
+            { group: 'E', date: '21/06 06:00', t1: 'PAR', t2: 'ECU' },
+            { group: 'E', date: '25/06 22:00', t1: 'ECU', t2: 'CIV' },
+            { group: 'E', date: '25/06 22:00', t1: 'GER', t2: 'PAR' },
+            // GROUPE F
+            { group: 'F', date: '14/06 22:00', t1: 'CUW', t2: 'JPN' },
+            { group: 'F', date: '15/06 04:00', t1: 'TUN', t2: 'NED' },
+            { group: 'F', date: '20/06 19:00', t1: 'NED', t2: 'JPN' },
+            { group: 'F', date: '21/06 06:00', t1: 'CUW', t2: 'TUN' },
+            { group: 'F', date: '26/06 01:00', t1: 'JPN', t2: 'TUN' },
+            { group: 'F', date: '26/06 01:00', t1: 'NED', t2: 'CUW' },
+            // GROUPE G
+            { group: 'G', date: '15/06 21:00', t1: 'BEL', t2: 'EGY' },
+            { group: 'G', date: '16/06 03:00', t1: 'IRN', t2: 'NZL' },
+            { group: 'G', date: '21/06 21:00', t1: 'BEL', t2: 'IRN' },
+            { group: 'G', date: '22/06 03:00', t1: 'NZL', t2: 'EGY' },
+            { group: 'G', date: '27/06 05:00', t1: 'EGY', t2: 'IRN' },
+            { group: 'G', date: '27/06 05:00', t1: 'NZL', t2: 'BEL' },
+            // GROUPE H
+            { group: 'H', date: '15/06 18:00', t1: 'ESP', t2: 'CPV' },
+            { group: 'H', date: '16/06 00:00', t1: 'KSA', t2: 'URU' },
+            { group: 'H', date: '21/06 18:00', t1: 'ESP', t2: 'KSA' },
+            { group: 'H', date: '22/06 00:00', t1: 'URU', t2: 'CPV' },
+            { group: 'H', date: '27/06 02:00', t1: 'CPV', t2: 'KSA' },
+            { group: 'H', date: '27/06 02:00', t1: 'URU', t2: 'ESP' },
+            // GROUPE I
+            { group: 'I', date: '16/06 21:00', t1: 'FRA', t2: 'SEN' },
+            { group: 'I', date: '17/06 00:00', t1: 'FIFA TBD', t2: 'NOR' },
+            { group: 'I', date: '22/06 23:00', t1: 'FRA', t2: 'FIFA TBD' },
+            { group: 'I', date: '23/06 02:00', t1: 'NOR', t2: 'SEN' },
+            { group: 'I', date: '26/06 21:00', t1: 'NOR', t2: 'FRA' },
+            { group: 'I', date: '26/06 21:00', t1: 'SEN', t2: 'FIFA TBD' },
+            // GROUPE J
+            { group: 'J', date: '17/06 03:00', t1: 'ARG', t2: 'ALG' },
+            { group: 'J', date: '17/06 06:00', t1: 'AUT', t2: 'JOR' },
+            { group: 'J', date: '22/06 19:00', t1: 'ARG', t2: 'AUT' },
+            { group: 'J', date: '23/06 05:00', t1: 'JOR', t2: 'ALG' },
+            { group: 'J', date: '28/06 04:00', t1: 'ALG', t2: 'AUT' },
+            { group: 'J', date: '28/06 04:00', t1: 'JOR', t2: 'ARG' },
+            // GROUPE K
+            { group: 'K', date: '17/06 19:00', t1: 'POR', t2: 'TBD' },
+            { group: 'K', date: '18/06 04:00', t1: 'UZB', t2: 'COL' },
+            { group: 'K', date: '23/06 19:00', t1: 'POR', t2: 'UZB' },
+            { group: 'K', date: '24/06 04:00', t1: 'COL', t2: 'TBD' },
+            { group: 'K', date: '28/06 01:30', t1: 'COL', t2: 'POR' },
+            { group: 'K', date: '28/06 01:30', t1: 'TBD', t2: 'UZB' },
+            // GROUPE L
+            { group: 'L', date: '17/06 22:00', t1: 'ENG', t2: 'CRO' },
+            { group: 'L', date: '18/06 01:00', t1: 'GHA', t2: 'PAN' },
+            { group: 'L', date: '23/06 22:00', t1: 'ENG', t2: 'GHA' },
+            { group: 'L', date: '24/06 01:00', t1: 'PAN', t2: 'CRO' },
+            { group: 'L', date: '27/06 23:00', t1: 'PAN', t2: 'ENG' },
+            { group: 'L', date: '27/06 23:00', t1: 'CRO', t2: 'GHA' }
+        ];
+
+        const container = document.getElementById('groups-container');
+        const groups = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L'];
+
+        // Boucle pour créer chaque groupe
+        groups.forEach(groupLetter => {
+            const card = document.createElement('div');
+            card.className = 'group-card';
+            
+            const title = document.createElement('div');
+            title.className = 'group-letter';
+            title.textContent = groupLetter;
+            card.appendChild(title);
+
+            const groupMatches = allMatches.filter(m => m.group === groupLetter);
+
+            groupMatches.forEach(match => {
+                const matchHTML = `
+                    <div class="match-row">
+                        <span class="date-time">${match.date}</span>
+                        <div class="teams-scores">
+                            <span class="team">${match.t1}</span>
+                            <div class="scores-container">
+                                <input type="number" min="0" class="score-input">
+                                <input type="number" min="0" class="score-input">
+                            </div>
+                            <span class="team right">${match.t2}</span>
+                        </div>
+                    </div>
+                `;
+                card.innerHTML += matchHTML;
+            });
+
+            container.appendChild(card);
+        });
+    </script>
 </body>
 </html>
