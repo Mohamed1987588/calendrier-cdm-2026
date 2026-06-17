@@ -69,13 +69,13 @@
         .player-card:hover { transform: translateY(-5px); box-shadow: 0 8px 20px rgba(0,0,0,0.08); }
         .p-top { display: flex; justify-content: space-between; margin-bottom: 15px; align-items: flex-start;}
         .p-circle { width: 50px; height: 50px; border-radius: 50%; background-color: #e0f8ee; color: var(--accent); display: flex; align-items: center; justify-content: center; font-size: 22px; font-weight: bold; flex-shrink: 0;}
-        .p-info { flex-grow: 1; margin-left: 15px; }
+        .p-info { flex-grow: 1; margin-left: 15px; overflow: hidden; }
         .p-pos { font-size: 10px; font-weight: bold; color: var(--accent); background: #e0f8ee; padding: 3px 6px; border-radius: 4px; display: inline-block; margin-bottom: 5px;}
-        .p-name { font-size: 16px; font-weight: 900; margin: 0 0 2px 0; color: var(--primary);}
-        .p-sub { font-size: 12px; color: #888; margin: 0;}
+        .p-name { font-size: 16px; font-weight: 900; margin: 0 0 2px 0; color: var(--primary); white-space: nowrap; overflow: hidden; text-overflow: ellipsis;}
+        .p-sub { font-size: 12px; color: #888; margin: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;}
         .p-num { font-size: 14px; font-weight: bold; color: #aaa; }
         .p-bottom { display: flex; justify-content: space-between; border-top: 1px solid #f0f0f0; padding-top: 15px; margin-top: auto;}
-        .p-club { font-size: 12px; color: #555; width: 50%;}
+        .p-club { font-size: 12px; color: #555; width: 50%; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;}
         .p-club span, .p-val span { display: block; font-size: 10px; color: #aaa; text-transform: uppercase;}
         .p-val { text-align: right; font-size: 16px; font-weight: 900; color: var(--primary); width: 50%;}
 
@@ -153,35 +153,42 @@
 
         async function chargerJoueursCSV() {
             try {
-                // Va lire le fichier "data.csv" situé sur votre GitHub
                 const response = await fetch('data.csv');
                 if (!response.ok) throw new Error("Fichier introuvable");
                 
                 const data = await response.text();
                 const lignes = data.split('\n');
 
+                // ⬇️⬇️⬇️ REGLAGES DES COLONNES ICI ⬇️⬇️⬇️
+                // Indiquez le numéro de la colonne de votre fichier Excel
+                // (Colonne A = 0, B = 1, C = 2, D = 3, E = 4, F = 5, G = 6, H = 7)
+                
+                const colPays = 0;   // Numéro pour le Pays (ex: 0 si en Colonne A)
+                const colNom = 1;    // Numéro pour le Nom du joueur
+                const colClub = 2;   // Numéro pour le Club
+                const colAge = 3;    // Numéro pour l'Âge
+                const colPos = 4;    // Numéro pour la Position (ATT, MIL...)
+                const colNum = 5;    // Numéro pour le Numéro de maillot
+                const colValeur = 6; // Numéro pour la Valeur
+                // ⬆️⬆️⬆️ NE TOUCHEZ PLUS A RIEN EN DESSOUS ⬆️⬆️⬆️
+
                 for (let i = 1; i < lignes.length; i++) {
                     const ligne = lignes[i].trim();
                     if (!ligne) continue;
 
-                    // Le séparateur classique d'Excel FR est le point-virgule
                     const colonnes = ligne.split(';');
 
-                    // ⚠️ À MODIFIER ICI SELON VOTRE FICHIER EXCEL ⚠️
-                    // Remplacez les chiffres entre crochets par le bon numéro de colonne.
-                    // Rappel : Colonne A = [0], Colonne B = [1], Colonne C = [2], etc.
-                    
+                    // On vérifie qu'il y a au moins des données sur la ligne
                     if (colonnes.length >= 2) {
                         playersData.push({
-                            // Exemple: Si le Nom est en colonne B, mettez colonnes[1]
-                            name: colonnes[0],      // Nom du joueur
-                            initial: colonnes[0] ? colonnes[0].charAt(0).toUpperCase() : "?",
-                            country: colonnes[1] || "Inconnu",  // Pays
-                            age: colonnes[2] || "",             // Âge
-                            pos: colonnes[3] || "-",            // Position (ATT, MIL, DEF...)
-                            num: colonnes[4] || "",             // Numéro
-                            club: colonnes[5] || "Sans club",   // Club
-                            value: colonnes[6] || "-"           // Valeur
+                            name: colonnes[colNom] || "Inconnu",
+                            initial: colonnes[colNom] ? colonnes[colNom].charAt(0).toUpperCase() : "?",
+                            country: colonnes[colPays] || "Inconnu",
+                            age: colonnes[colAge] || "",
+                            pos: colonnes[colPos] || "-",
+                            num: colonnes[colNum] || "",
+                            club: colonnes[colClub] || "Sans club",
+                            value: colonnes[colValeur] || "-"
                         });
                     }
                 }
@@ -203,13 +210,13 @@
                             <div class="p-circle">${p.initial}</div>
                             <div class="p-info">
                                 <span class="p-pos">${p.pos}</span>
-                                <h4 class="p-name">${p.name}</h4>
-                                <p class="p-sub">${p.country} ${p.age ? '• ' + p.age + ' ans' : ''}</p>
+                                <h4 class="p-name" title="${p.name}">${p.name}</h4>
+                                <p class="p-sub" title="${p.country}">${p.country} ${p.age ? '• ' + p.age + ' ans' : ''}</p>
                             </div>
                             <div class="p-num">${p.num ? 'N°'+p.num : ''}</div>
                         </div>
                         <div class="p-bottom">
-                            <div class="p-club"><span>CLUB</span>${p.club}</div>
+                            <div class="p-club" title="${p.club}"><span>CLUB</span>${p.club}</div>
                             <div class="p-val"><span>VALEUR MARCHANDE</span>${p.value}</div>
                         </div>
                     </div>
@@ -305,4 +312,147 @@
                 const gMatches = groupMatches.filter(m => m.group === groupLetter);
                 gMatches.forEach(match => {
                     const flag1 = flagCodes[match.t1] ? `https://flagcdn.com/w20/${flagCodes[match.t1]}.png` : '';
-                    const flag2 = flagCodes[match.t2] ? `https://flagcdn.com/w20/${flag
+                    const flag2 = flagCodes[match.t2] ? `https://flagcdn.com/w20/${flagCodes[match.t2]}.png` : '';
+                    card.innerHTML += `
+                        <div class="match-row">
+                            <span class="date-time">${match.date}</span>
+                            <div class="teams-scores">
+                                <span class="team">${flag1 ? `<img src="${flag1}" class="flag">` : ''} ${match.t1}</span>
+                                <div>
+                                    <input type="number" min="0" id="${match.id}-1" class="score-input saveData" oninput="saveAndCalculate()">
+                                    <input type="number" min="0" id="${match.id}-2" class="score-input saveData" oninput="saveAndCalculate()">
+                                </div>
+                                <span class="team right">${match.t2} ${flag2 ? `<img src="${flag2}" class="flag">` : ''}</span>
+                            </div>
+                        </div>`;
+                });
+                card.innerHTML += `<div id="standings-${groupLetter}"></div>`;
+                container.appendChild(card);
+            });
+        }
+
+        // Rendu de la Phase Finale
+        function renderKnockout() {
+            const container = document.getElementById('page-phase-finale');
+            knockoutRounds.forEach(round => {
+                const section = document.createElement('div');
+                section.className = 'round-section';
+                section.innerHTML = `<div class="round-title">${round.title}</div>`;
+                
+                const grid = document.createElement('div');
+                grid.style = "display: flex; flex-wrap: wrap; gap: 20px; justify-content: center; width: 100%; margin-top: 20px;";
+
+                round.matches.forEach(match => {
+                    const isFinale = match.id === 'FIN-1';
+                    grid.innerHTML += `
+                        <div class="card ${isFinale ? 'finale-card' : ''}">
+                            <div class="card-title" style="font-size:16px; margin-bottom:5px;">${isFinale ? '🏆 GRANDE FINALE' : 'Match ' + match.id}</div>
+                            <div class="match-row" style="border:none;">
+                                <span class="date-time">${match.date}</span>
+                                <div class="teams-scores" style="flex-direction: column; gap:10px;">
+                                    <div style="display:flex; justify-content:space-between; width:100%;">
+                                        <input type="text" id="${match.id}-t1" class="team-input saveData" placeholder="${match.p1}" oninput="saveAndCalculate()">
+                                        <input type="number" min="0" id="${match.id}-s1" class="score-input saveData" oninput="saveAndCalculate()">
+                                    </div>
+                                    <div style="display:flex; justify-content:space-between; width:100%;">
+                                        <input type="text" id="${match.id}-t2" class="team-input saveData" placeholder="${match.p2}" oninput="saveAndCalculate()">
+                                        <input type="number" min="0" id="${match.id}-s2" class="score-input saveData" oninput="saveAndCalculate()">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>`;
+                });
+                section.appendChild(grid);
+                container.appendChild(section);
+            });
+        }
+
+        // ==========================================
+        // 3. LOGIQUE GLOBALE (Navigation & Calculs)
+        // ==========================================
+        function switchTab(tabId) {
+            document.querySelectorAll('.page').forEach(page => page.classList.remove('active'));
+            document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+            document.getElementById('page-' + tabId).classList.add('active');
+            event.target.classList.add('active'); // active le bouton cliqué
+        }
+
+        function saveAndCalculate() {
+            const inputs = document.querySelectorAll('.saveData');
+            const data = {};
+            inputs.forEach(input => { if (input.value !== "") data[input.id] = input.value; });
+            localStorage.setItem('footmarket_wc2026', JSON.stringify(data));
+            calculateGroups();
+        }
+
+        function loadData() {
+            const saved = localStorage.getItem('footmarket_wc2026');
+            if (saved) {
+                const data = JSON.parse(saved);
+                for (const id in data) {
+                    if (document.getElementById(id)) document.getElementById(id).value = data[id];
+                }
+            }
+            calculateGroups();
+        }
+
+        function resetAll() {
+            if (confirm("Voulez-vous effacer TOUS vos scores de la simulation ?")) {
+                localStorage.removeItem('footmarket_wc2026');
+                document.querySelectorAll('.saveData').forEach(input => input.value = "");
+                calculateGroups();
+            }
+        }
+
+        function calculateGroups() {
+            const groups = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L'];
+            groups.forEach(gLetter => {
+                let teams = {};
+                let gMatches = groupMatches.filter(m => m.group === gLetter);
+
+                gMatches.forEach(m => {
+                    if (!teams[m.t1]) teams[m.t1] = { name: m.t1, flag: flagCodes[m.t1], pts: 0, p: 0, w: 0, d: 0, l: 0, gd: 0 };
+                    if (!teams[m.t2]) teams[m.t2] = { name: m.t2, flag: flagCodes[m.t2], pts: 0, p: 0, w: 0, d: 0, l: 0, gd: 0 };
+
+                    let input1 = document.getElementById(`${m.id}-1`);
+                    let input2 = document.getElementById(`${m.id}-2`);
+                    
+                    if (input1 && input2 && input1.value !== "" && input2.value !== "") {
+                        let s1 = parseInt(input1.value);
+                        let s2 = parseInt(input2.value);
+                        
+                        teams[m.t1].p++; teams[m.t2].p++;
+                        let diff = s1 - s2;
+                        teams[m.t1].gd += diff; teams[m.t2].gd -= diff;
+
+                        if (s1 > s2) { teams[m.t1].w++; teams[m.t1].pts += 3; teams[m.t2].l++; }
+                        else if (s1 < s2) { teams[m.t2].w++; teams[m.t2].pts += 3; teams[m.t1].l++; }
+                        else { teams[m.t1].d++; teams[m.t2].d++; teams[m.t1].pts += 1; teams[m.t2].pts += 1; }
+                    }
+                });
+
+                let tArray = Object.values(teams).sort((a, b) => b.pts !== a.pts ? b.pts - a.pts : b.gd - a.gd);
+
+                let html = `<table class="standings-table"><tr><th>Équipe</th><th>Pts</th><th>J</th><th>G</th><th>N</th><th>P</th><th>Diff</th></tr>`;
+                tArray.forEach((t, i) => {
+                    const flagImg = t.flag ? `<img src="https://flagcdn.com/w20/${t.flag}.png" class="flag">` : '';
+                    html += `<tr class="${i < 2 ? 'qualif-zone' : ''}">
+                        <td class="team-cell">${flagImg} ${t.name}</td>
+                        <td class="pts-col">${t.pts}</td><td>${t.p}</td><td>${t.w}</td><td>${t.d}</td><td>${t.l}</td><td>${t.gd > 0 ? '+'+t.gd : t.gd}</td>
+                    </tr>`;
+                });
+                document.getElementById(`standings-${gLetter}`).innerHTML = html + `</table>`;
+            });
+        }
+
+        // ==========================================
+        // INITIALISATION
+        // ==========================================
+        renderGroups();
+        renderKnockout();
+        chargerJoueursCSV(); 
+        setTimeout(loadData, 500); 
+
+    </script>
+</body>
+</html>
