@@ -17,7 +17,7 @@
         }
         .header {
             text-align: center;
-            margin-bottom: 40px;
+            margin-bottom: 30px;
         }
         .header h1 {
             color: #002366;
@@ -26,8 +26,23 @@
         }
         .header p {
             color: #666;
-            margin: 0;
+            margin: 0 0 15px 0;
             font-size: 1.2em;
+        }
+        .reset-btn {
+            background-color: #ff4d4d;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: bold;
+            font-size: 14px;
+            transition: background-color 0.2s;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        .reset-btn:hover {
+            background-color: #cc0000;
         }
         .container {
             display: flex;
@@ -121,8 +136,6 @@
             display: flex;
             align-items: center;
         }
-
-        /* Styles du tableau de classement */
         .standings-container {
             margin-top: 20px;
             padding-top: 15px;
@@ -157,7 +170,7 @@
             font-size: 14px;
         }
         .qualif-zone {
-            background-color: rgba(40, 167, 69, 0.05); /* Légèrement vert pour les 2 premiers */
+            background-color: rgba(40, 167, 69, 0.05);
         }
     </style>
 </head>
@@ -165,7 +178,8 @@
 
     <div class="header">
         <h1>Coupe du Monde 2026</h1>
-        <p>Phase de Groupes - Remplissez les scores, le classement se met à jour !</p>
+        <p>Phase de Groupes - Sauvegarde automatique !</p>
+        <button class="reset-btn" onclick="resetScores()">🗑️ Effacer mes pronostics</button>
     </div>
 
     <div class="container" id="groups-container"></div>
@@ -204,14 +218,12 @@
         const container = document.getElementById('groups-container');
         const groups = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L'];
 
-        // Attribuer un ID unique à chaque match pour les retrouver facilement
         allMatches.forEach((m, index) => m.id = index);
 
-        // Création de l'interface visuelle
+        // 1. Création de l'interface
         groups.forEach(groupLetter => {
             const card = document.createElement('div');
             card.className = 'group-card';
-            
             card.innerHTML = `<div class="group-letter">Groupe ${groupLetter}</div>`;
 
             const groupMatches = allMatches.filter(m => m.group === groupLetter);
@@ -219,14 +231,15 @@
             groupMatches.forEach(match => {
                 const flag1 = flagCodes[match.t1];
                 const flag2 = flagCodes[match.t2];
+                // L'attribut oninput déclenche maintenant la sauvegarde ET le calcul
                 card.innerHTML += `
                     <div class="match-row">
                         <span class="date-time">${match.date}</span>
                         <div class="teams-scores">
                             <span class="team"><img src="https://flagcdn.com/w20/${flag1}.png" class="flag" alt="${match.t1}"> ${match.t1}</span>
                             <div class="scores-container">
-                                <input type="number" min="0" id="score-${match.id}-1" class="score-input" oninput="calculateStandings()">
-                                <input type="number" min="0" id="score-${match.id}-2" class="score-input" oninput="calculateStandings()">
+                                <input type="number" min="0" id="score-${match.id}-1" class="score-input" oninput="saveScores(); calculateStandings();">
+                                <input type="number" min="0" id="score-${match.id}-2" class="score-input" oninput="saveScores(); calculateStandings();">
                             </div>
                             <span class="team right">${match.t2} <img src="https://flagcdn.com/w20/${flag2}.png" class="flag" alt="${match.t2}"></span>
                         </div>
@@ -234,27 +247,59 @@
                 `;
             });
 
-            // Conteneur pour le tableau de classement
             card.innerHTML += `<div id="standings-${groupLetter}" class="standings-container"></div>`;
             container.appendChild(card);
         });
 
-        // Fonction qui calcule tous les classements
+        // 2. Fonction de sauvegarde dans le LocalStorage
+        function saveScores() {
+            const inputs = document.querySelectorAll('.score-input');
+            const scoresToSave = {};
+            inputs.forEach(input => {
+                if (input.value !== "") {
+                    scoresToSave[input.id] = input.value;
+                }
+            });
+            localStorage.setItem('wc2026_scores', JSON.stringify(scoresToSave));
+        }
+
+        // 3. Fonction pour charger les scores au démarrage
+        function loadScores() {
+            const savedData = localStorage.getItem('wc2026_scores');
+            if (savedData) {
+                const scoresLoaded = JSON.parse(savedData);
+                for (const inputId in scoresLoaded) {
+                    const inputElement = document.getElementById(inputId);
+                    if (inputElement) {
+                        inputElement.value = scoresLoaded[inputId];
+                    }
+                }
+            }
+        }
+
+        // 4. Fonction pour tout effacer
+        function resetScores() {
+            if (confirm("Voulez-vous vraiment effacer tous vos pronostics ?")) {
+                localStorage.removeItem('wc2026_scores'); // Supprime la mémoire
+                const inputs = document.querySelectorAll('.score-input');
+                inputs.forEach(input => input.value = ""); // Vide les cases
+                calculateStandings(); // Recalcule les classements à zéro
+            }
+        }
+
+        // 5. Calcul des classements
         function calculateStandings() {
             groups.forEach(groupLetter => {
                 let teams = {};
                 let groupMatches = allMatches.filter(m => m.group === groupLetter);
 
-                // Initialiser les stats des équipes à zéro
                 groupMatches.forEach(m => {
                     if (!teams[m.t1]) teams[m.t1] = { name: m.t1, flag: flagCodes[m.t1], pts: 0, p: 0, w: 0, d: 0, l: 0, gf: 0, ga: 0, gd: 0 };
                     if (!teams[m.t2]) teams[m.t2] = { name: m.t2, flag: flagCodes[m.t2], pts: 0, p: 0, w: 0, d: 0, l: 0, gf: 0, ga: 0, gd: 0 };
 
-                    // Récupérer les scores tapés
                     let s1 = parseInt(document.getElementById(`score-${m.id}-1`).value);
                     let s2 = parseInt(document.getElementById(`score-${m.id}-2`).value);
 
-                    // Si les deux scores sont remplis, on calcule
                     if (!isNaN(s1) && !isNaN(s2)) {
                         teams[m.t1].p++; teams[m.t2].p++;
                         teams[m.t1].gf += s1; teams[m.t1].ga += s2;
@@ -268,7 +313,6 @@
                     }
                 });
 
-                // Transformer l'objet en liste et la trier (Points > Différence > Buts Marqués)
                 let teamsArray = Object.values(teams);
                 teamsArray.sort((a, b) => {
                     if (b.pts !== a.pts) return b.pts - a.pts;
@@ -276,7 +320,6 @@
                     return b.gf - a.gf;
                 });
 
-                // Dessiner le tableau HTML
                 let tableHTML = `
                     <table class="standings-table">
                         <tr>
@@ -286,7 +329,7 @@
                 `;
                 
                 teamsArray.forEach((t, index) => {
-                    let rowClass = index < 2 ? "qualif-zone" : ""; // Surligne les 2 premiers
+                    let rowClass = index < 2 ? "qualif-zone" : ""; 
                     tableHTML += `
                         <tr class="${rowClass}">
                             <td class="team-cell"><img src="https://flagcdn.com/w20/${t.flag}.png" class="flag"> ${t.name}</td>
@@ -298,13 +341,13 @@
                 });
                 tableHTML += `</table>`;
 
-                // Injecter le tableau dans la carte du groupe
                 document.getElementById(`standings-${groupLetter}`).innerHTML = tableHTML;
             });
         }
 
-        // Lancer le calcul une première fois au chargement pour afficher les tableaux à zéro
-        calculateStandings();
+        // --- Démarrage ---
+        loadScores(); // 1. On charge les scores sauvegardés (s'il y en a)
+        calculateStandings(); // 2. On affiche les classements
 
     </script>
 </body>
