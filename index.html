@@ -24,6 +24,7 @@
             align-items: center;
         }
         
+        /* HEADER FOOTMARKET */
         .top-navbar {
             background-color: white; width: 100%; padding: 15px 40px; display: flex;
             justify-content: space-between; align-items: center;
@@ -37,6 +38,7 @@
         .reset-btn { background-color: var(--danger); color: white; border: none; padding: 10px 15px; border-radius: 6px; cursor: pointer; font-weight: bold; font-size: 13px; transition: 0.2s;}
         .reset-btn:hover { background-color: #cc0000; }
 
+        /* ONGLETS */
         .tabs { display: flex; justify-content: center; gap: 15px; margin: 25px 0; width: 100%; flex-wrap: wrap;}
         .tab-btn {
             background-color: white; color: var(--primary); border: 2px solid var(--primary);
@@ -45,17 +47,23 @@
         }
         .tab-btn.active, .tab-btn:hover { background-color: var(--primary); color: white; }
 
+        /* PAGES */
         .page { display: none; width: 100%; max-width: 1450px; flex-wrap: wrap; gap: 25px; padding: 0 20px 40px; box-sizing: border-box; justify-content: center;}
         .page.active { display: flex; }
 
-        /* JOUEURS */
+        /* --- PAGE 1 : JOUEURS --- */
         .hero-banner { background-color: var(--primary); color: white; border-radius: 16px; padding: 40px; width: 100%; margin-bottom: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.15); }
         .hero-subtitle { color: var(--accent); font-weight: bold; font-size: 12px; letter-spacing: 1px; text-transform: uppercase; margin-bottom: 10px;}
         .hero-title { font-size: 42px; font-weight: 900; margin: 0 0 15px 0; line-height: 1.2; max-width: 600px;}
         .hero-desc { color: #a0a5b1; font-size: 15px; max-width: 500px; line-height: 1.5;}
 
         .players-main { width: 100%; display: flex; flex-direction: column;}
-        .players-header { display: flex; justify-content: space-between; margin-bottom: 20px; color: #555; font-size: 14px; font-weight: bold;}
+        
+        /* HEADER FILTRE PAYS */
+        .players-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; padding: 15px; background: white; border-radius: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.05); }
+        .filter-select { padding: 10px 15px; border-radius: 8px; border: 2px solid var(--primary); font-weight: bold; color: var(--primary); background-color: white; cursor: pointer; outline: none; font-size: 15px;}
+        .filter-select:focus { border-color: var(--accent); }
+
         .players-grid { display: flex; flex-wrap: wrap; gap: 20px; width: 100%; }
         
         .player-card {
@@ -76,7 +84,7 @@
         .p-club span, .p-val span { display: block; font-size: 10px; color: #aaa; text-transform: uppercase;}
         .p-val { text-align: right; font-size: 16px; font-weight: 900; color: var(--primary); width: 50%;}
 
-        /* SIMULATEUR */
+        /* --- PAGES 2 & 3 : SIMULATEUR --- */
         .card { background: var(--card-bg); border-radius: 12px; box-shadow: 0 5px 15px rgba(0,0,0,0.05); padding: 20px; width: 330px; display: flex; flex-direction: column; }
         .card-title { font-size: 24px; font-weight: 900; color: var(--primary); text-align: center; margin-bottom: 15px; padding-bottom: 10px; border-bottom: 2px solid var(--bg); }
         .match-row { margin-bottom: 12px; padding-bottom: 12px; border-bottom: 1px dashed #eee; }
@@ -119,6 +127,7 @@
         <button class="tab-btn" onclick="switchTab('phase-finale')">Tableau Final 🏆</button>
     </div>
 
+    <!-- PAGE 1 : JOUEURS -->
     <div id="page-joueurs" class="page active">
         <div class="hero-banner">
             <div class="hero-subtitle">VALEURS MARCHANDES & EFFECTIFS</div>
@@ -126,15 +135,22 @@
             <p class="hero-desc">Explorez les effectifs des 48 nations qualifiées, analysez les statistiques et comparez les valeurs marchandes des joueurs.</p>
         </div>
         <div class="players-main">
+            <!-- NOUVELLE BARRE DE FILTRE -->
             <div class="players-header">
-                <span id="player-count" style="color:var(--primary); font-weight:bold;">Récupération des 48 fichiers de pays en cours... ⏳</span>
+                <span id="player-count" style="color:var(--primary); font-weight:bold; font-size: 16px;">Récupération des 48 fichiers en cours... ⏳</span>
+                <select id="filter-pays" class="filter-select" onchange="filtrerJoueurs()">
+                    <option value="ALL">Sélectionnez une équipe (Tous les pays)</option>
+                </select>
             </div>
+            
             <div class="players-grid" id="players-container"></div>
         </div>
     </div>
 
+    <!-- PAGE 2 : GROUPES -->
     <div id="page-groupes" class="page"></div>
 
+    <!-- PAGE 3 : PHASE FINALE -->
     <div id="page-phase-finale" class="page">
         <div style="width: 100%; text-align: center; margin-bottom: 20px;">
             <p style="color: #666; font-size: 15px;">Écrivez le nom des équipes qualifiées dans les cases et remplissez les scores jusqu'à la Finale !</p>
@@ -145,9 +161,8 @@
         // ==========================================
         // 1. DATA DES JOUEURS (Lecture 48 fichiers)
         // ==========================================
-        let playersData = [];
+        let playersData = []; // Stockera TOUS les joueurs
 
-        // Liste corrigée avec vos fautes de frappe exactes !
         const listeFichiersCSV = [
             "afrique_du_sud.csv", "algerie.csv", "allemagne.csv", "angleterre.csv",
             "arabie_saoudite.csv", "argentine.csv", "australie.csv", "autriche.csv",
@@ -162,7 +177,8 @@
             "turquie.csv", "uruguay.csv", "usa.csv"
         ];
 
-        // RAPPEL: Ajustez ces chiffres si nécessaire (A=0, B=1, C=2...)
+        // ⬇️ REGLAGES DES COLONNES (POUR CORRIGER LES INCONNUS) ⬇️
+        // Changez ces chiffres selon l'ordre dans VOS fichiers CSV !
         const colPays = 0;   
         const colNom = 1;    
         const colClub = 2;   
@@ -170,31 +186,30 @@
         const colPos = 4;    
         const colNum = 5;    
         const colValeur = 6; 
+        // --------------------------------------------------------
         
         async function chargerJoueursCSV() {
             try {
                 const requetes = listeFichiersCSV.map(async (fichier) => {
                     try {
-                        // Ajout d'un paramètre cache-busting pour forcer le navigateur à télécharger la version récente
                         const response = await fetch(fichier + '?t=' + new Date().getTime());
                         if (!response.ok) return []; 
                         const data = await response.text();
                         const lignes = data.split('\n');
                         const joueursExtraits = [];
                         
+                        // Nettoyer le nom du fichier pour créer un beau nom de pays
+                        let formatPays = fichier.replace('.csv', '').replace(/_/g, ' ');
+                        formatPays = formatPays.charAt(0).toUpperCase() + formatPays.slice(1);
+
                         for (let i = 1; i < lignes.length; i++) {
                             const ligne = lignes[i].trim();
                             if (!ligne) continue;
                             
-                            // On essaye avec le séparateur français (;) ou international (,)
                             let colonnes = ligne.split(';');
                             if(colonnes.length < 2) colonnes = ligne.split(',');
 
                             if (colonnes.length >= 2) {
-                                // Nettoyage du nom de fichier pour le nom du pays
-                                let formatPays = fichier.replace('.csv', '').replace(/_/g, ' ');
-                                formatPays = formatPays.charAt(0).toUpperCase() + formatPays.slice(1);
-                                
                                 joueursExtraits.push({
                                     name: colonnes[colNom] || "Inconnu",
                                     initial: colonnes[colNom] ? colonnes[colNom].charAt(0).toUpperCase() : "?",
@@ -219,10 +234,14 @@
                     playersData.push(...paysArray);
                 });
 
-                if (playersData.length === 0) {
-                    document.getElementById('player-count').innerHTML = `<span style="color:red;">⚠️ Aucun joueur n'a été trouvé. Vérifiez que vos fichiers contiennent bien des données.</span>`;
+                // Trier par pays puis par nom
+                playersData.sort((a, b) => a.country.localeCompare(b.country) || a.name.localeCompare(b.name));
+
+                if (playersData.length > 0) {
+                    preparerFiltres();
+                    renderPlayers(playersData); 
                 } else {
-                    renderPlayers(); 
+                    document.getElementById('player-count').innerHTML = `<span style="color:red;">⚠️ Aucun joueur n'a été trouvé.</span>`;
                 }
                 
             } catch (erreur) {
@@ -231,11 +250,37 @@
             }
         }
 
-        function renderPlayers() {
+        // --- NOUVEAU : SYSTÈME DE FILTRE PAR PAYS ---
+        function preparerFiltres() {
+            const select = document.getElementById('filter-pays');
+            // Trouver tous les pays uniques dans la base de données
+            const paysUniques = [...new Set(playersData.map(p => p.country))].sort();
+            
+            paysUniques.forEach(pays => {
+                if(pays && pays !== "Inconnu") {
+                    select.innerHTML += `<option value="${pays}">${pays}</option>`;
+                }
+            });
+        }
+
+        function filtrerJoueurs() {
+            const paysChoisi = document.getElementById('filter-pays').value;
+            if (paysChoisi === "ALL") {
+                renderPlayers(playersData); // Afficher tout
+            } else {
+                const donneesFiltrees = playersData.filter(p => p.country === paysChoisi);
+                renderPlayers(donneesFiltrees); // Afficher juste le pays
+            }
+        }
+
+        // ---------------------------------------------
+
+        // Fonction d'affichage dynamique
+        function renderPlayers(donnees) {
             const container = document.getElementById('players-container');
             let htmlBuffer = '';
             
-            playersData.forEach(p => {
+            donnees.forEach(p => {
                 htmlBuffer += `
                     <div class="player-card">
                         <div class="p-top">
@@ -256,7 +301,7 @@
             });
             
             container.innerHTML = htmlBuffer; 
-            document.getElementById('player-count').innerText = `✅ ${playersData.length} joueurs chargés avec succès`;
+            document.getElementById('player-count').innerText = `✅ ${donnees.length} joueurs affichés`;
         }
 
         // ==========================================
