@@ -123,6 +123,7 @@
         <button class="tab-btn" onclick="switchTab('phase-finale')">Tableau Final 🏆</button>
     </div>
 
+    <!-- PAGE 1 : JOUEURS -->
     <div id="page-joueurs" class="page active">
         <div class="hero-banner">
             <div class="hero-subtitle">VALEURS MARCHANDES & EFFECTIFS</div>
@@ -131,14 +132,16 @@
         </div>
         <div class="players-main">
             <div class="players-header">
-                <span id="player-count">Chargement des joueurs en cours...</span>
+                <span id="player-count">Téléchargement des 48 fichiers en cours... Patientez...</span>
             </div>
             <div class="players-grid" id="players-container"></div>
         </div>
     </div>
 
+    <!-- PAGE 2 : GROUPES -->
     <div id="page-groupes" class="page"></div>
 
+    <!-- PAGE 3 : PHASE FINALE -->
     <div id="page-phase-finale" class="page">
         <div style="width: 100%; text-align: center; margin-bottom: 20px;">
             <p style="color: #666; font-size: 15px;">Écrivez le nom des équipes qualifiées dans les cases et remplissez les scores jusqu'à la Finale !</p>
@@ -147,64 +150,92 @@
 
     <script>
         // ==========================================
-        // 1. DATA DES JOUEURS (Lecture du CSV)
+        // 1. DATA DES JOUEURS (Lecture MULTIPLE CSV)
         // ==========================================
         let playersData = [];
 
+        // ⬇️ VERIFIEZ QUE CES NOMS CORRESPONDENT BIEN AUX VOS ⬇️
+        const listeFichiersCSV = [
+            "afrique_du_sud.csv", "algerie.csv", "allemagne.csv", "angleterre.csv",
+            "arabie_saoudite.csv", "argentine.csv", "australie.csv", "autriche.csv",
+            "belgique.csv", "bosnie_herzegovine.csv", "bresil.csv", "canada.csv",
+            "cap_vert.csv", "colombie.csv", "coree_du_sud.csv", "cote_divoire.csv",
+            "croatie.csv", "curaçao.csv", "ecosse.csv", "egypte.csv", "equateur.csv",
+            "espagne.csv", "etats_unis.csv", "france.csv", "ghana.csv", "haiti.csv",
+            "irak.csv", "iran.csv", "japon.csv", "jordanie.csv", "maroc.csv",
+            "mexique.csv", "norvege.csv", "nouvelle_zelande.csv", "ouzbekistan.csv",
+            "panama.csv", "paraguay.csv", "pays_bas.csv", "portugal.csv", "qatar.csv",
+            "rdc.csv", "senegal.csv", "suede.csv", "suisse.csv", "tchequie.csv",
+            "tunisie.csv", "turquie.csv", "uruguay.csv"
+        ];
+
+        // ⬇️ REGLAGES DES COLONNES ⬇️ (0 = Col A, 1 = Col B...)
+        const colPays = 0;   
+        const colNom = 1;    
+        const colClub = 2;   
+        const colAge = 3;    
+        const colPos = 4;    
+        const colNum = 5;    
+        const colValeur = 6; 
+        
         async function chargerJoueursCSV() {
             try {
-                const response = await fetch('data.csv');
-                if (!response.ok) throw new Error("Fichier introuvable");
-                
-                const data = await response.text();
-                const lignes = data.split('\n');
+                // On crée une liste de requêtes pour télécharger tous les fichiers EN MÊME TEMPS
+                const requetes = listeFichiersCSV.map(async (fichier) => {
+                    try {
+                        const response = await fetch(fichier);
+                        if (!response.ok) return []; // Ignore discrètement si le fichier manque
+                        const data = await response.text();
+                        const lignes = data.split('\n');
+                        const joueursExtraits = [];
+                        
+                        for (let i = 1; i < lignes.length; i++) {
+                            const ligne = lignes[i].trim();
+                            if (!ligne) continue;
+                            const colonnes = ligne.split(';');
 
-                // ⬇️⬇️⬇️ REGLAGES DES COLONNES ICI ⬇️⬇️⬇️
-                // Indiquez le numéro de la colonne de votre fichier Excel
-                // (Colonne A = 0, B = 1, C = 2, D = 3, E = 4, F = 5, G = 6, H = 7)
-                
-                const colPays = 0;   // Numéro pour le Pays (ex: 0 si en Colonne A)
-                const colNom = 1;    // Numéro pour le Nom du joueur
-                const colClub = 2;   // Numéro pour le Club
-                const colAge = 3;    // Numéro pour l'Âge
-                const colPos = 4;    // Numéro pour la Position (ATT, MIL...)
-                const colNum = 5;    // Numéro pour le Numéro de maillot
-                const colValeur = 6; // Numéro pour la Valeur
-                // ⬆️⬆️⬆️ NE TOUCHEZ PLUS A RIEN EN DESSOUS ⬆️⬆️⬆️
-
-                for (let i = 1; i < lignes.length; i++) {
-                    const ligne = lignes[i].trim();
-                    if (!ligne) continue;
-
-                    const colonnes = ligne.split(';');
-
-                    // On vérifie qu'il y a au moins des données sur la ligne
-                    if (colonnes.length >= 2) {
-                        playersData.push({
-                            name: colonnes[colNom] || "Inconnu",
-                            initial: colonnes[colNom] ? colonnes[colNom].charAt(0).toUpperCase() : "?",
-                            country: colonnes[colPays] || "Inconnu",
-                            age: colonnes[colAge] || "",
-                            pos: colonnes[colPos] || "-",
-                            num: colonnes[colNum] || "",
-                            club: colonnes[colClub] || "Sans club",
-                            value: colonnes[colValeur] || "-"
-                        });
+                            if (colonnes.length >= 2) {
+                                joueursExtraits.push({
+                                    name: colonnes[colNom] || "Inconnu",
+                                    initial: colonnes[colNom] ? colonnes[colNom].charAt(0).toUpperCase() : "?",
+                                    country: colonnes[colPays] || fichier.replace('.csv', '').replace(/_/g, ' ').toUpperCase(),
+                                    age: colonnes[colAge] || "",
+                                    pos: colonnes[colPos] || "-",
+                                    num: colonnes[colNum] || "",
+                                    club: colonnes[colClub] || "Sans club",
+                                    value: colonnes[colValeur] || "-"
+                                });
+                            }
+                        }
+                        return joueursExtraits;
+                    } catch (e) {
+                        return []; // Ignore en cas d'erreur réseau
                     }
-                }
-                renderPlayers();
+                });
+
+                // Attendre que TOUS les fichiers soient téléchargés et lus
+                const resultatsComplets = await Promise.all(requetes);
+                
+                // Rassembler tous les tableaux obtenus en un seul grand tableau `playersData`
+                resultatsComplets.forEach(paysArray => {
+                    playersData.push(...paysArray);
+                });
+
+                renderPlayers(); // Affiche tout d'un coup
+                
             } catch (erreur) {
                 console.error(erreur);
-                document.getElementById('players-container').innerHTML = `<p style="color:red; font-weight:bold;">Erreur : Impossible de lire data.csv. Vérifiez que le fichier est bien sur GitHub avec ce nom exact.</p>`;
-                document.getElementById('player-count').innerText = "0 joueur trouvé";
+                document.getElementById('players-container').innerHTML = `<p style="color:red; font-weight:bold;">Erreur fatale lors du chargement des fichiers.</p>`;
             }
         }
 
+        // Fonction d'affichage ultra-rapide (évite les plantages)
         function renderPlayers() {
             const container = document.getElementById('players-container');
-            container.innerHTML = '';
+            let htmlBuffer = '';
+            
             playersData.forEach(p => {
-                container.innerHTML += `
+                htmlBuffer += `
                     <div class="player-card">
                         <div class="p-top">
                             <div class="p-circle">${p.initial}</div>
@@ -222,7 +253,9 @@
                     </div>
                 `;
             });
-            document.getElementById('player-count').innerText = `${playersData.length} joueurs trouvés`;
+            
+            container.innerHTML = htmlBuffer; 
+            document.getElementById('player-count').innerText = `${playersData.length} joueurs trouvés dans les effectifs`;
         }
 
         // ==========================================
@@ -298,7 +331,6 @@
             }
         ];
 
-        // Rendu des Groupes
         function renderGroups() {
             const container = document.getElementById('page-groupes');
             const groups = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L'];
@@ -331,7 +363,6 @@
             });
         }
 
-        // Rendu de la Phase Finale
         function renderKnockout() {
             const container = document.getElementById('page-phase-finale');
             knockoutRounds.forEach(round => {
@@ -374,7 +405,7 @@
             document.querySelectorAll('.page').forEach(page => page.classList.remove('active'));
             document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
             document.getElementById('page-' + tabId).classList.add('active');
-            event.target.classList.add('active'); // active le bouton cliqué
+            event.target.classList.add('active');
         }
 
         function saveAndCalculate() {
