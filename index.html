@@ -24,7 +24,6 @@
             align-items: center;
         }
         
-        /* HEADER FOOTMARKET */
         .top-navbar {
             background-color: white; width: 100%; padding: 15px 40px; display: flex;
             justify-content: space-between; align-items: center;
@@ -38,7 +37,6 @@
         .reset-btn { background-color: var(--danger); color: white; border: none; padding: 10px 15px; border-radius: 6px; cursor: pointer; font-weight: bold; font-size: 13px; transition: 0.2s;}
         .reset-btn:hover { background-color: #cc0000; }
 
-        /* ONGLETS */
         .tabs { display: flex; justify-content: center; gap: 15px; margin: 25px 0; width: 100%; flex-wrap: wrap;}
         .tab-btn {
             background-color: white; color: var(--primary); border: 2px solid var(--primary);
@@ -47,11 +45,10 @@
         }
         .tab-btn.active, .tab-btn:hover { background-color: var(--primary); color: white; }
 
-        /* PAGES */
         .page { display: none; width: 100%; max-width: 1450px; flex-wrap: wrap; gap: 25px; padding: 0 20px 40px; box-sizing: border-box; justify-content: center;}
         .page.active { display: flex; }
 
-        /* --- PAGE 1 : JOUEURS --- */
+        /* JOUEURS */
         .hero-banner { background-color: var(--primary); color: white; border-radius: 16px; padding: 40px; width: 100%; margin-bottom: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.15); }
         .hero-subtitle { color: var(--accent); font-weight: bold; font-size: 12px; letter-spacing: 1px; text-transform: uppercase; margin-bottom: 10px;}
         .hero-title { font-size: 42px; font-weight: 900; margin: 0 0 15px 0; line-height: 1.2; max-width: 600px;}
@@ -79,7 +76,7 @@
         .p-club span, .p-val span { display: block; font-size: 10px; color: #aaa; text-transform: uppercase;}
         .p-val { text-align: right; font-size: 16px; font-weight: 900; color: var(--primary); width: 50%;}
 
-        /* --- PAGES 2 & 3 : SIMULATEUR --- */
+        /* SIMULATEUR */
         .card { background: var(--card-bg); border-radius: 12px; box-shadow: 0 5px 15px rgba(0,0,0,0.05); padding: 20px; width: 330px; display: flex; flex-direction: column; }
         .card-title { font-size: 24px; font-weight: 900; color: var(--primary); text-align: center; margin-bottom: 15px; padding-bottom: 10px; border-bottom: 2px solid var(--bg); }
         .match-row { margin-bottom: 12px; padding-bottom: 12px; border-bottom: 1px dashed #eee; }
@@ -100,7 +97,6 @@
         .pts-col { font-weight: bold; color: var(--primary); }
         .qualif-zone { background-color: rgba(0, 217, 138, 0.1); }
 
-        /* PHASE FINALE */
         .round-section { width: 100%; text-align: center; margin: 30px 0 10px; }
         .round-title { font-size: 24px; color: var(--primary); font-weight: 900; background: white; display: inline-block; padding: 10px 30px; border-radius: 30px; box-shadow: 0 4px 10px rgba(0,0,0,0.05);}
         .team-input { width: 85px; height: 25px; text-align: center; font-size: 13px; font-weight: bold; text-transform: uppercase; border: 1px dashed #aaa; border-radius: 4px; color: var(--primary); }
@@ -123,7 +119,6 @@
         <button class="tab-btn" onclick="switchTab('phase-finale')">Tableau Final 🏆</button>
     </div>
 
-    <!-- PAGE 1 : JOUEURS -->
     <div id="page-joueurs" class="page active">
         <div class="hero-banner">
             <div class="hero-subtitle">VALEURS MARCHANDES & EFFECTIFS</div>
@@ -132,16 +127,14 @@
         </div>
         <div class="players-main">
             <div class="players-header">
-                <span id="player-count">Téléchargement des 48 fichiers en cours... Patientez...</span>
+                <span id="player-count" style="color:var(--primary); font-weight:bold;">Récupération des 48 fichiers de pays en cours... ⏳</span>
             </div>
             <div class="players-grid" id="players-container"></div>
         </div>
     </div>
 
-    <!-- PAGE 2 : GROUPES -->
     <div id="page-groupes" class="page"></div>
 
-    <!-- PAGE 3 : PHASE FINALE -->
     <div id="page-phase-finale" class="page">
         <div style="width: 100%; text-align: center; margin-bottom: 20px;">
             <p style="color: #666; font-size: 15px;">Écrivez le nom des équipes qualifiées dans les cases et remplissez les scores jusqu'à la Finale !</p>
@@ -150,26 +143,26 @@
 
     <script>
         // ==========================================
-        // 1. DATA DES JOUEURS (Lecture MULTIPLE CSV)
+        // 1. DATA DES JOUEURS (Lecture 48 fichiers)
         // ==========================================
         let playersData = [];
 
-        // ⬇️ VERIFIEZ QUE CES NOMS CORRESPONDENT BIEN AUX VOS ⬇️
+        // Liste corrigée avec vos fautes de frappe exactes !
         const listeFichiersCSV = [
             "afrique_du_sud.csv", "algerie.csv", "allemagne.csv", "angleterre.csv",
             "arabie_saoudite.csv", "argentine.csv", "australie.csv", "autriche.csv",
             "belgique.csv", "bosnie_herzegovine.csv", "bresil.csv", "canada.csv",
             "cap_vert.csv", "colombie.csv", "coree_du_sud.csv", "cote_divoire.csv",
-            "croatie.csv", "curaçao.csv", "ecosse.csv", "egypte.csv", "equateur.csv",
-            "espagne.csv", "etats_unis.csv", "france.csv", "ghana.csv", "haiti.csv",
-            "irak.csv", "iran.csv", "japon.csv", "jordanie.csv", "maroc.csv",
-            "mexique.csv", "norvege.csv", "nouvelle_zelande.csv", "ouzbekistan.csv",
-            "panama.csv", "paraguay.csv", "pays_bas.csv", "portugal.csv", "qatar.csv",
-            "rdc.csv", "senegal.csv", "suede.csv", "suisse.csv", "tchequie.csv",
-            "tunisie.csv", "turquie.csv", "uruguay.csv"
+            "croatie.csv", "curaçao.csv", "egypte.csv", "equateur.csv", "escoss.csv",
+            "espagna.csv", "france.csv", "ghana.csv", "haïti.csv", "irak.csv",
+            "iran.csv", "japon.csv", "jordanie.csv", "maroc.csv", "mexique.csv",
+            "norvege.csv", "nouvelle_zelande.csv", "ouzbekistan.csv", "panama.csv",
+            "paraguay.csv", "pays_bas.csv", "portugal.csv", "qatar.csv", "rdc.csv",
+            "senegal.csv", "suede.csv", "suisse.csv", "tchequie.csv", "tunisie.csv",
+            "turquie.csv", "uruguay.csv", "usa.csv"
         ];
 
-        // ⬇️ REGLAGES DES COLONNES ⬇️ (0 = Col A, 1 = Col B...)
+        // RAPPEL: Ajustez ces chiffres si nécessaire (A=0, B=1, C=2...)
         const colPays = 0;   
         const colNom = 1;    
         const colClub = 2;   
@@ -180,11 +173,11 @@
         
         async function chargerJoueursCSV() {
             try {
-                // On crée une liste de requêtes pour télécharger tous les fichiers EN MÊME TEMPS
                 const requetes = listeFichiersCSV.map(async (fichier) => {
                     try {
-                        const response = await fetch(fichier);
-                        if (!response.ok) return []; // Ignore discrètement si le fichier manque
+                        // Ajout d'un paramètre cache-busting pour forcer le navigateur à télécharger la version récente
+                        const response = await fetch(fichier + '?t=' + new Date().getTime());
+                        if (!response.ok) return []; 
                         const data = await response.text();
                         const lignes = data.split('\n');
                         const joueursExtraits = [];
@@ -192,13 +185,20 @@
                         for (let i = 1; i < lignes.length; i++) {
                             const ligne = lignes[i].trim();
                             if (!ligne) continue;
-                            const colonnes = ligne.split(';');
+                            
+                            // On essaye avec le séparateur français (;) ou international (,)
+                            let colonnes = ligne.split(';');
+                            if(colonnes.length < 2) colonnes = ligne.split(',');
 
                             if (colonnes.length >= 2) {
+                                // Nettoyage du nom de fichier pour le nom du pays
+                                let formatPays = fichier.replace('.csv', '').replace(/_/g, ' ');
+                                formatPays = formatPays.charAt(0).toUpperCase() + formatPays.slice(1);
+                                
                                 joueursExtraits.push({
                                     name: colonnes[colNom] || "Inconnu",
                                     initial: colonnes[colNom] ? colonnes[colNom].charAt(0).toUpperCase() : "?",
-                                    country: colonnes[colPays] || fichier.replace('.csv', '').replace(/_/g, ' ').toUpperCase(),
+                                    country: colonnes[colPays] || formatPays,
                                     age: colonnes[colAge] || "",
                                     pos: colonnes[colPos] || "-",
                                     num: colonnes[colNum] || "",
@@ -209,27 +209,28 @@
                         }
                         return joueursExtraits;
                     } catch (e) {
-                        return []; // Ignore en cas d'erreur réseau
+                        return []; 
                     }
                 });
 
-                // Attendre que TOUS les fichiers soient téléchargés et lus
                 const resultatsComplets = await Promise.all(requetes);
                 
-                // Rassembler tous les tableaux obtenus en un seul grand tableau `playersData`
                 resultatsComplets.forEach(paysArray => {
                     playersData.push(...paysArray);
                 });
 
-                renderPlayers(); // Affiche tout d'un coup
+                if (playersData.length === 0) {
+                    document.getElementById('player-count').innerHTML = `<span style="color:red;">⚠️ Aucun joueur n'a été trouvé. Vérifiez que vos fichiers contiennent bien des données.</span>`;
+                } else {
+                    renderPlayers(); 
+                }
                 
             } catch (erreur) {
                 console.error(erreur);
-                document.getElementById('players-container').innerHTML = `<p style="color:red; font-weight:bold;">Erreur fatale lors du chargement des fichiers.</p>`;
+                document.getElementById('players-container').innerHTML = `<p style="color:red; font-weight:bold;">Erreur fatale de réseau.</p>`;
             }
         }
 
-        // Fonction d'affichage ultra-rapide (évite les plantages)
         function renderPlayers() {
             const container = document.getElementById('players-container');
             let htmlBuffer = '';
@@ -255,11 +256,11 @@
             });
             
             container.innerHTML = htmlBuffer; 
-            document.getElementById('player-count').innerText = `${playersData.length} joueurs trouvés dans les effectifs`;
+            document.getElementById('player-count').innerText = `✅ ${playersData.length} joueurs chargés avec succès`;
         }
 
         // ==========================================
-        // 2. SIMULATEUR (Groupes & Phase Finale)
+        // 2. SIMULATEUR (Groupes & Phase Finale)[cite: 2]
         // ==========================================
         const flagCodes = {
             MEX: 'mx', RSA: 'za', KOR: 'kr', CZE: 'cz', CAN: 'ca', QAT: 'qa', SUI: 'ch', BIH: 'ba',
