@@ -4,309 +4,167 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Footmarket | Simulateur Coupe du Monde 2026</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;900&display=swap" rel="stylesheet">
+    
     <style>
-        :root {
-            --primary: #0b1121;
-            --accent: #00d98a;
-            --bg: #f4f7f6;
-            --card-bg: #ffffff;
-            --text: #333333;
-            --danger: #ff4d4d;
-        }
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background-color: var(--bg);
-            color: var(--text);
-            margin: 0;
-            padding: 0;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-        }
+        body { font-family: 'Inter', sans-serif; background-color: #f8fafc; }
         
-        /* HEADER FOOTMARKET */
-        .top-navbar {
-            background-color: white; width: 100%; padding: 15px 40px; display: flex;
-            justify-content: space-between; align-items: center;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.05); box-sizing: border-box;
-            position: sticky; top: 0; z-index: 100;
-        }
-        .logo-container { font-size: 24px; font-weight: 900; color: black; display: flex; align-items: center; gap: 10px;}
-        .logo-container span { color: var(--accent); }
-        .badge-wc { background-color: #e0f8ee; color: var(--accent); padding: 4px 10px; border-radius: 20px; font-size: 12px; font-weight: bold;}
-        .controls { display: flex; gap: 15px; }
-        .reset-btn { background-color: var(--danger); color: white; border: none; padding: 10px 15px; border-radius: 6px; cursor: pointer; font-weight: bold; font-size: 13px; transition: 0.2s;}
-        .reset-btn:hover { background-color: #cc0000; }
+        /* Cacher les pages non actives */
+        .page-content { display: none; }
+        .page-content.active { display: block; }
 
-        /* ONGLETS */
-        .tabs { display: flex; justify-content: center; gap: 15px; margin: 25px 0; width: 100%; flex-wrap: wrap;}
-        .tab-btn {
-            background-color: white; color: var(--primary); border: 2px solid var(--primary);
-            padding: 10px 20px; font-size: 15px; font-weight: bold; border-radius: 30px;
-            cursor: pointer; transition: all 0.2s; box-shadow: 0 2px 5px rgba(0,0,0,0.05);
-        }
-        .tab-btn.active, .tab-btn:hover { background-color: var(--primary); color: white; }
-
-        /* PAGES */
-        .page { display: none; width: 100%; max-width: 1450px; flex-wrap: wrap; gap: 25px; padding: 0 20px 40px; box-sizing: border-box; justify-content: center;}
-        .page.active { display: flex; }
-
-        /* --- PAGE 1 : JOUEURS --- */
-        .hero-banner { background-color: var(--primary); color: white; border-radius: 16px; padding: 40px; width: 100%; margin-bottom: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.15); }
-        .hero-subtitle { color: var(--accent); font-weight: bold; font-size: 12px; letter-spacing: 1px; text-transform: uppercase; margin-bottom: 10px;}
-        .hero-title { font-size: 42px; font-weight: 900; margin: 0 0 15px 0; line-height: 1.2; max-width: 600px;}
-        .hero-desc { color: #a0a5b1; font-size: 15px; max-width: 500px; line-height: 1.5;}
-
-        .players-main { width: 100%; display: flex; flex-direction: column;}
-        
-        /* HEADER FILTRE PAYS */
-        .players-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; padding: 15px; background: white; border-radius: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.05); }
-        .filter-select { padding: 10px 15px; border-radius: 8px; border: 2px solid var(--primary); font-weight: bold; color: var(--primary); background-color: white; cursor: pointer; outline: none; font-size: 15px;}
-        .filter-select:focus { border-color: var(--accent); }
-
-        .players-grid { display: flex; flex-wrap: wrap; gap: 20px; width: 100%; }
-        
-        .player-card {
-            background: white; border-radius: 12px; padding: 20px; width: calc(25% - 15px); min-width: 280px;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.04); box-sizing: border-box; display: flex; flex-direction: column;
-            border: 1px solid #f0f0f0; transition: transform 0.2s;
-        }
-        .player-card:hover { transform: translateY(-5px); box-shadow: 0 8px 20px rgba(0,0,0,0.08); }
-        .p-top { display: flex; justify-content: space-between; margin-bottom: 15px; align-items: flex-start;}
-        .p-circle { width: 50px; height: 50px; border-radius: 50%; background-color: #e0f8ee; color: var(--accent); display: flex; align-items: center; justify-content: center; font-size: 22px; font-weight: bold; flex-shrink: 0;}
-        .p-info { flex-grow: 1; margin-left: 15px; overflow: hidden; }
-        .p-pos { font-size: 10px; font-weight: bold; color: var(--accent); background: #e0f8ee; padding: 3px 6px; border-radius: 4px; display: inline-block; margin-bottom: 5px;}
-        .p-name { font-size: 16px; font-weight: 900; margin: 0 0 2px 0; color: var(--primary); white-space: nowrap; overflow: hidden; text-overflow: ellipsis;}
-        .p-sub { font-size: 12px; color: #888; margin: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;}
-        .p-num { font-size: 14px; font-weight: bold; color: #aaa; }
-        .p-bottom { display: flex; justify-content: space-between; border-top: 1px solid #f0f0f0; padding-top: 15px; margin-top: auto;}
-        .p-club { font-size: 12px; color: #555; width: 50%; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;}
-        .p-club span, .p-val span { display: block; font-size: 10px; color: #aaa; text-transform: uppercase;}
-        .p-val { text-align: right; font-size: 16px; font-weight: 900; color: var(--primary); width: 50%;}
-
-        /* --- PAGES 2 & 3 : SIMULATEUR --- */
-        .card { background: var(--card-bg); border-radius: 12px; box-shadow: 0 5px 15px rgba(0,0,0,0.05); padding: 20px; width: 330px; display: flex; flex-direction: column; }
-        .card-title { font-size: 24px; font-weight: 900; color: var(--primary); text-align: center; margin-bottom: 15px; padding-bottom: 10px; border-bottom: 2px solid var(--bg); }
-        .match-row { margin-bottom: 12px; padding-bottom: 12px; border-bottom: 1px dashed #eee; }
+        /* Styles spécifiques au Simulateur (Groupes & Phase Finale) pour respecter Tailwind */
+        .sim-card { background: white; border-radius: 1rem; border: 1px solid #f1f5f9; box-shadow: 0 1px 3px rgba(0,0,0,0.05); padding: 1.5rem; width: 100%; max-width: 340px; display: flex; flex-direction: column; }
+        .sim-card-title { font-size: 1.5rem; font-weight: 900; color: #0f172a; text-align: center; margin-bottom: 1rem; padding-bottom: 0.75rem; border-bottom: 2px solid #f8fafc; }
+        .match-row { margin-bottom: 0.75rem; padding-bottom: 0.75rem; border-bottom: 1px dashed #e2e8f0; }
         .match-row:last-of-type { border-bottom: none; margin-bottom: 0; padding-bottom: 0; }
-        .date-time { font-size: 11px; color: #888; text-align: center; margin-bottom: 8px; display: block; font-weight: bold; }
+        .date-time { font-size: 0.65rem; color: #94a3b8; text-align: center; margin-bottom: 0.5rem; display: block; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; }
         .teams-scores { display: flex; align-items: center; justify-content: space-between; }
-        .team { font-size: 15px; font-weight: bold; width: 90px; display: flex; align-items: center; gap: 8px; }
+        .team { font-size: 0.875rem; font-weight: 700; width: 90px; display: flex; align-items: center; gap: 8px; color: #1e293b; }
         .team.right { justify-content: flex-end; text-align: right; }
-        .flag { width: 22px; height: auto; border-radius: 2px; box-shadow: 0 1px 3px rgba(0,0,0,0.2); }
-        .score-input { width: 35px; height: 28px; text-align: center; font-size: 16px; font-weight: bold; border: 1px solid #ccc; border-radius: 6px; background-color: #fafafa; margin: 0 5px; -moz-appearance: textfield;}
+        .flag { width: 22px; height: auto; border-radius: 3px; box-shadow: 0 1px 2px rgba(0,0,0,0.1); }
+        .score-input { width: 36px; height: 30px; text-align: center; font-size: 0.875rem; font-weight: 800; border: 1px solid #cbd5e1; border-radius: 6px; background-color: #f8fafc; margin: 0 4px; color: #0f172a; transition: all 0.2s; -moz-appearance: textfield;}
         .score-input::-webkit-outer-spin-button, .score-input::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
-        .score-input:focus { outline: none; border-color: var(--accent); background-color: #fff; box-shadow: 0 0 0 3px rgba(0,217,138,0.2); }
+        .score-input:focus { outline: none; border-color: #059669; background-color: #ffffff; box-shadow: 0 0 0 3px rgba(5, 150, 105, 0.1); }
         
-        .standings-table { width: 100%; border-collapse: collapse; font-size: 13px; margin-top: 15px; border-top: 2px solid var(--primary); padding-top: 10px; }
-        .standings-table th, .standings-table td { padding: 6px 2px; text-align: center; border-bottom: 1px solid #eee; }
-        .standings-table th { color: #666; font-size: 11px; text-transform: uppercase; }
-        .standings-table .team-cell { text-align: left; display: flex; align-items: center; gap: 6px; font-weight: bold; }
-        .pts-col { font-weight: bold; color: var(--primary); }
-        .qualif-zone { background-color: rgba(0, 217, 138, 0.1); }
+        .standings-table { width: 100%; border-collapse: collapse; font-size: 0.75rem; margin-top: 1rem; border-top: 2px solid #0f172a; padding-top: 0.5rem; }
+        .standings-table th, .standings-table td { padding: 0.5rem 0.2rem; text-align: center; border-bottom: 1px solid #f1f5f9; color: #475569; }
+        .standings-table th { font-size: 0.65rem; font-weight: 700; text-transform: uppercase; color: #94a3b8; }
+        .standings-table .team-cell { text-align: left; display: flex; align-items: center; gap: 6px; font-weight: 700; color: #1e293b; }
+        .pts-col { font-weight: 900; color: #0f172a; font-size: 0.875rem; }
+        .qualif-zone { background-color: #ecfdf5; }
 
-        .round-section { width: 100%; text-align: center; margin: 30px 0 10px; }
-        .round-title { font-size: 24px; color: var(--primary); font-weight: 900; background: white; display: inline-block; padding: 10px 30px; border-radius: 30px; box-shadow: 0 4px 10px rgba(0,0,0,0.05);}
-        .team-input { width: 85px; height: 25px; text-align: center; font-size: 13px; font-weight: bold; text-transform: uppercase; border: 1px dashed #aaa; border-radius: 4px; color: var(--primary); }
-        .finale-card { border: 2px solid #ffd700; box-shadow: 0 0 20px rgba(255, 215, 0, 0.3); }
-        .finale-card .card-title { color: #d4af37; }
+        .round-section { width: 100%; text-align: center; margin: 2rem 0 1rem; }
+        .round-title { font-size: 1.25rem; color: #0f172a; font-weight: 900; background: white; display: inline-block; padding: 0.5rem 2rem; border-radius: 2rem; box-shadow: 0 2px 10px rgba(0,0,0,0.05); border: 1px solid #f1f5f9; }
+        .team-input { width: 85px; height: 28px; text-align: center; font-size: 0.75rem; font-weight: 800; text-transform: uppercase; border: 1px dashed #cbd5e1; border-radius: 6px; color: #0f172a; outline: none; transition: 0.2s;}
+        .team-input:focus { border-color: #059669; border-style: solid; background: #ecfdf5;}
+        .finale-card { border: 2px solid #fbbf24; box-shadow: 0 4px 15px rgba(251, 191, 36, 0.15); }
+        .finale-card .sim-card-title { color: #d97706; }
     </style>
 </head>
-<body>
+<body class="text-slate-900 antialiased">
 
-    <div class="top-navbar">
-        <div class="logo-container">FOOT<span>MARKET</span> <div class="badge-wc">WC 2026</div></div>
-        <div class="controls">
-            <button class="reset-btn" onclick="resetAll()">🗑️ Effacer la simulation</button>
-        </div>
-    </div>
-
-    <div class="tabs">
-        <button class="tab-btn active" onclick="switchTab('joueurs')">Base de Données Joueurs</button>
-        <button class="tab-btn" onclick="switchTab('groupes')">Calendrier & Groupes</button>
-        <button class="tab-btn" onclick="switchTab('phase-finale')">Tableau Final 🏆</button>
-    </div>
-
-    <!-- PAGE 1 : JOUEURS -->
-    <div id="page-joueurs" class="page active">
-        <div class="hero-banner">
-            <div class="hero-subtitle">VALEURS MARCHANDES & EFFECTIFS</div>
-            <h1 class="hero-title">Les Équipes de la Coupe du Monde 2026</h1>
-            <p class="hero-desc">Explorez les effectifs des 48 nations qualifiées, analysez les statistiques et comparez les valeurs marchandes des joueurs.</p>
-        </div>
-        <div class="players-main">
-            <!-- NOUVELLE BARRE DE FILTRE -->
-            <div class="players-header">
-                <span id="player-count" style="color:var(--primary); font-weight:bold; font-size: 16px;">Récupération des 48 fichiers en cours... ⏳</span>
-                <select id="filter-pays" class="filter-select" onchange="filtrerJoueurs()">
-                    <option value="ALL">Sélectionnez une équipe (Tous les pays)</option>
-                </select>
+    <nav class="bg-white border-b border-slate-200 sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between h-16 items-center">
+                <div class="flex-shrink-0 flex items-center">
+                    <span class="text-xl font-black tracking-wider text-slate-950">FOOT<span class="text-emerald-600">MARKET</span></span>
+                    <span class="ml-2 bg-emerald-100 text-emerald-800 text-[10px] font-bold px-2 py-0.5 rounded-full">WC 2026</span>
+                </div>
+                <div class="flex-1 max-w-md mx-8" id="searchContainer">
+                    <div class="relative">
+                        <input type="text" id="searchInput" oninput="filtrerJoueurs()" placeholder="Rechercher un joueur, un club, un pays..." class="w-full bg-slate-50 border border-slate-200 rounded-xl py-2 px-5 pl-10 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:bg-white transition-all">
+                        <div class="absolute left-3 top-2.5 text-slate-400">
+                            <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
+                        </div>
+                    </div>
+                </div>
+                <div>
+                    <button onclick="resetAll()" class="bg-rose-500 hover:bg-rose-600 text-white text-xs font-bold px-4 py-2 rounded-lg transition-colors shadow-sm">
+                        🗑️ Effacer Scores
+                    </button>
+                </div>
             </div>
-            
-            <div class="players-grid" id="players-container"></div>
+        </div>
+    </nav>
+
+    <div class="bg-white border-b border-slate-200">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-center gap-4 py-4">
+                <button onclick="switchTab('joueurs', this)" class="tab-btn bg-slate-900 text-white px-5 py-2 rounded-full text-sm font-bold shadow-sm transition-all">Base de Données Joueurs</button>
+                <button onclick="switchTab('groupes', this)" class="tab-btn bg-white border border-slate-300 text-slate-700 hover:bg-slate-50 px-5 py-2 rounded-full text-sm font-bold transition-all">Calendrier & Groupes</button>
+                <button onclick="switchTab('phase-finale', this)" class="tab-btn bg-white border border-slate-300 text-slate-700 hover:bg-slate-50 px-5 py-2 rounded-full text-sm font-bold transition-all">Tableau Final 🏆</button>
+            </div>
         </div>
     </div>
 
-    <!-- PAGE 2 : GROUPES -->
-    <div id="page-groupes" class="page"></div>
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        
+        <div id="page-joueurs" class="page-content active">
+            <div class="mb-8 bg-slate-950 text-white rounded-2xl p-8 md:p-12 relative overflow-hidden shadow-lg">
+                <div class="relative z-10 max-w-lg">
+                    <span class="text-xs font-bold uppercase tracking-widest text-emerald-400">Valeurs Marchandes</span>
+                    <h1 class="text-3xl md:text-4xl font-black mt-2 mb-4 leading-tight">Les Équipes de la Coupe du Monde</h1>
+                    <p class="text-slate-400 text-sm">Explorez les effectifs des 48 nations, analysez les stats et comparez les valeurs marchandes des joueurs sélectionnés.</p>
+                </div>
+            </div>
 
-    <!-- PAGE 3 : PHASE FINALE -->
-    <div id="page-phase-finale" class="page">
-        <div style="width: 100%; text-align: center; margin-bottom: 20px;">
-            <p style="color: #666; font-size: 15px;">Écrivez le nom des équipes qualifiées dans les cases et remplissez les scores jusqu'à la Finale !</p>
+            <div class="flex flex-col lg:flex-row gap-8">
+                <aside class="w-full lg:w-64 flex-shrink-0">
+                    <div class="bg-white p-6 rounded-xl border border-slate-200 sticky top-24 shadow-sm">
+                        <h2 class="text-xs font-bold uppercase tracking-wider text-slate-400 mb-3">Filtrer par Pays</h2>
+                        <div class="space-y-1 mb-6 max-h-60 overflow-y-auto pr-2 custom-scrollbar" id="paysFilters"></div>
+                        <hr class="my-4 border-slate-100">
+                        <h2 class="text-xs font-bold uppercase tracking-wider text-slate-400 mb-3">Poste</h2>
+                        <div class="space-y-1" id="posteFilters"></div>
+                    </div>
+                </aside>
+
+                <section class="flex-1">
+                    <div class="flex justify-between items-center mb-6">
+                        <p class="text-sm text-slate-500"><span id="joueurCount" class="font-bold text-slate-950">0</span> joueurs trouvés</p>
+                        <select id="sortSelect" onchange="filtrerJoueurs()" class="bg-transparent text-sm font-semibold text-slate-700 focus:outline-none cursor-pointer">
+                            <option value="valeurDesc">Valeur : Élevée à Faible</option>
+                            <option value="valeurAsc">Valeur : Faible à Élevée</option>
+                            <option value="nom">Nom (A-Z)</option>
+                        </select>
+                    </div>
+                    <div id="joueursGrid" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
+                        <div class="col-span-full text-center py-12 text-slate-400 text-sm">Extraction des joueurs en cours...</div>
+                    </div>
+                </section>
+            </div>
         </div>
-    </div>
+
+        <div id="page-groupes" class="page-content">
+            <div class="mb-8 text-center">
+                <h2 class="text-2xl font-black text-slate-900">Phase de Groupes</h2>
+                <p class="text-slate-500 text-sm mt-1">Remplissez les scores, le classement se calcule et se trie automatiquement.</p>
+            </div>
+            <div id="groupes-container" class="flex flex-wrap justify-center gap-6">
+                </div>
+        </div>
+
+        <div id="page-phase-finale" class="page-content">
+            <div class="mb-8 text-center">
+                <h2 class="text-2xl font-black text-slate-900">Tableau à Élimination Directe</h2>
+                <p class="text-slate-500 text-sm mt-1">Saisissez les noms des équipes qualifiées et simulez jusqu'à la grande finale.</p>
+            </div>
+            <div id="knockout-container" class="flex flex-col items-center">
+                </div>
+        </div>
+
+    </main>
 
     <script>
         // ==========================================
-        // 1. DATA DES JOUEURS (Lecture 48 fichiers)
+        // VARIABLES GLOBALES
         // ==========================================
-        let playersData = []; // Stockera TOUS les joueurs
+        let tousLesJoueurs = [];
+        let paysSelectionne = 'Tous';
+        let posteSelectionne = 'Tous';
 
-        const listeFichiersCSV = [
-            "afrique_du_sud.csv", "algerie.csv", "allemagne.csv", "angleterre.csv",
-            "arabie_saoudite.csv", "argentine.csv", "australie.csv", "autriche.csv",
-            "belgique.csv", "bosnie_herzegovine.csv", "bresil.csv", "canada.csv",
-            "cap_vert.csv", "colombie.csv", "coree_du_sud.csv", "cote_divoire.csv",
-            "croatie.csv", "curaçao.csv", "egypte.csv", "equateur.csv", "escoss.csv",
-            "espagna.csv", "france.csv", "ghana.csv", "haïti.csv", "irak.csv",
-            "iran.csv", "japon.csv", "jordanie.csv", "maroc.csv", "mexique.csv",
-            "norvege.csv", "nouvelle_zelande.csv", "ouzbekistan.csv", "panama.csv",
-            "paraguay.csv", "pays_bas.csv", "portugal.csv", "qatar.csv", "rdc.csv",
-            "senegal.csv", "suede.csv", "suisse.csv", "tchequie.csv", "tunisie.csv",
-            "turquie.csv", "uruguay.csv", "usa.csv"
+        // 1. DATA JOUEURS 
+        const categoriesPostes = {
+            "Gardiens": ["GA"],
+            "Défenseurs": ["DC", "DD", "DG", "DLD", "DLG"],
+            "Milieux": ["MC", "MD", "MG", "MO"],
+            "Attaquants": ["ATT", "AD", "AG"],
+            "Entraîneurs": ["Entraineur"]
+        };
+
+        const fichiersPays = [
+            "mexique", "afrique_du_sud", "coree_du_sud", "tchequie", "canada", "bosnie_herzegovine", "qatar", "suisse",
+            "bresil", "maroc", "haiti", "ecosse", "usa", "paraguay", "australie", "turquie",
+            "allemagne", "Curaçao", "Cote_divoire", "equateur", "pays_bas", "japon", "suede", "tunisie",
+            "belgique", "egypte", "iran", "nouvelle_zelande", "espagne", "cap_ver", "arabie_saoudite", "uruguay",
+            "france", "senegal", "irak", "norvege", "argentine", "algerie", "autriche", "jordanie",
+            "portugal", "rd_congo", "ouzbekistan", "colombie", "angleterre", "croatie", "ghana", "panama"
         ];
 
-        // ⬇️ REGLAGES DES COLONNES (POUR CORRIGER LES INCONNUS) ⬇️
-        // Changez ces chiffres selon l'ordre dans VOS fichiers CSV !
-        const colPays = 0;   
-        const colNom = 1;    
-        const colClub = 2;   
-        const colAge = 3;    
-        const colPos = 4;    
-        const colNum = 5;    
-        const colValeur = 6; 
-        // --------------------------------------------------------
-        
-        async function chargerJoueursCSV() {
-            try {
-                const requetes = listeFichiersCSV.map(async (fichier) => {
-                    try {
-                        const response = await fetch(fichier + '?t=' + new Date().getTime());
-                        if (!response.ok) return []; 
-                        const data = await response.text();
-                        const lignes = data.split('\n');
-                        const joueursExtraits = [];
-                        
-                        // Nettoyer le nom du fichier pour créer un beau nom de pays
-                        let formatPays = fichier.replace('.csv', '').replace(/_/g, ' ');
-                        formatPays = formatPays.charAt(0).toUpperCase() + formatPays.slice(1);
-
-                        for (let i = 1; i < lignes.length; i++) {
-                            const ligne = lignes[i].trim();
-                            if (!ligne) continue;
-                            
-                            let colonnes = ligne.split(';');
-                            if(colonnes.length < 2) colonnes = ligne.split(',');
-
-                            if (colonnes.length >= 2) {
-                                joueursExtraits.push({
-                                    name: colonnes[colNom] || "Inconnu",
-                                    initial: colonnes[colNom] ? colonnes[colNom].charAt(0).toUpperCase() : "?",
-                                    country: colonnes[colPays] || formatPays,
-                                    age: colonnes[colAge] || "",
-                                    pos: colonnes[colPos] || "-",
-                                    num: colonnes[colNum] || "",
-                                    club: colonnes[colClub] || "Sans club",
-                                    value: colonnes[colValeur] || "-"
-                                });
-                            }
-                        }
-                        return joueursExtraits;
-                    } catch (e) {
-                        return []; 
-                    }
-                });
-
-                const resultatsComplets = await Promise.all(requetes);
-                
-                resultatsComplets.forEach(paysArray => {
-                    playersData.push(...paysArray);
-                });
-
-                // Trier par pays puis par nom
-                playersData.sort((a, b) => a.country.localeCompare(b.country) || a.name.localeCompare(b.name));
-
-                if (playersData.length > 0) {
-                    preparerFiltres();
-                    renderPlayers(playersData); 
-                } else {
-                    document.getElementById('player-count').innerHTML = `<span style="color:red;">⚠️ Aucun joueur n'a été trouvé.</span>`;
-                }
-                
-            } catch (erreur) {
-                console.error(erreur);
-                document.getElementById('players-container').innerHTML = `<p style="color:red; font-weight:bold;">Erreur fatale de réseau.</p>`;
-            }
-        }
-
-        // --- NOUVEAU : SYSTÈME DE FILTRE PAR PAYS ---
-        function preparerFiltres() {
-            const select = document.getElementById('filter-pays');
-            // Trouver tous les pays uniques dans la base de données
-            const paysUniques = [...new Set(playersData.map(p => p.country))].sort();
-            
-            paysUniques.forEach(pays => {
-                if(pays && pays !== "Inconnu") {
-                    select.innerHTML += `<option value="${pays}">${pays}</option>`;
-                }
-            });
-        }
-
-        function filtrerJoueurs() {
-            const paysChoisi = document.getElementById('filter-pays').value;
-            if (paysChoisi === "ALL") {
-                renderPlayers(playersData); // Afficher tout
-            } else {
-                const donneesFiltrees = playersData.filter(p => p.country === paysChoisi);
-                renderPlayers(donneesFiltrees); // Afficher juste le pays
-            }
-        }
-
-        // ---------------------------------------------
-
-        // Fonction d'affichage dynamique
-        function renderPlayers(donnees) {
-            const container = document.getElementById('players-container');
-            let htmlBuffer = '';
-            
-            donnees.forEach(p => {
-                htmlBuffer += `
-                    <div class="player-card">
-                        <div class="p-top">
-                            <div class="p-circle">${p.initial}</div>
-                            <div class="p-info">
-                                <span class="p-pos">${p.pos}</span>
-                                <h4 class="p-name" title="${p.name}">${p.name}</h4>
-                                <p class="p-sub" title="${p.country}">${p.country} ${p.age ? '• ' + p.age + ' ans' : ''}</p>
-                            </div>
-                            <div class="p-num">${p.num ? 'N°'+p.num : ''}</div>
-                        </div>
-                        <div class="p-bottom">
-                            <div class="p-club" title="${p.club}"><span>CLUB</span>${p.club}</div>
-                            <div class="p-val"><span>VALEUR MARCHANDE</span>${p.value}</div>
-                        </div>
-                    </div>
-                `;
-            });
-            
-            container.innerHTML = htmlBuffer; 
-            document.getElementById('player-count').innerText = `✅ ${donnees.length} joueurs affichés`;
-        }
-
-        // ==========================================
-        // 2. SIMULATEUR (Groupes & Phase Finale)[cite: 2]
-        // ==========================================
+        // 2. DATA SIMULATEUR
         const flagCodes = {
             MEX: 'mx', RSA: 'za', KOR: 'kr', CZE: 'cz', CAN: 'ca', QAT: 'qa', SUI: 'ch', BIH: 'ba',
             BRA: 'br', MAR: 'ma', HAI: 'ht', SCO: 'gb-sct', USA: 'us', PAR: 'py', AUS: 'au', TUR: 'tr',
@@ -332,60 +190,254 @@
         ];
 
         const knockoutRounds = [
-            {
-                title: "Seizièmes de finale",
-                matches: [
-                    { id: 'R32-1', date: '29/06 22:30', p1: '1E', p2: '3AB/CDF' }, { id: 'R32-2', date: '30/06 23:00', p1: '1I', p2: '3CD/FGH' },
-                    { id: 'R32-3', date: '28/06 21:00', p1: '2A', p2: '2B' }, { id: 'R32-4', date: '30/06 03:00', p1: '1F', p2: '2C' },
-                    { id: 'R32-5', date: '03/07 01:00', p1: '2K', p2: '2L' }, { id: 'R32-6', date: '02/07 21:00', p1: '1H', p2: '2J' },
-                    { id: 'R32-7', date: '02/07 02:00', p1: '1D', p2: '3BE/FIJ' }, { id: 'R32-8', date: '01/07 22:00', p1: '1G', p2: '3AE/HIJ' },
-                    { id: 'R32-9', date: '29/06 19:00', p1: '1C', p2: '2F' }, { id: 'R32-10', date: '30/06 19:00', p1: '2E', p2: '2I' },
-                    { id: 'R32-11', date: '01/07 03:00', p1: '1A', p2: '3CE/FHI' }, { id: 'R32-12', date: '01/07 18:00', p1: '1L', p2: '3EH/IJK' },
-                    { id: 'R32-13', date: '03/07 05:00', p1: '1B', p2: '3EF/GIJ' }, { id: 'R32-14', date: '04/07 03:30', p1: '1K', p2: '3DE/IJL' },
-                    { id: 'R32-15', date: '04/07 00:00', p1: '1J', p2: '2H' }, { id: 'R32-16', date: '03/07 20:00', p1: '2D', p2: '2G' }
-                ]
-            },
-            {
-                title: "Huitièmes de finale",
-                matches: [
-                    { id: 'R16-1', date: '04/07 23:00', p1: 'Vainq. S1', p2: 'Vainq. S2' }, { id: 'R16-2', date: '04/07 19:00', p1: 'Vainq. S3', p2: 'Vainq. S4' },
-                    { id: 'R16-3', date: '06/07 21:00', p1: 'Vainq. S5', p2: 'Vainq. S6' }, { id: 'R16-4', date: '07/07 02:00', p1: 'Vainq. S7', p2: 'Vainq. S8' },
-                    { id: 'R16-5', date: '05/07 22:00', p1: 'Vainq. S9', p2: 'Vainq. S10' }, { id: 'R16-6', date: '06/07 02:00', p1: 'Vainq. S11', p2: 'Vainq. S12' },
-                    { id: 'R16-7', date: '07/07 22:00', p1: 'Vainq. S13', p2: 'Vainq. S14' }, { id: 'R16-8', date: '07/07 18:00', p1: 'Vainq. S15', p2: 'Vainq. S16' }
-                ]
-            },
-            {
-                title: "Quarts de finale",
-                matches: [
-                    { id: 'QF-1', date: '09/07 22:00', p1: 'Vainq. H1', p2: 'Vainq. H2' }, { id: 'QF-2', date: '10/07 21:00', p1: 'Vainq. H3', p2: 'Vainq. H4' },
-                    { id: 'QF-3', date: '11/07 23:00', p1: 'Vainq. H5', p2: 'Vainq. H6' }, { id: 'QF-4', date: '12/07 03:00', p1: 'Vainq. H7', p2: 'Vainq. H8' }
-                ]
-            },
-            {
-                title: "Demi-finales",
-                matches: [
-                    { id: 'SF-1', date: '14/07 21:00', p1: 'Vainq. Q1', p2: 'Vainq. Q2' }, { id: 'SF-2', date: '15/07 21:00', p1: 'Vainq. Q3', p2: 'Vainq. Q4' }
-                ]
-            },
-            {
-                title: "Match pour la 3ème place",
-                matches: [{ id: '3P-1', date: '18/07 23:00', p1: 'Perdant D1', p2: 'Perdant D2' }]
-            },
-            {
-                title: "FINALE 🏆",
-                matches: [{ id: 'FIN-1', date: '19/07 21:00', p1: 'Vainq. D1', p2: 'Vainq. D2' }]
-            }
+            { title: "Seizièmes de finale", matches: [{ id: 'R32-1', date: '29/06 22:30', p1: '1E', p2: '3AB/CDF' }, { id: 'R32-2', date: '30/06 23:00', p1: '1I', p2: '3CD/FGH' }, { id: 'R32-3', date: '28/06 21:00', p1: '2A', p2: '2B' }, { id: 'R32-4', date: '30/06 03:00', p1: '1F', p2: '2C' }, { id: 'R32-5', date: '03/07 01:00', p1: '2K', p2: '2L' }, { id: 'R32-6', date: '02/07 21:00', p1: '1H', p2: '2J' }, { id: 'R32-7', date: '02/07 02:00', p1: '1D', p2: '3BE/FIJ' }, { id: 'R32-8', date: '01/07 22:00', p1: '1G', p2: '3AE/HIJ' }, { id: 'R32-9', date: '29/06 19:00', p1: '1C', p2: '2F' }, { id: 'R32-10', date: '30/06 19:00', p1: '2E', p2: '2I' }, { id: 'R32-11', date: '01/07 03:00', p1: '1A', p2: '3CE/FHI' }, { id: 'R32-12', date: '01/07 18:00', p1: '1L', p2: '3EH/IJK' }, { id: 'R32-13', date: '03/07 05:00', p1: '1B', p2: '3EF/GIJ' }, { id: 'R32-14', date: '04/07 03:30', p1: '1K', p2: '3DE/IJL' }, { id: 'R32-15', date: '04/07 00:00', p1: '1J', p2: '2H' }, { id: 'R32-16', date: '03/07 20:00', p1: '2D', p2: '2G' }] },
+            { title: "Huitièmes de finale", matches: [{ id: 'R16-1', date: '04/07 23:00', p1: 'Vainq. S1', p2: 'Vainq. S2' }, { id: 'R16-2', date: '04/07 19:00', p1: 'Vainq. S3', p2: 'Vainq. S4' }, { id: 'R16-3', date: '06/07 21:00', p1: 'Vainq. S5', p2: 'Vainq. S6' }, { id: 'R16-4', date: '07/07 02:00', p1: 'Vainq. S7', p2: 'Vainq. S8' }, { id: 'R16-5', date: '05/07 22:00', p1: 'Vainq. S9', p2: 'Vainq. S10' }, { id: 'R16-6', date: '06/07 02:00', p1: 'Vainq. S11', p2: 'Vainq. S12' }, { id: 'R16-7', date: '07/07 22:00', p1: 'Vainq. S13', p2: 'Vainq. S14' }, { id: 'R16-8', date: '07/07 18:00', p1: 'Vainq. S15', p2: 'Vainq. S16' }] },
+            { title: "Quarts de finale", matches: [{ id: 'QF-1', date: '09/07 22:00', p1: 'Vainq. H1', p2: 'Vainq. H2' }, { id: 'QF-2', date: '10/07 21:00', p1: 'Vainq. H3', p2: 'Vainq. H4' }, { id: 'QF-3', date: '11/07 23:00', p1: 'Vainq. H5', p2: 'Vainq. H6' }, { id: 'QF-4', date: '12/07 03:00', p1: 'Vainq. H7', p2: 'Vainq. H8' }] },
+            { title: "Demi-finales", matches: [{ id: 'SF-1', date: '14/07 21:00', p1: 'Vainq. Q1', p2: 'Vainq. Q2' }, { id: 'SF-2', date: '15/07 21:00', p1: 'Vainq. Q3', p2: 'Vainq. Q4' }] },
+            { title: "Match pour la 3ème place", matches: [{ id: '3P-1', date: '18/07 23:00', p1: 'Perdant D1', p2: 'Perdant D2' }] },
+            { title: "FINALE 🏆", matches: [{ id: 'FIN-1', date: '19/07 21:00', p1: 'Vainq. D1', p2: 'Vainq. D2' }] }
         ];
 
+        // ==========================================
+        // INITIALISATION
+        // ==========================================
+        document.addEventListener("DOMContentLoaded", () => {
+            chargerTousLesFichiersCSV();
+            renderGroups();
+            renderKnockout();
+            setTimeout(loadData, 500);
+        });
+
+        // ==========================================
+        // LOGIQUE ONGLETS
+        // ==========================================
+        function switchTab(tabId, btnElement) {
+            // Cacher toutes les pages
+            document.querySelectorAll('.page-content').forEach(page => page.classList.remove('active'));
+            // Réinitialiser les styles des boutons
+            document.querySelectorAll('.tab-btn').forEach(btn => {
+                btn.className = 'tab-btn bg-white border border-slate-300 text-slate-700 hover:bg-slate-50 px-5 py-2 rounded-full text-sm font-bold transition-all';
+            });
+            
+            // Activer la page
+            document.getElementById('page-' + tabId).classList.add('active');
+            // Styliser le bouton actif
+            btnElement.className = 'tab-btn bg-slate-900 border border-slate-900 text-white px-5 py-2 rounded-full text-sm font-bold shadow-sm transition-all';
+            
+            // Afficher ou cacher la barre de recherche
+            document.getElementById('searchContainer').style.visibility = (tabId === 'joueurs') ? 'visible' : 'hidden';
+        }
+
+        // ==========================================
+        // LOGIQUE JOUEURS (PAPA PARSE & TAILWIND)
+        // ==========================================
+        function parserValeur(valStr) {
+            if (!valStr || typeof valStr !== 'string') return 0;
+            let cleanStr = valStr.replace(/[\s\xa0€]/g, '').trim(); 
+            if (cleanStr === '' || cleanStr === '-') return 0;
+            
+            let multiplier = 1;
+            if (cleanStr.toUpperCase().includes('K')) {
+                multiplier = 1000;
+                cleanStr = cleanStr.replace(/K/ig, '');
+            } else if (cleanStr.toUpperCase().includes('M')) {
+                multiplier = 1000000;
+                cleanStr = cleanStr.replace(/M/ig, '');
+            }
+            
+            cleanStr = cleanStr.replace(',', '.');
+            let num = parseFloat(cleanStr);
+            return isNaN(num) ? 0 : num * multiplier;
+        }
+
+        async function chargerTousLesFichiersCSV() {
+            try {
+                const listePromises = fichiersPays.map(nomFichier => {
+                    return new Promise((resolve) => {
+                        Papa.parse(`${nomFichier}.csv`, {
+                            download: true,
+                            header: true,
+                            skipEmptyLines: true,
+                            complete: (results) => {
+                                let records = [];
+                                let currentStats = null;
+                                
+                                let paysFormatter = nomFichier.split('_').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ');
+                                if(nomFichier === "usa") paysFormatter = "USA";
+
+                                for (let row of results.data) {
+                                    let keys = Object.keys(row);
+                                    if (keys.length < 2) continue;
+                                    
+                                    let firstKey = keys[0]; 
+                                    let posKey = keys.find(k => k.includes('Position')) || keys[1];
+                                    let clubKey = keys.find(k => k.includes('Club')) || keys[2];
+                                    let numKey = keys.find(k => k.includes('Num')) || keys[3];
+                                    let ageKey = keys.find(k => k.includes('ge')) || keys[4];
+                                    let valKey = keys.find(k => k.includes('Valeur')) || keys[6];
+
+                                    let nameCol = row[firstKey];
+                                    let position = row[posKey];
+
+                                    if (position && String(position).trim() !== '') {
+                                        currentStats = {
+                                            Poste: position,
+                                            Club: row[clubKey] || '-',
+                                            SelectionNumero: row[numKey] || '?',
+                                            Age: row[ageKey] || '?',
+                                            ValeurText: row[valKey] || '-',
+                                            ValeurNum: parserValeur(row[valKey])
+                                        };
+                                    } else if (nameCol && String(nameCol).trim() !== '') {
+                                        if (currentStats) {
+                                            let nomAffiche = String(nameCol).trim();
+                                            nomAffiche = nomAffiche.replace(/(Blessure|Suspendu|Carton).*/i, '').trim();
+
+                                            records.push({
+                                                Nom: nomAffiche,
+                                                Pays: paysFormatter,
+                                                Poste: currentStats.Poste,
+                                                Club: currentStats.Club,
+                                                Age: currentStats.Age,
+                                                SelectionNumero: currentStats.SelectionNumero,
+                                                ValeurText: (currentStats.ValeurText === '-' || !currentStats.ValeurText) ? 'N/A' : currentStats.ValeurText,
+                                                ValeurNum: currentStats.ValeurNum
+                                            });
+                                            currentStats = null;
+                                        }
+                                    }
+                                }
+                                resolve(records);
+                            },
+                            error: () => resolve([])
+                        });
+                    });
+                });
+
+                const résultatsParPays = await Promise.all(listePromises);
+                tousLesJoueurs = résultatsParPays.flat().filter(j => j && j.Nom);
+
+                genererFiltresPays();
+                genererFiltresPostes();
+                filtrerJoueurs();
+            } catch (error) {
+                console.error("Erreur de chargement :", error);
+            }
+        }
+
+        function genererFiltresPays() {
+            const pays = ['Tous', ...new Set(tousLesJoueurs.map(j => j.Pays))].sort();
+            const conteneur = document.getElementById('paysFilters');
+            conteneur.innerHTML = '';
+            pays.forEach(p => {
+                const b = document.createElement('button');
+                b.textContent = p;
+                b.className = `w-full text-left px-3 py-1.5 rounded-lg text-sm transition-all ${paysSelectionne === p ? 'bg-emerald-600 text-white font-semibold' : 'text-slate-600 hover:bg-slate-100'}`;
+                b.onclick = () => { paysSelectionne = p; genererFiltresPays(); filtrerJoueurs(); };
+                conteneur.appendChild(b);
+            });
+        }
+
+        function genererFiltresPostes() {
+            const grandesFamilles = ['Tous', 'Gardiens', 'Défenseurs', 'Milieux', 'Attaquants', 'Entraîneurs'];
+            const conteneur = document.getElementById('posteFilters');
+            conteneur.innerHTML = '';
+            grandesFamilles.forEach(famille => {
+                const b = document.createElement('button');
+                b.textContent = famille;
+                b.className = `w-full text-left px-3 py-1.5 rounded-lg text-sm transition-all ${posteSelectionne === famille ? 'bg-emerald-600 text-white font-semibold' : 'text-slate-600 hover:bg-slate-100'}`;
+                b.onclick = () => { posteSelectionne = famille; genererFiltresPostes(); filtrerJoueurs(); };
+                conteneur.appendChild(b);
+            });
+        }
+
+        function correspondCategorie(posteDuJoueur, categorieChoisie) {
+            if (!posteDuJoueur) return false;
+            const acronymesJoueur = posteDuJoueur.split(',').map(p => p.trim());
+            const tagsDeLaFamille = categoriesPostes[categorieChoisie];
+            if (!tagsDeLaFamille) return false;
+            return acronymesJoueur.some(acronyme => tagsDeLaFamille.includes(acronyme));
+        }
+
+        function afficherJoueurs(liste) {
+            const grid = document.getElementById('joueursGrid');
+            document.getElementById('joueurCount').textContent = liste.length;
+            grid.innerHTML = '';
+
+            if(liste.length === 0) {
+                grid.innerHTML = `<div class="col-span-full text-center py-12 text-slate-400 text-sm">Aucun joueur ne correspond aux filtres.</div>`;
+                return;
+            }
+
+            liste.forEach(joueur => {
+                const carte = document.createElement('div');
+                carte.className = "bg-white border border-slate-100 rounded-2xl overflow-hidden shadow-sm hover:shadow-md transition-all duration-300 relative group";
+                carte.innerHTML = `
+                    <div class="absolute top-3 right-3 bg-slate-100 text-slate-700 font-bold text-xs w-7 h-7 rounded-full flex items-center justify-center z-10 shadow-sm">
+                        N°${joueur.SelectionNumero}
+                    </div>
+                    <div class="p-5">
+                        <div class="flex items-center gap-4">
+                            <div class="w-12 h-12 rounded-full bg-emerald-50 border border-emerald-100 flex-shrink-0 flex items-center justify-center font-bold text-emerald-600 text-lg">
+                                ${joueur.Nom ? joueur.Nom.charAt(0) : '?'}
+                            </div>
+                            <div class="overflow-hidden">
+                                <span class="text-[10px] font-extrabold uppercase tracking-widest text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded">${joueur.Poste}</span>
+                                <h3 class="font-bold text-base text-slate-900 mt-0.5 leading-tight group-hover:text-emerald-600 transition-colors truncate" title="${joueur.Nom}">${joueur.Nom}</h3>
+                                <p class="text-xs text-slate-500 font-medium truncate" title="${joueur.Pays}">${joueur.Pays} • ${joueur.Age} ans</p>
+                            </div>
+                        </div>
+                        <div class="mt-4 pt-3 border-t border-slate-50 flex justify-between items-center text-xs">
+                            <div class="w-1/2 overflow-hidden pr-2">
+                                <p class="text-[10px] uppercase tracking-wider text-slate-400 font-semibold">Club</p>
+                                <p class="font-semibold text-slate-700 truncate" title="${joueur.Club}">${joueur.Club}</p>
+                            </div>
+                            <div class="text-right w-1/2">
+                                <p class="text-[10px] uppercase tracking-wider text-slate-400 font-semibold">Valeur</p>
+                                <p class="font-extrabold text-slate-950 text-sm">${joueur.ValeurText}</p>
+                            </div>
+                        </div>
+                    </div>
+                `;
+                grid.appendChild(carte);
+            });
+        }
+
+        function filtrerJoueurs() {
+            const recherche = document.getElementById('searchInput').value.toLowerCase();
+            const tri = document.getElementById('sortSelect').value;
+            
+            let resultats = tousLesJoueurs.filter(j => {
+                const matchPays = (paysSelectionne === 'Tous' || j.Pays === paysSelectionne);
+                const matchPoste = (posteSelectionne === 'Tous' || correspondCategorie(j.Poste, posteSelectionne));
+                
+                const matchTexte = 
+                    (j.Nom && j.Nom.toLowerCase().includes(recherche)) || 
+                    (j.Club && j.Club.toLowerCase().includes(recherche)) ||
+                    (j.Pays && j.Pays.toLowerCase().includes(recherche));
+                
+                return matchPays && matchPoste && matchTexte;
+            });
+
+            if (tri === "valeurDesc") resultats.sort((a, b) => b.ValeurNum - a.ValeurNum);
+            if (tri === "valeurAsc") resultats.sort((a, b) => a.ValeurNum - b.ValeurNum);
+            if (tri === "nom") resultats.sort((a, b) => (a.Nom || "").localeCompare(b.Nom || ""));
+
+            afficherJoueurs(resultats);
+        }
+
+        // ==========================================
+        // LOGIQUE SIMULATEUR (Groupes & Knockout)
+        // ==========================================
         function renderGroups() {
-            const container = document.getElementById('page-groupes');
+            const container = document.getElementById('groupes-container');
             const groups = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L'];
             groupMatches.forEach((m, index) => m.id = 'G' + index);
 
             groups.forEach(groupLetter => {
                 const card = document.createElement('div');
-                card.className = 'card';
-                card.innerHTML = `<div class="card-title">Groupe ${groupLetter}</div>`;
+                card.className = 'sim-card';
+                card.innerHTML = `<div class="sim-card-title">Groupe ${groupLetter}</div>`;
                 
                 const gMatches = groupMatches.filter(m => m.group === groupLetter);
                 gMatches.forEach(match => {
@@ -396,8 +448,9 @@
                             <span class="date-time">${match.date}</span>
                             <div class="teams-scores">
                                 <span class="team">${flag1 ? `<img src="${flag1}" class="flag">` : ''} ${match.t1}</span>
-                                <div>
+                                <div class="flex items-center">
                                     <input type="number" min="0" id="${match.id}-1" class="score-input saveData" oninput="saveAndCalculate()">
+                                    <span class="text-slate-300 font-bold">-</span>
                                     <input type="number" min="0" id="${match.id}-2" class="score-input saveData" oninput="saveAndCalculate()">
                                 </div>
                                 <span class="team right">${match.t2} ${flag2 ? `<img src="${flag2}" class="flag">` : ''}</span>
@@ -410,28 +463,28 @@
         }
 
         function renderKnockout() {
-            const container = document.getElementById('page-phase-finale');
+            const container = document.getElementById('knockout-container');
             knockoutRounds.forEach(round => {
                 const section = document.createElement('div');
                 section.className = 'round-section';
                 section.innerHTML = `<div class="round-title">${round.title}</div>`;
                 
                 const grid = document.createElement('div');
-                grid.style = "display: flex; flex-wrap: wrap; gap: 20px; justify-content: center; width: 100%; margin-top: 20px;";
+                grid.className = "flex flex-wrap justify-center gap-6 w-full mt-6";
 
                 round.matches.forEach(match => {
                     const isFinale = match.id === 'FIN-1';
                     grid.innerHTML += `
-                        <div class="card ${isFinale ? 'finale-card' : ''}">
-                            <div class="card-title" style="font-size:16px; margin-bottom:5px;">${isFinale ? '🏆 GRANDE FINALE' : 'Match ' + match.id}</div>
-                            <div class="match-row" style="border:none;">
-                                <span class="date-time">${match.date}</span>
-                                <div class="teams-scores" style="flex-direction: column; gap:10px;">
-                                    <div style="display:flex; justify-content:space-between; width:100%;">
+                        <div class="sim-card ${isFinale ? 'finale-card' : ''}">
+                            <div class="sim-card-title" style="font-size:1rem; margin-bottom:0.5rem; border:none; padding:0;">${isFinale ? '🏆 GRANDE FINALE' : 'Match ' + match.id}</div>
+                            <div class="match-row" style="border:none; padding:0; margin:0;">
+                                <span class="date-time mb-3">${match.date}</span>
+                                <div class="flex flex-col gap-3">
+                                    <div class="flex justify-between items-center w-full">
                                         <input type="text" id="${match.id}-t1" class="team-input saveData" placeholder="${match.p1}" oninput="saveAndCalculate()">
                                         <input type="number" min="0" id="${match.id}-s1" class="score-input saveData" oninput="saveAndCalculate()">
                                     </div>
-                                    <div style="display:flex; justify-content:space-between; width:100%;">
+                                    <div class="flex justify-between items-center w-full">
                                         <input type="text" id="${match.id}-t2" class="team-input saveData" placeholder="${match.p2}" oninput="saveAndCalculate()">
                                         <input type="number" min="0" id="${match.id}-s2" class="score-input saveData" oninput="saveAndCalculate()">
                                     </div>
@@ -442,16 +495,6 @@
                 section.appendChild(grid);
                 container.appendChild(section);
             });
-        }
-
-        // ==========================================
-        // 3. LOGIQUE GLOBALE (Navigation & Calculs)
-        // ==========================================
-        function switchTab(tabId) {
-            document.querySelectorAll('.page').forEach(page => page.classList.remove('active'));
-            document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
-            document.getElementById('page-' + tabId).classList.add('active');
-            event.target.classList.add('active');
         }
 
         function saveAndCalculate() {
@@ -521,14 +564,6 @@
                 document.getElementById(`standings-${gLetter}`).innerHTML = html + `</table>`;
             });
         }
-
-        // ==========================================
-        // INITIALISATION
-        // ==========================================
-        renderGroups();
-        renderKnockout();
-        chargerJoueursCSV(); 
-        setTimeout(loadData, 500); 
 
     </script>
 </body>
