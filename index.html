@@ -4,8 +4,11 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Footmarket | Simulateur Coupe du Monde 2026</title>
+    <!-- Tailwind CSS pour le design -->
     <script src="https://cdn.tailwindcss.com"></script>
+    <!-- PapaParse pour lire les CSV -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
+    <!-- Police Inter -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;900&display=swap" rel="stylesheet">
     
     <style>
@@ -38,14 +41,18 @@
 
         .round-section { width: 100%; text-align: center; margin: 2rem 0 1rem; }
         .round-title { font-size: 1.25rem; color: #0f172a; font-weight: 900; background: white; display: inline-block; padding: 0.5rem 2rem; border-radius: 2rem; box-shadow: 0 2px 10px rgba(0,0,0,0.05); border: 1px solid #f1f5f9; }
-        .team-input { width: 85px; height: 28px; text-align: center; font-size: 0.75rem; font-weight: 800; text-transform: uppercase; border: 1px dashed #cbd5e1; border-radius: 6px; color: #0f172a; outline: none; transition: 0.2s;}
+        
+        /* Ajustements du style des inputs avec drapeau intégré */
+        .team-input { width: 100%; height: 30px; text-align: left; font-size: 0.75rem; font-weight: 800; text-transform: uppercase; border: 1px dashed #cbd5e1; border-radius: 6px; color: #0f172a; outline: none; transition: 0.2s; background: white;}
         .team-input:focus { border-color: #059669; border-style: solid; background: #ecfdf5;}
+        
         .finale-card { border: 2px solid #fbbf24; box-shadow: 0 4px 15px rgba(251, 191, 36, 0.15); }
         .finale-card .sim-card-title { color: #d97706; }
     </style>
 </head>
 <body class="text-slate-900 antialiased">
 
+    <!-- BARRE DE NAVIGATION -->
     <nav class="bg-white border-b border-slate-200 sticky top-0 z-50">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex justify-between h-16 items-center">
@@ -53,7 +60,8 @@
                     <span class="text-xl font-black tracking-wider text-slate-950">FOOT<span class="text-emerald-600">MARKET</span></span>
                     <span class="ml-2 bg-emerald-100 text-emerald-800 text-[10px] font-bold px-2 py-0.5 rounded-full">WC 2026</span>
                 </div>
-                <div class="flex-1 max-w-md mx-8" id="searchContainer">
+                <!-- Barre de recherche -->
+                <div class="flex-1 max-w-md mx-8" id="searchContainer" style="visibility: hidden;">
                     <div class="relative">
                         <input type="text" id="searchInput" oninput="filtrerJoueurs()" placeholder="Rechercher un joueur, un club, un pays..." class="w-full bg-slate-50 border border-slate-200 rounded-xl py-2 px-5 pl-10 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:bg-white transition-all">
                         <div class="absolute left-3 top-2.5 text-slate-400">
@@ -70,19 +78,49 @@
         </div>
     </nav>
 
+    <!-- ONGLETS -->
     <div class="bg-white border-b border-slate-200">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex justify-center gap-4 py-4">
-                <button onclick="switchTab('joueurs', this)" class="tab-btn bg-slate-900 text-white px-5 py-2 rounded-full text-sm font-bold shadow-sm transition-all">Base de Données Joueurs</button>
-                <button onclick="switchTab('groupes', this)" class="tab-btn bg-white border border-slate-300 text-slate-700 hover:bg-slate-50 px-5 py-2 rounded-full text-sm font-bold transition-all">Calendrier & Groupes</button>
+                <button onclick="switchTab('groupes', this)" class="tab-btn bg-slate-900 text-white px-5 py-2 rounded-full text-sm font-bold shadow-sm transition-all">Calendrier & Groupes</button>
                 <button onclick="switchTab('phase-finale', this)" class="tab-btn bg-white border border-slate-300 text-slate-700 hover:bg-slate-50 px-5 py-2 rounded-full text-sm font-bold transition-all">Tableau Final 🏆</button>
+                <button onclick="switchTab('joueurs', this)" class="tab-btn bg-white border border-slate-300 text-slate-700 hover:bg-slate-50 px-5 py-2 rounded-full text-sm font-bold transition-all">Base de Données Joueurs</button>
             </div>
         </div>
     </div>
 
     <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         
-        <div id="page-joueurs" class="page-content active">
+        <!-- ========================================== -->
+        <!-- ONGLET 1 : GROUPES ET CALENDRIER           -->
+        <!-- ========================================== -->
+        <div id="page-groupes" class="page-content active">
+            <div class="mb-8 text-center">
+                <h2 class="text-2xl font-black text-slate-900">Phase de Groupes</h2>
+                <p class="text-slate-500 text-sm mt-1">Remplissez les scores, le classement se calcule et vos qualifiés s'envoient dans le Tableau Final.</p>
+            </div>
+            <div id="groupes-container" class="flex flex-wrap justify-center gap-6">
+                <!-- Généré par JS -->
+            </div>
+        </div>
+
+        <!-- ========================================== -->
+        <!-- ONGLET 2 : TABLEAU FINAL                   -->
+        <!-- ========================================== -->
+        <div id="page-phase-finale" class="page-content">
+            <div class="mb-8 text-center">
+                <h2 class="text-2xl font-black text-slate-900">Tableau à Élimination Directe</h2>
+                <p class="text-slate-500 text-sm mt-1">Saisissez les équipes repêchées (3èmes) et simulez jusqu'à la grande finale.</p>
+            </div>
+            <div id="knockout-container" class="flex flex-col items-center">
+                <!-- Généré par JS -->
+            </div>
+        </div>
+
+        <!-- ========================================== -->
+        <!-- ONGLET 3 : BASE DE DONNÉES JOUEURS         -->
+        <!-- ========================================== -->
+        <div id="page-joueurs" class="page-content">
             <div class="mb-8 bg-slate-950 text-white rounded-2xl p-8 md:p-12 relative overflow-hidden shadow-lg">
                 <div class="relative z-10 max-w-lg">
                     <span class="text-xs font-bold uppercase tracking-widest text-emerald-400">Valeurs Marchandes</span>
@@ -92,6 +130,7 @@
             </div>
 
             <div class="flex flex-col lg:flex-row gap-8">
+                <!-- FILTRES LATERAUX -->
                 <aside class="w-full lg:w-64 flex-shrink-0">
                     <div class="bg-white p-6 rounded-xl border border-slate-200 sticky top-24 shadow-sm">
                         <h2 class="text-xs font-bold uppercase tracking-wider text-slate-400 mb-3">Filtrer par Pays</h2>
@@ -102,6 +141,7 @@
                     </div>
                 </aside>
 
+                <!-- GRILLE DES JOUEURS -->
                 <section class="flex-1">
                     <div class="flex justify-between items-center mb-6">
                         <p class="text-sm text-slate-500"><span id="joueurCount" class="font-bold text-slate-950">0</span> joueurs trouvés</p>
@@ -118,53 +158,17 @@
             </div>
         </div>
 
-        <div id="page-groupes" class="page-content">
-            <div class="mb-8 text-center">
-                <h2 class="text-2xl font-black text-slate-900">Phase de Groupes</h2>
-                <p class="text-slate-500 text-sm mt-1">Remplissez les scores, le classement se calcule et se trie automatiquement.</p>
-            </div>
-            <div id="groupes-container" class="flex flex-wrap justify-center gap-6">
-                </div>
-        </div>
-
-        <div id="page-phase-finale" class="page-content">
-            <div class="mb-8 text-center">
-                <h2 class="text-2xl font-black text-slate-900">Tableau à Élimination Directe</h2>
-                <p class="text-slate-500 text-sm mt-1">Saisissez les noms des équipes qualifiées et simulez jusqu'à la grande finale.</p>
-            </div>
-            <div id="knockout-container" class="flex flex-col items-center">
-                </div>
-        </div>
-
     </main>
 
+    <!-- LOGIQUE JAVASCRIPT GLOBALE -->
     <script>
         // ==========================================
-        // VARIABLES GLOBALES
+        // VARIABLES GLOBALES & MAPPING
         // ==========================================
         let tousLesJoueurs = [];
         let paysSelectionne = 'Tous';
         let posteSelectionne = 'Tous';
 
-        // 1. DATA JOUEURS 
-        const categoriesPostes = {
-            "Gardiens": ["GA"],
-            "Défenseurs": ["DC", "DD", "DG", "DLD", "DLG"],
-            "Milieux": ["MC", "MD", "MG", "MO"],
-            "Attaquants": ["ATT", "AD", "AG"],
-            "Entraîneurs": ["Entraineur"]
-        };
-
-        const fichiersPays = [
-            "mexique", "afrique_du_sud", "coree_du_sud", "tchequie", "canada", "bosnie_herzegovine", "qatar", "suisse",
-            "bresil", "maroc", "haïti", "ecosse", "usa", "paraguay", "australie", "turquie",
-            "allemagne", "Curaçao", "Cote_divoire", "equateur", "pays_bas", "japon", "suede", "tunisie",
-            "belgique", "egypte", "iran", "nouvelle_zelande", "espagne", "cap_ver", "arabie_saoudite", "uruguay",
-            "france", "senegal", "irak", "norvege", "argentine", "algerie", "autriche", "jordanie",
-            "portugal", "rd_congo", "ouzbekistan", "colombie", "angleterre", "croatie", "ghana", "panama"
-        ];
-
-        // 2. DATA SIMULATEUR
         const flagCodes = {
             MEX: 'mx', RSA: 'za', KOR: 'kr', CZE: 'cz', CAN: 'ca', QAT: 'qa', SUI: 'ch', BIH: 'ba',
             BRA: 'br', MAR: 'ma', HAI: 'ht', SCO: 'gb-sct', USA: 'us', PAR: 'py', AUS: 'au', TUR: 'tr',
@@ -198,53 +202,288 @@
             { title: "FINALE 🏆", matches: [{ id: 'FIN-1', date: '19/07 21:00', p1: 'Vainq. D1', p2: 'Vainq. D2' }] }
         ];
 
+        // Mapping pour envoyer automatiquement le 1er et 2ème de chaque groupe dans les bonnes cases R32
+        const groupToR32 = {
+            'A': { '1': 'R32-11-t1', '2': 'R32-3-t1' }, 'B': { '1': 'R32-13-t1', '2': 'R32-3-t2' },
+            'C': { '1': 'R32-9-t1',  '2': 'R32-4-t2' }, 'D': { '1': 'R32-7-t1',  '2': 'R32-16-t1' },
+            'E': { '1': 'R32-1-t1',  '2': 'R32-10-t1' }, 'F': { '1': 'R32-4-t1',  '2': 'R32-9-t2' },
+            'G': { '1': 'R32-8-t1',  '2': 'R32-16-t2' }, 'H': { '1': 'R32-6-t1',  '2': 'R32-15-t2' },
+            'I': { '1': 'R32-2-t1',  '2': 'R32-10-t2' }, 'J': { '1': 'R32-15-t1', '2': 'R32-6-t2' },
+            'K': { '1': 'R32-14-t1', '2': 'R32-5-t1' }, 'L': { '1': 'R32-12-t1', '2': 'R32-5-t2' }
+        };
+
+        // L'arbre de progression du tournoi
+        const knockoutProgression = {
+            'R32-1': 'R16-1-t1', 'R32-2': 'R16-1-t2', 'R32-3': 'R16-2-t1', 'R32-4': 'R16-2-t2',
+            'R32-5': 'R16-3-t1', 'R32-6': 'R16-3-t2', 'R32-7': 'R16-4-t1', 'R32-8': 'R16-4-t2',
+            'R32-9': 'R16-5-t1', 'R32-10': 'R16-5-t2', 'R32-11': 'R16-6-t1', 'R32-12': 'R16-6-t2',
+            'R32-13': 'R16-7-t1', 'R32-14': 'R16-7-t2', 'R32-15': 'R16-8-t1', 'R32-16': 'R16-8-t2',
+            'R16-1': 'QF-1-t1', 'R16-2': 'QF-1-t2', 'R16-3': 'QF-2-t1', 'R16-4': 'QF-2-t2',
+            'R16-5': 'QF-3-t1', 'R16-6': 'QF-3-t2', 'R16-7': 'QF-4-t1', 'R16-8': 'QF-4-t2',
+            'QF-1': 'SF-1-t1', 'QF-2': 'SF-1-t2', 'QF-3': 'SF-2-t1', 'QF-4': 'SF-2-t2',
+            'SF-1': 'FIN-1-t1', 'SF-2': 'FIN-1-t2'
+        };
+
         // ==========================================
         // INITIALISATION
         // ==========================================
         document.addEventListener("DOMContentLoaded", () => {
-            chargerTousLesFichiersCSV();
             renderGroups();
             renderKnockout();
+            chargerTousLesFichiersCSV();
             setTimeout(loadData, 500);
         });
 
-        // ==========================================
-        // LOGIQUE ONGLETS
-        // ==========================================
         function switchTab(tabId, btnElement) {
-            // Cacher toutes les pages
             document.querySelectorAll('.page-content').forEach(page => page.classList.remove('active'));
-            // Réinitialiser les styles des boutons
             document.querySelectorAll('.tab-btn').forEach(btn => {
                 btn.className = 'tab-btn bg-white border border-slate-300 text-slate-700 hover:bg-slate-50 px-5 py-2 rounded-full text-sm font-bold transition-all';
             });
-            
-            // Activer la page
             document.getElementById('page-' + tabId).classList.add('active');
-            // Styliser le bouton actif
             btnElement.className = 'tab-btn bg-slate-900 border border-slate-900 text-white px-5 py-2 rounded-full text-sm font-bold shadow-sm transition-all';
-            
-            // Afficher ou cacher la barre de recherche
             document.getElementById('searchContainer').style.visibility = (tabId === 'joueurs') ? 'visible' : 'hidden';
         }
 
         // ==========================================
-        // LOGIQUE JOUEURS (PAPA PARSE & TAILWIND)
+        // RENDER DE L'INTERFACE
         // ==========================================
+        function renderGroups() {
+            const container = document.getElementById('groupes-container');
+            const groups = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L'];
+            groupMatches.forEach((m, index) => m.id = 'G' + index);
+
+            groups.forEach(groupLetter => {
+                const card = document.createElement('div');
+                card.className = 'sim-card';
+                card.innerHTML = `<div class="sim-card-title">Groupe ${groupLetter}</div>`;
+                
+                const gMatches = groupMatches.filter(m => m.group === groupLetter);
+                gMatches.forEach(match => {
+                    const flag1 = flagCodes[match.t1] ? `https://flagcdn.com/w20/${flagCodes[match.t1]}.png` : '';
+                    const flag2 = flagCodes[match.t2] ? `https://flagcdn.com/w20/${flagCodes[match.t2]}.png` : '';
+                    card.innerHTML += `
+                        <div class="match-row">
+                            <span class="date-time">${match.date}</span>
+                            <div class="teams-scores">
+                                <span class="team">${flag1 ? `<img src="${flag1}" class="flag">` : ''} ${match.t1}</span>
+                                <div class="flex items-center">
+                                    <input type="number" min="0" id="${match.id}-1" class="score-input saveData" oninput="saveAndCalculate()">
+                                    <span class="text-slate-300 font-bold mx-1">-</span>
+                                    <input type="number" min="0" id="${match.id}-2" class="score-input saveData" oninput="saveAndCalculate()">
+                                </div>
+                                <span class="team right">${match.t2} ${flag2 ? `<img src="${flag2}" class="flag">` : ''}</span>
+                            </div>
+                        </div>`;
+                });
+                card.innerHTML += `<div id="standings-${groupLetter}"></div>`;
+                container.appendChild(card);
+            });
+        }
+
+        function renderKnockout() {
+            const container = document.getElementById('knockout-container');
+            knockoutRounds.forEach(round => {
+                const section = document.createElement('div');
+                section.className = 'round-section';
+                section.innerHTML = `<div class="round-title">${round.title}</div>`;
+                
+                const grid = document.createElement('div');
+                grid.className = "flex flex-wrap justify-center gap-6 w-full mt-6";
+
+                round.matches.forEach(match => {
+                    const isFinale = match.id === 'FIN-1';
+                    grid.innerHTML += `
+                        <div class="sim-card ${isFinale ? 'finale-card' : ''}">
+                            <div class="sim-card-title" style="font-size:1rem; margin-bottom:0.5rem; border:none; padding:0;">${isFinale ? '🏆 GRANDE FINALE' : 'Match ' + match.id}</div>
+                            <div class="match-row" style="border:none; padding:0; margin:0;">
+                                <span class="date-time mb-3">${match.date}</span>
+                                <div class="flex flex-col gap-3">
+                                    <!-- Equipe 1 avec drapeau -->
+                                    <div class="flex justify-between items-center w-full gap-2">
+                                        <div class="relative flex-1 group focus-within:ring-2 focus-within:ring-emerald-500 rounded-md">
+                                            <img id="flag-${match.id}-t1" src="" class="absolute left-2 top-1/2 -translate-y-1/2 w-[18px] h-[13px] rounded-[2px] object-cover hidden shadow-sm z-10">
+                                            <input type="text" id="${match.id}-t1" class="team-input saveData w-full pl-8 pr-2 relative" placeholder="${match.p1}" oninput="updateKnockoutProgression(); saveAndCalculate()">
+                                        </div>
+                                        <input type="number" min="0" id="${match.id}-s1" class="score-input saveData" oninput="updateKnockoutProgression(); saveAndCalculate()">
+                                    </div>
+                                    <!-- Equipe 2 avec drapeau -->
+                                    <div class="flex justify-between items-center w-full gap-2">
+                                        <div class="relative flex-1 group focus-within:ring-2 focus-within:ring-emerald-500 rounded-md">
+                                            <img id="flag-${match.id}-t2" src="" class="absolute left-2 top-1/2 -translate-y-1/2 w-[18px] h-[13px] rounded-[2px] object-cover hidden shadow-sm z-10">
+                                            <input type="text" id="${match.id}-t2" class="team-input saveData w-full pl-8 pr-2 relative" placeholder="${match.p2}" oninput="updateKnockoutProgression(); saveAndCalculate()">
+                                        </div>
+                                        <input type="number" min="0" id="${match.id}-s2" class="score-input saveData" oninput="updateKnockoutProgression(); saveAndCalculate()">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>`;
+                });
+                section.appendChild(grid);
+                container.appendChild(section);
+            });
+        }
+
+        // ==========================================
+        // LOGIQUE DE CALCULS ET SAUVEGARDE
+        // ==========================================
+        function saveAndCalculate() {
+            const inputs = document.querySelectorAll('.saveData');
+            const data = {};
+            inputs.forEach(input => { if (input.value !== "") data[input.id] = input.value; });
+            localStorage.setItem('footmarket_wc2026', JSON.stringify(data));
+            calculateGroups();
+        }
+
+        function loadData() {
+            const saved = localStorage.getItem('footmarket_wc2026');
+            if (saved) {
+                const data = JSON.parse(saved);
+                for (const id in data) {
+                    if (document.getElementById(id)) document.getElementById(id).value = data[id];
+                }
+            }
+            calculateGroups();
+            updateKnockoutProgression(); // Déclenche l'affichage des drapeaux initiaux
+        }
+
+        function resetAll() {
+            if (confirm("Voulez-vous effacer TOUS vos scores de la simulation ?")) {
+                localStorage.removeItem('footmarket_wc2026');
+                document.querySelectorAll('.saveData').forEach(input => input.value = "");
+                calculateGroups();
+                updateKnockoutProgression();
+            }
+        }
+
+        function calculateGroups() {
+            const groups = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L'];
+            groups.forEach(gLetter => {
+                let teams = {};
+                let gMatches = groupMatches.filter(m => m.group === gLetter);
+
+                gMatches.forEach(m => {
+                    if (!teams[m.t1]) teams[m.t1] = { name: m.t1, flag: flagCodes[m.t1], pts: 0, p: 0, w: 0, d: 0, l: 0, gd: 0 };
+                    if (!teams[m.t2]) teams[m.t2] = { name: m.t2, flag: flagCodes[m.t2], pts: 0, p: 0, w: 0, d: 0, l: 0, gd: 0 };
+
+                    let input1 = document.getElementById(`${m.id}-1`);
+                    let input2 = document.getElementById(`${m.id}-2`);
+                    
+                    if (input1 && input2 && input1.value !== "" && input2.value !== "") {
+                        let s1 = parseInt(input1.value);
+                        let s2 = parseInt(input2.value);
+                        
+                        teams[m.t1].p++; teams[m.t2].p++;
+                        let diff = s1 - s2;
+                        teams[m.t1].gd += diff; teams[m.t2].gd -= diff;
+
+                        if (s1 > s2) { teams[m.t1].w++; teams[m.t1].pts += 3; teams[m.t2].l++; }
+                        else if (s1 < s2) { teams[m.t2].w++; teams[m.t2].pts += 3; teams[m.t1].l++; }
+                        else { teams[m.t1].d++; teams[m.t2].d++; teams[m.t1].pts += 1; teams[m.t2].pts += 1; }
+                    }
+                });
+
+                let tArray = Object.values(teams).sort((a, b) => b.pts !== a.pts ? b.pts - a.pts : b.gd - a.gd);
+
+                // --- NOUVEAU : Envoyer les 1er et 2eme vers le Tableau Final ---
+                let groupPlayed = tArray.some(t => t.p > 0); // Si au moins un match joué
+                if (groupPlayed && groupToR32[gLetter]) {
+                    let in1 = document.getElementById(groupToR32[gLetter]['1']);
+                    let in2 = document.getElementById(groupToR32[gLetter]['2']);
+                    if (in1) in1.value = tArray[0].name;
+                    if (in2) in2.value = tArray[1].name;
+                }
+                // ---------------------------------------------------------------
+
+                let html = `<table class="standings-table"><tr><th>Équipe</th><th>Pts</th><th>J</th><th>G</th><th>N</th><th>P</th><th>Diff</th></tr>`;
+                tArray.forEach((t, i) => {
+                    const flagImg = t.flag ? `<img src="https://flagcdn.com/w20/${t.flag}.png" class="flag">` : '';
+                    html += `<tr class="${i < 2 ? 'qualif-zone' : ''}">
+                        <td class="team-cell">${flagImg} ${t.name}</td>
+                        <td class="pts-col">${t.pts}</td><td>${t.p}</td><td>${t.w}</td><td>${t.d}</td><td>${t.l}</td><td>${t.gd > 0 ? '+'+t.gd : t.gd}</td>
+                    </tr>`;
+                });
+                document.getElementById(`standings-${gLetter}`).innerHTML = html + `</table>`;
+            });
+            
+            // On met à jour les drapeaux et l'arbre dès que les groupes changent
+            updateKnockoutProgression();
+        }
+
+        // --- NOUVEAU : Affichage des drapeaux et progression auto dans le tableau final ---
+        function updateKnockoutProgression() {
+            // 1. Mettre à jour les drapeaux dans toutes les cases de texte
+            document.querySelectorAll('.team-input').forEach(input => {
+                let teamName = input.value.trim().toUpperCase();
+                let code = flagCodes[teamName];
+                let imgEl = document.getElementById('flag-' + input.id);
+                
+                if (imgEl) {
+                    if (code) {
+                        imgEl.src = `https://flagcdn.com/w20/${code}.png`;
+                        imgEl.classList.remove('hidden');
+                        input.classList.remove('pl-2');
+                    } else {
+                        imgEl.classList.add('hidden');
+                        input.classList.add('pl-2'); // Recadre le texte si pas de drapeau
+                    }
+                }
+            });
+
+            // 2. Faire progresser les gagnants automatiquement au tour suivant
+            for (let matchId in knockoutProgression) {
+                let s1 = parseInt(document.getElementById(`${matchId}-s1`)?.value);
+                let s2 = parseInt(document.getElementById(`${matchId}-s2`)?.value);
+                let t1 = document.getElementById(`${matchId}-t1`)?.value;
+                let t2 = document.getElementById(`${matchId}-t2`)?.value;
+                
+                let nextInputId = knockoutProgression[matchId];
+                let nextInput = document.getElementById(nextInputId);
+                
+                // Gérer le match de la 3ème place (les perdants des demi-finales)
+                let thirdPlaceInputId = null;
+                if (matchId === 'SF-1') thirdPlaceInputId = '3P-1-t1';
+                if (matchId === 'SF-2') thirdPlaceInputId = '3P-1-t2';
+                let thirdPlaceInput = thirdPlaceInputId ? document.getElementById(thirdPlaceInputId) : null;
+
+                if (nextInput && !isNaN(s1) && !isNaN(s2) && t1 && t2) {
+                    if (s1 > s2) {
+                        nextInput.value = t1;
+                        if (thirdPlaceInput) thirdPlaceInput.value = t2;
+                    } else if (s2 > s1) {
+                        nextInput.value = t2;
+                        if (thirdPlaceInput) thirdPlaceInput.value = t1;
+                    }
+                }
+            }
+            
+            // Relancer les drapeaux une 2ème fois au cas où une équipe a été propulsée au tour d'après
+            document.querySelectorAll('.team-input').forEach(input => {
+                let code = flagCodes[input.value.trim().toUpperCase()];
+                let imgEl = document.getElementById('flag-' + input.id);
+                if (imgEl && code) { imgEl.src = `https://flagcdn.com/w20/${code}.png`; imgEl.classList.remove('hidden'); }
+            });
+        }
+
+
+        // ==========================================
+        // LOGIQUE JOUEURS CSV (Papa Parse)
+        // ==========================================
+        const fichiersPays = [
+            "mexique", "afrique_du_sud", "coree_du_sud", "tchequie", "canada", "bosnie_herzegovine", "qatar", "suisse",
+            "bresil", "maroc", "haiti", "ecosse", "usa", "paraguay", "australie", "turquie",
+            "allemagne", "Curaçao", "Cote_divoire", "equateur", "pays_bas", "japon", "suede", "tunisie",
+            "belgique", "egypte", "iran", "nouvelle_zelande", "espagne", "cap_ver", "arabie_saoudite", "uruguay",
+            "france", "senegal", "irak", "norvege", "argentine", "algerie", "autriche", "jordanie",
+            "portugal", "rd_congo", "ouzbekistan", "colombie", "angleterre", "croatie", "ghana", "panama"
+        ];
+
         function parserValeur(valStr) {
             if (!valStr || typeof valStr !== 'string') return 0;
             let cleanStr = valStr.replace(/[\s\xa0€]/g, '').trim(); 
             if (cleanStr === '' || cleanStr === '-') return 0;
-            
             let multiplier = 1;
-            if (cleanStr.toUpperCase().includes('K')) {
-                multiplier = 1000;
-                cleanStr = cleanStr.replace(/K/ig, '');
-            } else if (cleanStr.toUpperCase().includes('M')) {
-                multiplier = 1000000;
-                cleanStr = cleanStr.replace(/M/ig, '');
-            }
-            
+            if (cleanStr.toUpperCase().includes('K')) { multiplier = 1000; cleanStr = cleanStr.replace(/K/ig, ''); } 
+            else if (cleanStr.toUpperCase().includes('M')) { multiplier = 1000000; cleanStr = cleanStr.replace(/M/ig, ''); }
             cleanStr = cleanStr.replace(',', '.');
             let num = parseFloat(cleanStr);
             return isNaN(num) ? 0 : num * multiplier;
@@ -261,7 +500,6 @@
                             complete: (results) => {
                                 let records = [];
                                 let currentStats = null;
-                                
                                 let paysFormatter = nomFichier.split('_').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ');
                                 if(nomFichier === "usa") paysFormatter = "USA";
 
@@ -280,29 +518,11 @@
                                     let position = row[posKey];
 
                                     if (position && String(position).trim() !== '') {
-                                        currentStats = {
-                                            Poste: position,
-                                            Club: row[clubKey] || '-',
-                                            SelectionNumero: row[numKey] || '?',
-                                            Age: row[ageKey] || '?',
-                                            ValeurText: row[valKey] || '-',
-                                            ValeurNum: parserValeur(row[valKey])
-                                        };
+                                        currentStats = { Poste: position, Club: row[clubKey] || '-', SelectionNumero: row[numKey] || '?', Age: row[ageKey] || '?', ValeurText: row[valKey] || '-', ValeurNum: parserValeur(row[valKey]) };
                                     } else if (nameCol && String(nameCol).trim() !== '') {
                                         if (currentStats) {
-                                            let nomAffiche = String(nameCol).trim();
-                                            nomAffiche = nomAffiche.replace(/(Blessure|Suspendu|Carton).*/i, '').trim();
-
-                                            records.push({
-                                                Nom: nomAffiche,
-                                                Pays: paysFormatter,
-                                                Poste: currentStats.Poste,
-                                                Club: currentStats.Club,
-                                                Age: currentStats.Age,
-                                                SelectionNumero: currentStats.SelectionNumero,
-                                                ValeurText: (currentStats.ValeurText === '-' || !currentStats.ValeurText) ? 'N/A' : currentStats.ValeurText,
-                                                ValeurNum: currentStats.ValeurNum
-                                            });
+                                            let nomAffiche = String(nameCol).trim().replace(/(Blessure|Suspendu|Carton).*/i, '').trim();
+                                            records.push({ Nom: nomAffiche, Pays: paysFormatter, Poste: currentStats.Poste, Club: currentStats.Club, Age: currentStats.Age, SelectionNumero: currentStats.SelectionNumero, ValeurText: (currentStats.ValeurText === '-' || !currentStats.ValeurText) ? 'N/A' : currentStats.ValeurText, ValeurNum: currentStats.ValeurNum });
                                             currentStats = null;
                                         }
                                     }
@@ -320,9 +540,7 @@
                 genererFiltresPays();
                 genererFiltresPostes();
                 filtrerJoueurs();
-            } catch (error) {
-                console.error("Erreur de chargement :", error);
-            }
+            } catch (error) { console.error(error); }
         }
 
         function genererFiltresPays() {
@@ -365,22 +583,17 @@
             grid.innerHTML = '';
 
             if(liste.length === 0) {
-                grid.innerHTML = `<div class="col-span-full text-center py-12 text-slate-400 text-sm">Aucun joueur ne correspond aux filtres.</div>`;
-                return;
+                grid.innerHTML = `<div class="col-span-full text-center py-12 text-slate-400 text-sm">Aucun joueur ne correspond aux filtres.</div>`; return;
             }
 
             liste.forEach(joueur => {
                 const carte = document.createElement('div');
                 carte.className = "bg-white border border-slate-100 rounded-2xl overflow-hidden shadow-sm hover:shadow-md transition-all duration-300 relative group";
                 carte.innerHTML = `
-                    <div class="absolute top-3 right-3 bg-slate-100 text-slate-700 font-bold text-xs w-7 h-7 rounded-full flex items-center justify-center z-10 shadow-sm">
-                        N°${joueur.SelectionNumero}
-                    </div>
+                    <div class="absolute top-3 right-3 bg-slate-100 text-slate-700 font-bold text-xs w-7 h-7 rounded-full flex items-center justify-center z-10 shadow-sm">N°${joueur.SelectionNumero}</div>
                     <div class="p-5">
                         <div class="flex items-center gap-4">
-                            <div class="w-12 h-12 rounded-full bg-emerald-50 border border-emerald-100 flex-shrink-0 flex items-center justify-center font-bold text-emerald-600 text-lg">
-                                ${joueur.Nom ? joueur.Nom.charAt(0) : '?'}
-                            </div>
+                            <div class="w-12 h-12 rounded-full bg-emerald-50 border border-emerald-100 flex-shrink-0 flex items-center justify-center font-bold text-emerald-600 text-lg">${joueur.Nom ? joueur.Nom.charAt(0) : '?'}</div>
                             <div class="overflow-hidden">
                                 <span class="text-[10px] font-extrabold uppercase tracking-widest text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded">${joueur.Poste}</span>
                                 <h3 class="font-bold text-base text-slate-900 mt-0.5 leading-tight group-hover:text-emerald-600 transition-colors truncate" title="${joueur.Nom}">${joueur.Nom}</h3>
@@ -397,8 +610,7 @@
                                 <p class="font-extrabold text-slate-950 text-sm">${joueur.ValeurText}</p>
                             </div>
                         </div>
-                    </div>
-                `;
+                    </div>`;
                 grid.appendChild(carte);
             });
         }
@@ -410,161 +622,15 @@
             let resultats = tousLesJoueurs.filter(j => {
                 const matchPays = (paysSelectionne === 'Tous' || j.Pays === paysSelectionne);
                 const matchPoste = (posteSelectionne === 'Tous' || correspondCategorie(j.Poste, posteSelectionne));
-                
-                const matchTexte = 
-                    (j.Nom && j.Nom.toLowerCase().includes(recherche)) || 
-                    (j.Club && j.Club.toLowerCase().includes(recherche)) ||
-                    (j.Pays && j.Pays.toLowerCase().includes(recherche));
-                
+                const matchTexte = (j.Nom && j.Nom.toLowerCase().includes(recherche)) || (j.Club && j.Club.toLowerCase().includes(recherche)) || (j.Pays && j.Pays.toLowerCase().includes(recherche));
                 return matchPays && matchPoste && matchTexte;
             });
 
             if (tri === "valeurDesc") resultats.sort((a, b) => b.ValeurNum - a.ValeurNum);
             if (tri === "valeurAsc") resultats.sort((a, b) => a.ValeurNum - b.ValeurNum);
             if (tri === "nom") resultats.sort((a, b) => (a.Nom || "").localeCompare(b.Nom || ""));
-
             afficherJoueurs(resultats);
         }
-
-        // ==========================================
-        // LOGIQUE SIMULATEUR (Groupes & Knockout)
-        // ==========================================
-        function renderGroups() {
-            const container = document.getElementById('groupes-container');
-            const groups = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L'];
-            groupMatches.forEach((m, index) => m.id = 'G' + index);
-
-            groups.forEach(groupLetter => {
-                const card = document.createElement('div');
-                card.className = 'sim-card';
-                card.innerHTML = `<div class="sim-card-title">Groupe ${groupLetter}</div>`;
-                
-                const gMatches = groupMatches.filter(m => m.group === groupLetter);
-                gMatches.forEach(match => {
-                    const flag1 = flagCodes[match.t1] ? `https://flagcdn.com/w20/${flagCodes[match.t1]}.png` : '';
-                    const flag2 = flagCodes[match.t2] ? `https://flagcdn.com/w20/${flagCodes[match.t2]}.png` : '';
-                    card.innerHTML += `
-                        <div class="match-row">
-                            <span class="date-time">${match.date}</span>
-                            <div class="teams-scores">
-                                <span class="team">${flag1 ? `<img src="${flag1}" class="flag">` : ''} ${match.t1}</span>
-                                <div class="flex items-center">
-                                    <input type="number" min="0" id="${match.id}-1" class="score-input saveData" oninput="saveAndCalculate()">
-                                    <span class="text-slate-300 font-bold">-</span>
-                                    <input type="number" min="0" id="${match.id}-2" class="score-input saveData" oninput="saveAndCalculate()">
-                                </div>
-                                <span class="team right">${match.t2} ${flag2 ? `<img src="${flag2}" class="flag">` : ''}</span>
-                            </div>
-                        </div>`;
-                });
-                card.innerHTML += `<div id="standings-${groupLetter}"></div>`;
-                container.appendChild(card);
-            });
-        }
-
-        function renderKnockout() {
-            const container = document.getElementById('knockout-container');
-            knockoutRounds.forEach(round => {
-                const section = document.createElement('div');
-                section.className = 'round-section';
-                section.innerHTML = `<div class="round-title">${round.title}</div>`;
-                
-                const grid = document.createElement('div');
-                grid.className = "flex flex-wrap justify-center gap-6 w-full mt-6";
-
-                round.matches.forEach(match => {
-                    const isFinale = match.id === 'FIN-1';
-                    grid.innerHTML += `
-                        <div class="sim-card ${isFinale ? 'finale-card' : ''}">
-                            <div class="sim-card-title" style="font-size:1rem; margin-bottom:0.5rem; border:none; padding:0;">${isFinale ? '🏆 GRANDE FINALE' : 'Match ' + match.id}</div>
-                            <div class="match-row" style="border:none; padding:0; margin:0;">
-                                <span class="date-time mb-3">${match.date}</span>
-                                <div class="flex flex-col gap-3">
-                                    <div class="flex justify-between items-center w-full">
-                                        <input type="text" id="${match.id}-t1" class="team-input saveData" placeholder="${match.p1}" oninput="saveAndCalculate()">
-                                        <input type="number" min="0" id="${match.id}-s1" class="score-input saveData" oninput="saveAndCalculate()">
-                                    </div>
-                                    <div class="flex justify-between items-center w-full">
-                                        <input type="text" id="${match.id}-t2" class="team-input saveData" placeholder="${match.p2}" oninput="saveAndCalculate()">
-                                        <input type="number" min="0" id="${match.id}-s2" class="score-input saveData" oninput="saveAndCalculate()">
-                                    </div>
-                                </div>
-                            </div>
-                        </div>`;
-                });
-                section.appendChild(grid);
-                container.appendChild(section);
-            });
-        }
-
-        function saveAndCalculate() {
-            const inputs = document.querySelectorAll('.saveData');
-            const data = {};
-            inputs.forEach(input => { if (input.value !== "") data[input.id] = input.value; });
-            localStorage.setItem('footmarket_wc2026', JSON.stringify(data));
-            calculateGroups();
-        }
-
-        function loadData() {
-            const saved = localStorage.getItem('footmarket_wc2026');
-            if (saved) {
-                const data = JSON.parse(saved);
-                for (const id in data) {
-                    if (document.getElementById(id)) document.getElementById(id).value = data[id];
-                }
-            }
-            calculateGroups();
-        }
-
-        function resetAll() {
-            if (confirm("Voulez-vous effacer TOUS vos scores de la simulation ?")) {
-                localStorage.removeItem('footmarket_wc2026');
-                document.querySelectorAll('.saveData').forEach(input => input.value = "");
-                calculateGroups();
-            }
-        }
-
-        function calculateGroups() {
-            const groups = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L'];
-            groups.forEach(gLetter => {
-                let teams = {};
-                let gMatches = groupMatches.filter(m => m.group === gLetter);
-
-                gMatches.forEach(m => {
-                    if (!teams[m.t1]) teams[m.t1] = { name: m.t1, flag: flagCodes[m.t1], pts: 0, p: 0, w: 0, d: 0, l: 0, gd: 0 };
-                    if (!teams[m.t2]) teams[m.t2] = { name: m.t2, flag: flagCodes[m.t2], pts: 0, p: 0, w: 0, d: 0, l: 0, gd: 0 };
-
-                    let input1 = document.getElementById(`${m.id}-1`);
-                    let input2 = document.getElementById(`${m.id}-2`);
-                    
-                    if (input1 && input2 && input1.value !== "" && input2.value !== "") {
-                        let s1 = parseInt(input1.value);
-                        let s2 = parseInt(input2.value);
-                        
-                        teams[m.t1].p++; teams[m.t2].p++;
-                        let diff = s1 - s2;
-                        teams[m.t1].gd += diff; teams[m.t2].gd -= diff;
-
-                        if (s1 > s2) { teams[m.t1].w++; teams[m.t1].pts += 3; teams[m.t2].l++; }
-                        else if (s1 < s2) { teams[m.t2].w++; teams[m.t2].pts += 3; teams[m.t1].l++; }
-                        else { teams[m.t1].d++; teams[m.t2].d++; teams[m.t1].pts += 1; teams[m.t2].pts += 1; }
-                    }
-                });
-
-                let tArray = Object.values(teams).sort((a, b) => b.pts !== a.pts ? b.pts - a.pts : b.gd - a.gd);
-
-                let html = `<table class="standings-table"><tr><th>Équipe</th><th>Pts</th><th>J</th><th>G</th><th>N</th><th>P</th><th>Diff</th></tr>`;
-                tArray.forEach((t, i) => {
-                    const flagImg = t.flag ? `<img src="https://flagcdn.com/w20/${t.flag}.png" class="flag">` : '';
-                    html += `<tr class="${i < 2 ? 'qualif-zone' : ''}">
-                        <td class="team-cell">${flagImg} ${t.name}</td>
-                        <td class="pts-col">${t.pts}</td><td>${t.p}</td><td>${t.w}</td><td>${t.d}</td><td>${t.l}</td><td>${t.gd > 0 ? '+'+t.gd : t.gd}</td>
-                    </tr>`;
-                });
-                document.getElementById(`standings-${gLetter}`).innerHTML = html + `</table>`;
-            });
-        }
-
     </script>
 </body>
 </html>
