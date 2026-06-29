@@ -1,30 +1,698 @@
+HTML
 <!DOCTYPE html>
 <html lang="fr">
 <head>
     <meta charset="UTF-8">
-    <title>Footmarket | Coupe du Monde 2026</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Footmarket | Simulateur Coupe du Monde 2026</title>
+    <!-- Tailwind CSS pour le design -->
     <script src="https://cdn.tailwindcss.com"></script>
-</head>
-<body class="bg-slate-50 p-5">
-    <h1 class="text-2xl font-bold text-center mb-6">Calendrier & Groupes</h1>
+    <!-- PapaParse pour lire les CSV -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
+    <!-- Police Inter -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;900&display=swap" rel="stylesheet">
     
-    <!-- Retour à la structure initiale fixe -->
-    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        <!-- Groupe A -->
-        <div class="bg-white p-4 rounded shadow">
-            <h2 class="font-bold text-lg mb-2">Groupe A</h2>
-            <div class="space-y-2">
-                <div class="flex justify-between border-b"><span>MEX vs RSA</span> <span>11/06 21:00</span></div>
-                <div class="flex justify-between border-b"><span>KOR vs TBD</span> <span>12/06 04:00</span></div>
-                <div class="flex justify-between border-b"><span>TBD vs RSA</span> <span>18/06 18:00</span></div>
-                <div class="flex justify-between border-b"><span>MEX vs KOR</span> <span>19/06 03:00</span></div>
-                <div class="flex justify-between border-b"><span>TBD vs MEX</span> <span>25/06 03:00</span></div>
-                <div class="flex justify-between border-b"><span>RSA vs KOR</span> <span>25/06 03:00</span></div>
+    <style>
+        body { font-family: 'Inter', sans-serif; background-color: #f8fafc; }
+        
+        /* Cacher les pages non actives */
+        .page-content { display: none; }
+        .page-content.active { display: block; }
+
+        .sim-card { background: white; border-radius: 1rem; border: 1px solid #f1f5f9; box-shadow: 0 1px 3px rgba(0,0,0,0.05); padding: 1.5rem; width: 100%; max-width: 340px; display: flex; flex-direction: column; }
+        .sim-card-title { font-size: 1.25rem; font-weight: 900; color: #0f172a; text-align: center; margin-bottom: 1rem; padding-bottom: 0.75rem; border-bottom: 2px solid #f8fafc; }
+        .match-row { margin-bottom: 0.75rem; padding-bottom: 0.75rem; border-bottom: 1px dashed #e2e8f0; }
+        .match-row:last-of-type { border-bottom: none; margin-bottom: 0; padding-bottom: 0; }
+        .date-time { font-size: 0.65rem; color: #94a3b8; text-align: center; margin-bottom: 0.5rem; display: block; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; }
+        .teams-scores { display: flex; align-items: center; justify-content: space-between; }
+        .team { font-size: 0.875rem; font-weight: 700; width: 90px; display: flex; align-items: center; gap: 8px; color: #1e293b; }
+        .team.right { justify-content: flex-end; text-align: right; }
+        .flag { width: 22px; height: auto; border-radius: 3px; box-shadow: 0 1px 2px rgba(0,0,0,0.1); }
+        .score-input { width: 36px; height: 30px; text-align: center; font-size: 0.875rem; font-weight: 800; border: 1px solid #cbd5e1; border-radius: 6px; background-color: #f8fafc; margin: 0 4px; color: #0f172a; transition: all 0.2s; -moz-appearance: textfield;}
+        .score-input::-webkit-outer-spin-button, .score-input::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
+        .score-input:focus { outline: none; border-color: #059669; background-color: #ffffff; box-shadow: 0 0 0 3px rgba(5, 150, 105, 0.1); }
+        
+        .standings-table { width: 100%; border-collapse: collapse; font-size: 0.75rem; margin-top: 1rem; border-top: 2px solid #0f172a; padding-top: 0.5rem; }
+        .standings-table th, .standings-table td { padding: 0.5rem 0.2rem; text-align: center; border-bottom: 1px solid #f1f5f9; color: #475569; }
+        .standings-table th { font-size: 0.65rem; font-weight: 700; text-transform: uppercase; color: #94a3b8; }
+        .standings-table .team-cell { text-align: left; display: flex; align-items: center; gap: 6px; font-weight: 700; color: #1e293b; }
+        .pts-col { font-weight: 900; color: #0f172a; font-size: 0.875rem; }
+        .qualif-zone { background-color: #ecfdf5; }
+
+        .round-section { width: 100%; text-align: center; margin: 2rem 0 1rem; }
+        .round-title { font-size: 1.25rem; color: #0f172a; font-weight: 900; background: white; display: inline-block; padding: 0.5rem 2rem; border-radius: 2rem; box-shadow: 0 2px 10px rgba(0,0,0,0.05); border: 1px solid #f1f5f9; }
+        
+        .team-input { width: 100%; height: 30px; text-align: left; font-size: 0.75rem; font-weight: 800; text-transform: uppercase; border: 1px dashed #cbd5e1; border-radius: 6px; color: #0f172a; outline: none; transition: 0.2s; background: white;}
+        .team-input:focus { border-color: #059669; border-style: solid; background: #ecfdf5;}
+        
+        .finale-card { border: 2px solid #fbbf24; box-shadow: 0 4px 15px rgba(251, 191, 36, 0.15); }
+        .finale-card .sim-card-title { color: #d97706; }
+    </style>
+</head>
+<body class="text-slate-900 antialiased">
+
+    <!-- BARRE DE NAVIGATION -->
+    <nav class="bg-white border-b border-slate-200 sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between h-16 items-center">
+                <div class="flex-shrink-0 flex items-center">
+                    <span class="text-xl font-black tracking-wider text-slate-950">FOOT<span class="text-emerald-600">MARKET</span></span>
+                    <span class="ml-2 bg-emerald-100 text-emerald-800 text-[10px] font-bold px-2 py-0.5 rounded-full">WC 2026</span>
+                </div>
+                <!-- Barre de recherche -->
+                <div class="flex-1 max-w-md mx-8" id="searchContainer" style="visibility: hidden;">
+                    <div class="relative">
+                        <input type="text" id="searchInput" oninput="filtrerJoueurs()" placeholder="Rechercher un joueur, un club, un pays..." class="w-full bg-slate-50 border border-slate-200 rounded-xl py-2 px-5 pl-10 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:bg-white transition-all">
+                        <div class="absolute left-3 top-2.5 text-slate-400">
+                            <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
+                        </div>
+                    </div>
+                </div>
+                <div>
+                    <button onclick="resetAll()" class="bg-rose-500 hover:bg-rose-600 text-white text-xs font-bold px-4 py-2 rounded-lg transition-colors shadow-sm">
+                        🗑️ Effacer Scores
+                    </button>
+                </div>
             </div>
         </div>
-        
-        <!-- Vous pouvez ajouter les autres groupes sur ce modèle statique -->
-        <!-- Le code ne fera AUCUNE modification automatique ici -->
+    </nav>
+
+    <!-- ONGLETS -->
+    <div class="bg-white border-b border-slate-200">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-center gap-4 py-4">
+                <button onclick="switchTab('groupes', this)" class="tab-btn bg-slate-900 text-white px-5 py-2 rounded-full text-sm font-bold shadow-sm transition-all">Calendrier & Groupes</button>
+                <button onclick="switchTab('phase-finale', this)" class="tab-btn bg-white border border-slate-300 text-slate-700 hover:bg-slate-50 px-5 py-2 rounded-full text-sm font-bold transition-all">Tableau Final 🏆</button>
+                <button onclick="switchTab('joueurs', this)" class="tab-btn bg-white border border-slate-300 text-slate-700 hover:bg-slate-50 px-5 py-2 rounded-full text-sm font-bold transition-all">Base de Données Joueurs</button>
+            </div>
+        </div>
     </div>
+
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        
+        <!-- ONGLET 1 : GROUPES ET CALENDRIER -->
+        <div id="page-groupes" class="page-content active">
+            <div class="mb-8 text-center">
+                <h2 class="text-2xl font-black text-slate-900">Phase de Groupes</h2>
+                <p class="text-slate-500 text-sm mt-1">Les 1ers, 2èmes et les 8 Meilleurs 3èmes s'envoient automatiquement dans le Tableau Final (Règles Officielles).</p>
+            </div>
+            <div id="groupes-container" class="flex flex-wrap justify-center gap-6"></div>
+        </div>
+
+        <!-- ONGLET 2 : TABLEAU FINAL -->
+        <div id="page-phase-finale" class="page-content">
+            <div class="mb-8 text-center">
+                <h2 class="text-2xl font-black text-slate-900">Tableau à Élimination Directe</h2>
+                <p class="text-slate-500 text-sm mt-1">L'arbre respecte à 100% le croisement officiel de la FIFA pour éviter les conflits de groupes.</p>
+            </div>
+            <div id="knockout-container" class="flex flex-col items-center"></div>
+        </div>
+
+        <!-- ONGLET 3 : BASE DE DONNÉES JOUEURS -->
+        <div id="page-joueurs" class="page-content">
+            <div class="mb-8 bg-slate-950 text-white rounded-2xl p-8 md:p-12 relative overflow-hidden shadow-lg">
+                <div class="relative z-10 max-w-lg">
+                    <span class="text-xs font-bold uppercase tracking-widest text-emerald-400">Valeurs Marchandes</span>
+                    <h1 class="text-3xl md:text-4xl font-black mt-2 mb-4 leading-tight">Les Équipes de la Coupe du Monde</h1>
+                    <p class="text-slate-400 text-sm">Explorez les effectifs des 48 nations, analysez les stats et comparez les valeurs marchandes des joueurs sélectionnés.</p>
+                </div>
+            </div>
+
+            <div class="flex flex-col lg:flex-row gap-8">
+                <aside class="w-full lg:w-64 flex-shrink-0">
+                    <div class="bg-white p-6 rounded-xl border border-slate-200 sticky top-24 shadow-sm">
+                        <h2 class="text-xs font-bold uppercase tracking-wider text-slate-400 mb-3">Filtrer par Pays</h2>
+                        <div class="space-y-1 mb-6 max-h-60 overflow-y-auto pr-2 custom-scrollbar" id="paysFilters"></div>
+                        <hr class="my-4 border-slate-100">
+                        <h2 class="text-xs font-bold uppercase tracking-wider text-slate-400 mb-3">Poste</h2>
+                        <div class="space-y-1" id="posteFilters"></div>
+                    </div>
+                </aside>
+
+                <section class="flex-1">
+                    <div class="flex justify-between items-center mb-6">
+                        <p class="text-sm text-slate-500"><span id="joueurCount" class="font-bold text-slate-950">0</span> joueurs trouvés</p>
+                        <select id="sortSelect" onchange="filtrerJoueurs()" class="bg-transparent text-sm font-semibold text-slate-700 focus:outline-none cursor-pointer">
+                            <option value="valeurDesc">Valeur : Élevée à Faible</option>
+                            <option value="valeurAsc">Valeur : Faible à Élevée</option>
+                            <option value="nom">Nom (A-Z)</option>
+                        </select>
+                    </div>
+                    <div id="joueursGrid" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
+                        <div class="col-span-full text-center py-12 text-slate-400 text-sm">Extraction des joueurs en cours...</div>
+                    </div>
+                </section>
+            </div>
+        </div>
+
+    </main>
+
+    <!-- LOGIQUE JAVASCRIPT GLOBALE -->
+    <script>
+        let tousLesJoueurs = [];
+        let paysSelectionne = 'Tous';
+        let posteSelectionne = 'Tous';
+
+        const flagCodes = {
+            MEX: 'mx', RSA: 'za', KOR: 'kr', CZE: 'cz', CAN: 'ca', QAT: 'qa', SUI: 'ch', BIH: 'ba',
+            BRA: 'br', MAR: 'ma', HAI: 'ht', SCO: 'gb-sct', USA: 'us', PAR: 'py', AUS: 'au', TUR: 'tr',
+            GER: 'de', CIV: 'ci', ECU: 'ec', CUW: 'cw', NED: 'nl', JPN: 'jp', TUN: 'tn', SWE: 'se',
+            BEL: 'be', EGY: 'eg', IRN: 'ir', NZL: 'nz', ESP: 'es', CPV: 'cv', KSA: 'sa', URU: 'uy',
+            FRA: 'fr', SEN: 'sn', NOR: 'no', IRQ: 'iq', ARG: 'ar', ALG: 'dz', AUT: 'at', JOR: 'jo',
+            POR: 'pt', UZB: 'uz', COL: 'co', DRC: 'cd', ENG: 'gb-eng', GHA: 'gh', PAN: 'pa', CRO: 'hr'
+        };
+
+        // --- LES VRAIS GROUPES OFFICIELS ---
+        const groupMatches = [
+            { group: 'A', date: '11/06 21:00', t1: 'MEX', t2: 'RSA' }, { group: 'A', date: '12/06 04:00', t1: 'KOR', t2: 'CZE' }, { group: 'A', date: '18/06 18:00', t1: 'CZE', t2: 'RSA' }, { group: 'A', date: '19/06 03:00', t1: 'MEX', t2: 'KOR' }, { group: 'A', date: '25/06 03:00', t1: 'CZE', t2: 'MEX' }, { group: 'A', date: '25/06 03:00', t1: 'RSA', t2: 'KOR' },
+            { group: 'B', date: '12/06 21:00', t1: 'CAN', t2: 'SUI' }, { group: 'B', date: '13/06 21:00', t1: 'QAT', t2: 'BIH' }, { group: 'B', date: '18/06 21:00', t1: 'SUI', t2: 'BIH' }, { group: 'B', date: '20/06 03:00', t1: 'CAN', t2: 'QAT' }, { group: 'B', date: '24/06 21:00', t1: 'SUI', t2: 'CAN' }, { group: 'B', date: '24/06 21:00', t1: 'BIH', t2: 'QAT' },
+            { group: 'C', date: '13/06 00:00', t1: 'SWE', t2: 'MAR' }, { group: 'C', date: '14/06 03:00', t1: 'HAI', t2: 'SCO' }, { group: 'C', date: '19/06 00:00', t1: 'SWE', t2: 'SCO' }, { group: 'C', date: '20/06 06:00', t1: 'MAR', t2: 'HAI' }, { group: 'C', date: '24/06 00:00', t1: 'SCO', t2: 'MAR' }, { group: 'C', date: '24/06 00:00', t1: 'SWE', t2: 'HAI' },
+            { group: 'D', date: '13/06 03:00', t1: 'BRA', t2: 'TUR' }, { group: 'D', date: '14/06 06:00', t1: 'AUS', t2: 'USA' }, { group: 'D', date: '19/06 21:00', t1: 'USA', t2: 'TUR' }, { group: 'D', date: '21/06 02:00', t1: 'BRA', t2: 'AUS' }, { group: 'D', date: '26/06 04:00', t1: 'TUR', t2: 'AUS' }, { group: 'D', date: '26/06 04:00', t1: 'USA', t2: 'BRA' },
+            { group: 'E', date: '14/06 19:00', t1: 'PAR', t2: 'CIV' }, { group: 'E', date: '15/06 01:00', t1: 'ECU', t2: 'GER' }, { group: 'E', date: '20/06 22:00', t1: 'GER', t2: 'CIV' }, { group: 'E', date: '21/06 06:00', t1: 'PAR', t2: 'ECU' }, { group: 'E', date: '25/06 22:00', t1: 'ECU', t2: 'CIV' }, { group: 'E', date: '25/06 22:00', t1: 'GER', t2: 'PAR' },
+            { group: 'F', date: '14/06 22:00', t1: 'CUW', t2: 'JPN' }, { group: 'F', date: '15/06 04:00', t1: 'TUN', t2: 'NED' }, { group: 'F', date: '20/06 19:00', t1: 'NED', t2: 'JPN' }, { group: 'F', date: '21/06 06:00', t1: 'CUW', t2: 'TUN' }, { group: 'F', date: '26/06 01:00', t1: 'JPN', t2: 'TUN' }, { group: 'F', date: '26/06 01:00', t1: 'NED', t2: 'CUW' },
+            { group: 'G', date: '15/06 21:00', t1: 'BEL', t2: 'EGY' }, { group: 'G', date: '16/06 03:00', t1: 'IRN', t2: 'NZL' }, { group: 'G', date: '21/06 21:00', t1: 'BEL', t2: 'IRN' }, { group: 'G', date: '22/06 03:00', t1: 'NZL', t2: 'EGY' }, { group: 'G', date: '27/06 05:00', t1: 'EGY', t2: 'IRN' }, { group: 'G', date: '27/06 05:00', t1: 'NZL', t2: 'BEL' },
+            { group: 'H', date: '15/06 18:00', t1: 'ESP', t2: 'CPV' }, { group: 'H', date: '16/06 00:00', t1: 'KSA', t2: 'URU' }, { group: 'H', date: '21/06 18:00', t1: 'ESP', t2: 'KSA' }, { group: 'H', date: '22/06 00:00', t1: 'URU', t2: 'CPV' }, { group: 'H', date: '27/06 02:00', t1: 'CPV', t2: 'KSA' }, { group: 'H', date: '27/06 02:00', t1: 'URU', t2: 'ESP' },
+            { group: 'I', date: '16/06 21:00', t1: 'FRA', t2: 'SEN' }, { group: 'I', date: '17/06 00:00', t1: 'IRQ', t2: 'NOR' }, { group: 'I', date: '22/06 23:00', t1: 'FRA', t2: 'IRQ' }, { group: 'I', date: '23/06 02:00', t1: 'NOR', t2: 'SEN' }, { group: 'I', date: '26/06 21:00', t1: 'NOR', t2: 'FRA' }, { group: 'I', date: '26/06 21:00', t1: 'SEN', t2: 'IRQ' },
+            { group: 'J', date: '17/06 03:00', t1: 'ARG', t2: 'ALG' }, { group: 'J', date: '17/06 06:00', t1: 'AUT', t2: 'JOR' }, { group: 'J', date: '22/06 19:00', t1: 'ARG', t2: 'AUT' }, { group: 'J', date: '23/06 05:00', t1: 'JOR', t2: 'ALG' }, { group: 'J', date: '28/06 04:00', t1: 'ALG', t2: 'AUT' }, { group: 'J', date: '28/06 04:00', t1: 'JOR', t2: 'ARG' },
+            { group: 'K', date: '17/06 19:00', t1: 'POR', t2: 'DRC' }, { group: 'K', date: '18/06 04:00', t1: 'UZB', t2: 'COL' }, { group: 'K', date: '23/06 19:00', t1: 'POR', t2: 'UZB' }, { group: 'K', date: '24/06 04:00', t1: 'COL', t2: 'DRC' }, { group: 'K', date: '28/06 01:30', t1: 'COL', t2: 'POR' }, { group: 'K', date: '28/06 01:30', t1: 'DRC', t2: 'UZB' },
+            { group: 'L', date: '17/06 22:00', t1: 'ENG', t2: 'CRO' }, { group: 'L', date: '18/06 01:00', t1: 'GHA', t2: 'PAN' }, { group: 'L', date: '23/06 22:00', t1: 'ENG', t2: 'GHA' }, { group: 'L', date: '24/06 01:00', t1: 'PAN', t2: 'CRO' }, { group: 'L', date: '27/06 23:00', t1: 'PAN', t2: 'ENG' }, { group: 'L', date: '27/06 23:00', t1: 'CRO', t2: 'GHA' }
+        ];
+
+        // --- ARBRE OFFICIEL (CALQUÉ SUR LES REGLES OFFICIELLES) ---
+        const knockoutRounds = [
+            { title: "Seizièmes de finale", matches: [
+                { id: 'M73', date: 'N°73 (28 juin)', p1: '2A', p2: '2B' },
+                { id: 'M74', date: 'N°74 (29 juin)', p1: '1C', p2: '2F' },
+                { id: 'M75', date: 'N°75 (30 juin)', p1: '1F', p2: '2C' },
+                { id: 'M76', date: 'N°76 (29 juin)', p1: '1E', p2: '3ème' },
+                { id: 'M77', date: 'N°77 (30 juin)', p1: '2E', p2: '2I' },
+                { id: 'M78', date: 'N°78 (30 juin)', p1: '1I', p2: '3ème' },
+                { id: 'M79', date: 'N°79 (1 juillet)', p1: '1A', p2: '3ème' },
+                { id: 'M80', date: 'N°80 (1 juillet)', p1: '1L', p2: '3ème' },
+                { id: 'M81', date: 'N°81 (2 juillet)', p1: '1D', p2: '3ème' },
+                { id: 'M82', date: 'N°82 (1 juillet)', p1: '1G', p2: '3ème' },
+                { id: 'M83', date: 'N°83 (3 juillet)', p1: '2K', p2: '2L' },
+                { id: 'M84', date: 'N°84 (2 juillet)', p1: '1H', p2: '2J' },
+                { id: 'M85', date: 'N°85 (3 juillet)', p1: '1B', p2: '3ème' },
+                { id: 'M86', date: 'N°86 (4 juillet)', p1: '1J', p2: '2H' },
+                { id: 'M87', date: 'N°87 (4 juillet)', p1: '1K', p2: '3ème' },
+                { id: 'M88', date: 'N°88 (3 juillet)', p1: '2D', p2: '2G' }
+            ]},
+            { title: "Huitièmes de finale", matches: [
+                { id: 'M89', date: 'N°89', p1: 'Vainq. N°74', p2: 'Vainq. N°76' },
+                { id: 'M90', date: 'N°90', p1: 'Vainq. N°73', p2: 'Vainq. N°75' },
+                { id: 'M91', date: 'N°91', p1: 'Vainq. N°77', p2: 'Vainq. N°78' },
+                { id: 'M92', date: 'N°92', p1: 'Vainq. N°79', p2: 'Vainq. N°80' },
+                { id: 'M93', date: 'N°93', p1: 'Vainq. N°83', p2: 'Vainq. N°84' },
+                { id: 'M94', date: 'N°94', p1: 'Vainq. N°81', p2: 'Vainq. N°82' },
+                { id: 'M95', date: 'N°95', p1: 'Vainq. N°86', p2: 'Vainq. N°88' },
+                { id: 'M96', date: 'N°96', p1: 'Vainq. N°85', p2: 'Vainq. N°87' }
+            ]},
+            { title: "Quarts de finale", matches: [
+                { id: 'M97', date: 'N°97', p1: 'Vainq. N°89', p2: 'Vainq. N°90' },
+                { id: 'M98', date: 'N°98', p1: 'Vainq. N°93', p2: 'Vainq. N°94' },
+                { id: 'M99', date: 'N°99', p1: 'Vainq. N°91', p2: 'Vainq. N°92' },
+                { id: 'M100', date: 'N°100', p1: 'Vainq. N°95', p2: 'Vainq. N°96' }
+            ]},
+            { title: "Demi-finales", matches: [
+                { id: 'M101', date: 'N°101', p1: 'Vainq. N°97', p2: 'Vainq. N°98' },
+                { id: 'M102', date: 'N°102', p1: 'Vainq. N°99', p2: 'Vainq. N°100' }
+            ]},
+            { title: "Match pour la 3e place", matches: [
+                { id: 'M103', date: 'N°103 (Petite Finale)', p1: 'Perdant N°101', p2: 'Perdant N°102' }
+            ]},
+            { title: "Finale 🏆", matches: [
+                { id: 'M104', date: 'N°104 (Grande Finale)', p1: 'Vainq. N°101', p2: 'Vainq. N°102' }
+            ]}
+        ];
+
+        // Transfert des groupes vers les Seizièmes
+        const groupToR32 = {
+            'A': { '1': 'M79-t1', '2': 'M73-t1' }, 'B': { '1': 'M85-t1', '2': 'M73-t2' },
+            'C': { '1': 'M74-t1', '2': 'M75-t2' }, 'D': { '1': 'M81-t1', '2': 'M88-t1' },
+            'E': { '1': 'M76-t1', '2': 'M77-t1' }, 'F': { '1': 'M75-t1', '2': 'M74-t2' },
+            'G': { '1': 'M82-t1', '2': 'M88-t2' }, 'H': { '1': 'M84-t1', '2': 'M86-t2' },
+            'I': { '1': 'M78-t1', '2': 'M77-t2' }, 'J': { '1': 'M86-t1', '2': 'M84-t2' },
+            'K': { '1': 'M87-t1', '2': 'M83-t1' }, 'L': { '1': 'M80-t1', '2': 'M83-t2' }
+        };
+
+        // Progression de l'arbre
+        const knockoutProgression = {
+            'M74': 'M89-t1', 'M76': 'M89-t2', 'M73': 'M90-t1', 'M75': 'M90-t2',
+            'M77': 'M91-t1', 'M78': 'M91-t2', 'M79': 'M92-t1', 'M80': 'M92-t2',
+            'M83': 'M93-t1', 'M84': 'M93-t2', 'M81': 'M94-t1', 'M82': 'M94-t2',
+            'M86': 'M95-t1', 'M88': 'M95-t2', 'M85': 'M96-t1', 'M87': 'M96-t2',
+            'M89': 'M97-t1', 'M90': 'M97-t2', 'M93': 'M98-t1', 'M94': 'M98-t2',
+            'M91': 'M99-t1', 'M92': 'M99-t2', 'M95': 'M100-t1', 'M96': 'M100-t2',
+            'M97': 'M101-t1', 'M98': 'M101-t2', 'M99': 'M102-t1', 'M100': 'M102-t2',
+            'M101': 'M104-t1', 'M102': 'M104-t2'
+        };
+
+        document.addEventListener("DOMContentLoaded", () => {
+            renderGroups();
+            renderKnockout();
+            chargerTousLesFichiersCSV();
+            setTimeout(loadData, 500);
+        });
+
+        function switchTab(tabId, btnElement) {
+            document.querySelectorAll('.page-content').forEach(page => page.classList.remove('active'));
+            document.querySelectorAll('.tab-btn').forEach(btn => {
+                btn.className = 'tab-btn bg-white border border-slate-300 text-slate-700 hover:bg-slate-50 px-5 py-2 rounded-full text-sm font-bold transition-all';
+            });
+            document.getElementById('page-' + tabId).classList.add('active');
+            btnElement.className = 'tab-btn bg-slate-900 border border-slate-900 text-white px-5 py-2 rounded-full text-sm font-bold shadow-sm transition-all';
+            document.getElementById('searchContainer').style.visibility = (tabId === 'joueurs') ? 'visible' : 'hidden';
+        }
+
+        function renderGroups() {
+            const container = document.getElementById('groupes-container');
+            const groups = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L'];
+            groupMatches.forEach((m, index) => m.id = 'G' + index);
+
+            groups.forEach(groupLetter => {
+                const card = document.createElement('div');
+                card.className = 'sim-card';
+                card.innerHTML = `<div class="sim-card-title">Groupe ${groupLetter}</div>`;
+                
+                const gMatches = groupMatches.filter(m => m.group === groupLetter);
+                gMatches.forEach(match => {
+                    const flag1 = flagCodes[match.t1] ? `https://flagcdn.com/w20/${flagCodes[match.t1]}.png` : '';
+                    const flag2 = flagCodes[match.t2] ? `https://flagcdn.com/w20/${flagCodes[match.t2]}.png` : '';
+                    card.innerHTML += `
+                        <div class="match-row">
+                            <span class="date-time">${match.date}</span>
+                            <div class="teams-scores">
+                                <span class="team">${flag1 ? `<img src="${flag1}" class="flag">` : ''} ${match.t1}</span>
+                                <div class="flex items-center">
+                                    <input type="number" min="0" id="${match.id}-1" class="score-input saveData" oninput="saveAndCalculate()">
+                                    <span class="text-slate-300 font-bold mx-1">-</span>
+                                    <input type="number" min="0" id="${match.id}-2" class="score-input saveData" oninput="saveAndCalculate()">
+                                </div>
+                                <span class="team right">${match.t2} ${flag2 ? `<img src="${flag2}" class="flag">` : ''}</span>
+                            </div>
+                        </div>`;
+                });
+                card.innerHTML += `<div id="standings-${groupLetter}"></div>`;
+                container.appendChild(card);
+            });
+        }
+
+        function renderKnockout() {
+            const container = document.getElementById('knockout-container');
+            knockoutRounds.forEach(round => {
+                const section = document.createElement('div');
+                section.className = 'round-section';
+                section.innerHTML = `<div class="round-title">${round.title}</div>`;
+                
+                const grid = document.createElement('div');
+                grid.className = "flex flex-wrap justify-center gap-6 w-full mt-6";
+
+                round.matches.forEach(match => {
+                    const isFinale = match.id === 'M104';
+                    grid.innerHTML += `
+                        <div class="sim-card ${isFinale ? 'finale-card' : ''}">
+                            <div class="sim-card-title" style="font-size:1rem; margin-bottom:0.5rem; border:none; padding:0;">${isFinale ? '🏆 ' : ''}${match.date}</div>
+                            <div class="match-row" style="border:none; padding:0; margin:0;">
+                                <div class="flex flex-col gap-3 mt-3">
+                                    <div class="flex justify-between items-center w-full gap-2">
+                                        <div class="relative flex-1 group focus-within:ring-2 focus-within:ring-emerald-500 rounded-md">
+                                            <img id="flag-${match.id}-t1" src="" class="absolute left-2 top-1/2 -translate-y-1/2 w-[18px] h-[13px] rounded-[2px] object-cover hidden shadow-sm z-10">
+                                            <input type="text" id="${match.id}-t1" class="team-input saveData w-full pl-8 pr-2 relative" placeholder="${match.p1}" oninput="updateKnockoutProgression(); saveAndCalculate()">
+                                        </div>
+                                        <input type="number" min="0" id="${match.id}-s1" class="score-input saveData" oninput="updateKnockoutProgression(); saveAndCalculate()">
+                                    </div>
+                                    <div class="flex justify-between items-center w-full gap-2">
+                                        <div class="relative flex-1 group focus-within:ring-2 focus-within:ring-emerald-500 rounded-md">
+                                            <img id="flag-${match.id}-t2" src="" class="absolute left-2 top-1/2 -translate-y-1/2 w-[18px] h-[13px] rounded-[2px] object-cover hidden shadow-sm z-10">
+                                            <input type="text" id="${match.id}-t2" class="team-input saveData w-full pl-8 pr-2 relative" placeholder="${match.p2}" oninput="updateKnockoutProgression(); saveAndCalculate()">
+                                        </div>
+                                        <input type="number" min="0" id="${match.id}-s2" class="score-input saveData" oninput="updateKnockoutProgression(); saveAndCalculate()">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>`;
+                });
+                section.appendChild(grid);
+                container.appendChild(section);
+            });
+        }
+
+        function saveAndCalculate() {
+            const inputs = document.querySelectorAll('.saveData');
+            const data = {};
+            inputs.forEach(input => { if (input.value !== "") data[input.id] = input.value; });
+            localStorage.setItem('footmarket_wc2026', JSON.stringify(data));
+            calculateGroups();
+        }
+
+        function loadData() {
+            const saved = localStorage.getItem('footmarket_wc2026');
+            if (saved) {
+                const data = JSON.parse(saved);
+                for (const id in data) {
+                    if (document.getElementById(id)) document.getElementById(id).value = data[id];
+                }
+            }
+            calculateGroups();
+        }
+
+        function resetAll() {
+            if (confirm("Voulez-vous effacer TOUS vos scores de la simulation ?")) {
+                localStorage.removeItem('footmarket_wc2026');
+                document.querySelectorAll('.saveData').forEach(input => input.value = "");
+                calculateGroups();
+                updateKnockoutProgression();
+            }
+        }
+
+        function calculateGroups() {
+            const groups = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L'];
+            let thirdPlacedTeams = [];
+
+            groups.forEach(gLetter => {
+                let teams = {};
+                let gMatches = groupMatches.filter(m => m.group === gLetter);
+
+                gMatches.forEach(m => {
+                    if (!teams[m.t1]) teams[m.t1] = { name: m.t1, flag: flagCodes[m.t1], pts: 0, p: 0, w: 0, d: 0, l: 0, gd: 0, gf: 0 };
+                    if (!teams[m.t2]) teams[m.t2] = { name: m.t2, flag: flagCodes[m.t2], pts: 0, p: 0, w: 0, d: 0, l: 0, gd: 0, gf: 0 };
+
+                    let input1 = document.getElementById(`${m.id}-1`);
+                    let input2 = document.getElementById(`${m.id}-2`);
+                    
+                    if (input1 && input2 && input1.value !== "" && input2.value !== "") {
+                        let s1 = parseInt(input1.value);
+                        let s2 = parseInt(input2.value);
+                        
+                        teams[m.t1].p++; teams[m.t2].p++;
+                        let diff = s1 - s2;
+                        teams[m.t1].gd += diff; teams[m.t2].gd -= diff;
+                        teams[m.t1].gf += s1; teams[m.t2].gf += s2;
+
+                        if (s1 > s2) { teams[m.t1].w++; teams[m.t1].pts += 3; teams[m.t2].l++; }
+                        else if (s1 < s2) { teams[m.t2].w++; teams[m.t2].pts += 3; teams[m.t1].l++; }
+                        else { teams[m.t1].d++; teams[m.t2].d++; teams[m.t1].pts += 1; teams[m.t2].pts += 1; }
+                    }
+                });
+
+                let tArray = Object.values(teams).sort((a, b) => b.pts !== a.pts ? b.pts - a.pts : (b.gd !== a.gd ? b.gd - a.gd : b.gf - a.gf));
+
+                let groupPlayed = tArray.some(t => t.p > 0); 
+                if (groupPlayed && groupToR32[gLetter]) {
+                    let in1 = document.getElementById(groupToR32[gLetter]['1']);
+                    let in2 = document.getElementById(groupToR32[gLetter]['2']);
+                    if (in1) in1.value = tArray[0].name;
+                    if (in2) in2.value = tArray[1].name;
+                    
+                    if (tArray[2] && tArray[2].p > 0) {
+                        thirdPlacedTeams.push({ group: gLetter, ...tArray[2] });
+                    }
+                }
+
+                let html = `<table class="standings-table"><tr><th>Équipe</th><th>Pts</th><th>J</th><th>G</th><th>N</th><th>P</th><th>Diff</th></tr>`;
+                tArray.forEach((t, i) => {
+                    const flagImg = t.flag ? `<img src="https://flagcdn.com/w20/${t.flag}.png" class="flag">` : '';
+                    let rowClass = i < 2 ? 'qualif-zone' : (i === 2 ? 'bg-amber-50' : ''); 
+                    html += `<tr class="${rowClass}">
+                        <td class="team-cell">${flagImg} ${t.name}</td>
+                        <td class="pts-col">${t.pts}</td><td>${t.p}</td><td>${t.w}</td><td>${t.d}</td><td>${t.l}</td><td>${t.gd > 0 ? '+'+t.gd : t.gd}</td>
+                    </tr>`;
+                });
+                document.getElementById(`standings-${gLetter}`).innerHTML = html + `</table>`;
+            });
+
+            // GESTION INTELLIGENTE DES 8 MEILLEURS 3ÈMES 
+            thirdPlacedTeams.sort((a, b) => b.pts !== a.pts ? b.pts - a.pts : (b.gd !== a.gd ? b.gd - a.gd : b.gf - a.gf));
+            let top8Thirds = thirdPlacedTeams.slice(0, 8);
+            
+            // Les règles strictes pour empêcher qu'une équipe repêchée joue contre le 1er de son propre groupe
+            const thirdPlaceConfig = [
+                { id: 'M76-t2', forbidden: 'E', team: null }, 
+                { id: 'M78-t2', forbidden: 'I', team: null }, 
+                { id: 'M79-t2', forbidden: 'A', team: null }, 
+                { id: 'M80-t2', forbidden: 'L', team: null }, 
+                { id: 'M82-t2', forbidden: 'G', team: null }, 
+                { id: 'M81-t2', forbidden: 'D', team: null }, 
+                { id: 'M85-t2', forbidden: 'B', team: null }, 
+                { id: 'M87-t2', forbidden: 'K', team: null }  
+            ];
+
+            // Réinitialiser les inputs des 3èmes
+            thirdPlaceConfig.forEach(conf => { let el = document.getElementById(conf.id); if (el) el.value = ''; });
+
+            // Algorithme d'assignation sécurisé
+            let unassigned = [...top8Thirds];
+            for (let i = 0; i < thirdPlaceConfig.length; i++) {
+                let slot = thirdPlaceConfig[i];
+                let idx = unassigned.findIndex(t => t.group !== slot.forbidden);
+                
+                if (idx !== -1) {
+                    slot.team = unassigned[idx];
+                    unassigned.splice(idx, 1);
+                } else if (unassigned.length > 0) {
+                    // S'il ne reste qu'une équipe et qu'elle tombe contre son groupe, on l'échange avec une précédente !
+                    for (let j = 0; j < i; j++) {
+                        if (thirdPlaceConfig[j].team.group !== slot.forbidden && unassigned[0].group !== thirdPlaceConfig[j].forbidden) {
+                            slot.team = thirdPlaceConfig[j].team;
+                            thirdPlaceConfig[j].team = unassigned[0];
+                            unassigned.splice(0, 1);
+                            break;
+                        }
+                    }
+                }
+            }
+
+            // Mettre à jour l'affichage
+            thirdPlaceConfig.forEach(slot => {
+                let el = document.getElementById(slot.id);
+                if (el) el.value = slot.team ? slot.team.name : '';
+            });
+            
+            updateKnockoutProgression();
+        }
+
+        function updateKnockoutProgression() {
+            document.querySelectorAll('.team-input').forEach(input => {
+                let teamName = input.value.trim().toUpperCase();
+                let code = flagCodes[teamName];
+                let imgEl = document.getElementById('flag-' + input.id);
+                
+                if (imgEl) {
+                    if (code) {
+                        imgEl.src = `https://flagcdn.com/w20/${code}.png`;
+                        imgEl.classList.remove('hidden');
+                        input.classList.remove('pl-2');
+                    } else {
+                        imgEl.classList.add('hidden');
+                        input.classList.add('pl-2');
+                    }
+                }
+            });
+
+            for (let matchId in knockoutProgression) {
+                let s1 = parseInt(document.getElementById(`${matchId}-s1`)?.value);
+                let s2 = parseInt(document.getElementById(`${matchId}-s2`)?.value);
+                let t1 = document.getElementById(`${matchId}-t1`)?.value;
+                let t2 = document.getElementById(`${matchId}-t2`)?.value;
+                
+                let nextInputId = knockoutProgression[matchId];
+                let nextInput = document.getElementById(nextInputId);
+                
+                let thirdPlaceInputId = null;
+                if (matchId === 'M101') thirdPlaceInputId = 'M103-t1';
+                if (matchId === 'M102') thirdPlaceInputId = 'M103-t2';
+                let thirdPlaceInput = thirdPlaceInputId ? document.getElementById(thirdPlaceInputId) : null;
+
+                if (nextInput && !isNaN(s1) && !isNaN(s2) && t1 && t2) {
+                    if (s1 > s2) {
+                        nextInput.value = t1;
+                        if (thirdPlaceInput) thirdPlaceInput.value = t2;
+                    } else if (s2 > s1) {
+                        nextInput.value = t2;
+                        if (thirdPlaceInput) thirdPlaceInput.value = t1;
+                    }
+                }
+            }
+            
+            document.querySelectorAll('.team-input').forEach(input => {
+                let code = flagCodes[input.value.trim().toUpperCase()];
+                let imgEl = document.getElementById('flag-' + input.id);
+                if (imgEl && code) { imgEl.src = `https://flagcdn.com/w20/${code}.png`; imgEl.classList.remove('hidden'); }
+            });
+        }
+
+        // ==========================================
+        // LOGIQUE JOUEURS CSV
+        // ==========================================
+        const categoriesPostes = {
+            "Gardiens": ["GA"], "Défenseurs": ["DC", "DD", "DG", "DLD", "DLG"],
+            "Milieux": ["MC", "MD", "MG", "MO"], "Attaquants": ["ATT", "AD", "AG"], "Entraîneurs": ["Entraineur"]
+        };
+
+        const fichiersPays = [
+            "mexique", "afrique_du_sud", "coree_du_sud", "tchequie", "canada", "bosnie_herzegovine", "qatar", "suisse",
+            "bresil", "maroc", "haiti", "ecosse", "usa", "paraguay", "australie", "turquie",
+            "allemagne", "Curaçao", "Cote_divoire", "equateur", "pays_bas", "japon", "suede", "tunisie",
+            "belgique", "egypte", "iran", "nouvelle_zelande", "espagne", "cap_ver", "arabie_saoudite", "uruguay",
+            "france", "senegal", "irak", "norvege", "argentine", "algerie", "autriche", "jordanie",
+            "portugal", "rd_congo", "ouzbekistan", "colombie", "angleterre", "croatie", "ghana", "panama"
+        ];
+
+        function parserValeur(valStr) {
+            if (!valStr || typeof valStr !== 'string') return 0;
+            let cleanStr = valStr.replace(/[\s\xa0€]/g, '').trim(); 
+            if (cleanStr === '' || cleanStr === '-') return 0;
+            let multiplier = 1;
+            if (cleanStr.toUpperCase().includes('K')) { multiplier = 1000; cleanStr = cleanStr.replace(/K/ig, ''); } 
+            else if (cleanStr.toUpperCase().includes('M')) { multiplier = 1000000; cleanStr = cleanStr.replace(/M/ig, ''); }
+            cleanStr = cleanStr.replace(',', '.');
+            let num = parseFloat(cleanStr);
+            return isNaN(num) ? 0 : num * multiplier;
+        }
+
+        async function chargerTousLesFichiersCSV() {
+            try {
+                const listePromises = fichiersPays.map(nomFichier => {
+                    return new Promise((resolve) => {
+                        Papa.parse(`${nomFichier}.csv`, {
+                            download: true,
+                            header: true,
+                            skipEmptyLines: true,
+                            complete: (results) => {
+                                let records = [];
+                                let currentStats = null;
+                                let paysFormatter = nomFichier.split('_').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ');
+                                if(nomFichier === "usa") paysFormatter = "USA";
+
+                                for (let row of results.data) {
+                                    let keys = Object.keys(row);
+                                    if (keys.length < 2) continue;
+                                    
+                                    let firstKey = keys[0]; 
+                                    let posKey = keys.find(k => k.includes('Position')) || keys[1];
+                                    let clubKey = keys.find(k => k.includes('Club')) || keys[2];
+                                    let numKey = keys.find(k => k.includes('Num')) || keys[3];
+                                    let ageKey = keys.find(k => k.includes('ge')) || keys[4];
+                                    let valKey = keys.find(k => k.includes('Valeur')) || keys[6];
+
+                                    let nameCol = row[firstKey];
+                                    let position = row[posKey];
+
+                                    if (position && String(position).trim() !== '') {
+                                        currentStats = { Poste: position, Club: row[clubKey] || '-', SelectionNumero: row[numKey] || '?', Age: row[ageKey] || '?', ValeurText: row[valKey] || '-', ValeurNum: parserValeur(row[valKey]) };
+                                    } else if (nameCol && String(nameCol).trim() !== '') {
+                                        if (currentStats) {
+                                            let nomAffiche = String(nameCol).trim().replace(/(Blessure|Suspendu|Carton).*/i, '').trim();
+                                            records.push({ Nom: nomAffiche, Pays: paysFormatter, Poste: currentStats.Poste, Club: currentStats.Club, Age: currentStats.Age, SelectionNumero: currentStats.SelectionNumero, ValeurText: (currentStats.ValeurText === '-' || !currentStats.ValeurText) ? 'N/A' : currentStats.ValeurText, ValeurNum: currentStats.ValeurNum });
+                                            currentStats = null;
+                                        }
+                                    }
+                                }
+                                resolve(records);
+                            },
+                            error: () => resolve([])
+                        });
+                    });
+                });
+
+                const résultatsParPays = await Promise.all(listePromises);
+                tousLesJoueurs = résultatsParPays.flat().filter(j => j && j.Nom);
+
+                genererFiltresPays();
+                genererFiltresPostes();
+                filtrerJoueurs();
+            } catch (error) { console.error(error); }
+        }
+
+        function genererFiltresPays() {
+            const pays = ['Tous', ...new Set(tousLesJoueurs.map(j => j.Pays))].sort();
+            const conteneur = document.getElementById('paysFilters');
+            conteneur.innerHTML = '';
+            pays.forEach(p => {
+                const b = document.createElement('button');
+                b.textContent = p;
+                b.className = `w-full text-left px-3 py-1.5 rounded-lg text-sm transition-all ${paysSelectionne === p ? 'bg-emerald-600 text-white font-semibold' : 'text-slate-600 hover:bg-slate-100'}`;
+                b.onclick = () => { paysSelectionne = p; genererFiltresPays(); filtrerJoueurs(); };
+                conteneur.appendChild(b);
+            });
+        }
+
+        function genererFiltresPostes() {
+            const grandesFamilles = ['Tous', 'Gardiens', 'Défenseurs', 'Milieux', 'Attaquants', 'Entraîneurs'];
+            const conteneur = document.getElementById('posteFilters');
+            conteneur.innerHTML = '';
+            grandesFamilles.forEach(famille => {
+                const b = document.createElement('button');
+                b.textContent = famille;
+                b.className = `w-full text-left px-3 py-1.5 rounded-lg text-sm transition-all ${posteSelectionne === famille ? 'bg-emerald-600 text-white font-semibold' : 'text-slate-600 hover:bg-slate-100'}`;
+                b.onclick = () => { posteSelectionne = famille; genererFiltresPostes(); filtrerJoueurs(); };
+                conteneur.appendChild(b);
+            });
+        }
+
+        function correspondCategorie(posteDuJoueur, categorieChoisie) {
+            if (!posteDuJoueur) return false;
+            const acronymesJoueur = posteDuJoueur.split(',').map(p => p.trim());
+            const tagsDeLaFamille = categoriesPostes[categorieChoisie];
+            if (!tagsDeLaFamille) return false;
+            return acronymesJoueur.some(acronyme => tagsDeLaFamille.includes(acronyme));
+        }
+
+        function afficherJoueurs(liste) {
+            const grid = document.getElementById('joueursGrid');
+            document.getElementById('joueurCount').textContent = liste.length;
+            grid.innerHTML = '';
+
+            if(liste.length === 0) {
+                grid.innerHTML = `<div class="col-span-full text-center py-12 text-slate-400 text-sm">Aucun joueur ne correspond aux filtres.</div>`; return;
+            }
+
+            liste.forEach(joueur => {
+                const carte = document.createElement('div');
+                carte.className = "bg-white border border-slate-100 rounded-2xl overflow-hidden shadow-sm hover:shadow-md transition-all duration-300 relative group";
+                carte.innerHTML = `
+                    <div class="absolute top-3 right-3 bg-slate-100 text-slate-700 font-bold text-xs w-7 h-7 rounded-full flex items-center justify-center z-10 shadow-sm">N°${joueur.SelectionNumero}</div>
+                    <div class="p-5">
+                        <div class="flex items-center gap-4">
+                            <div class="w-12 h-12 rounded-full bg-emerald-50 border border-emerald-100 flex-shrink-0 flex items-center justify-center font-bold text-emerald-600 text-lg">${joueur.Nom ? joueur.Nom.charAt(0) : '?'}</div>
+                            <div class="overflow-hidden">
+                                <span class="text-[10px] font-extrabold uppercase tracking-widest text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded">${joueur.Poste}</span>
+                                <h3 class="font-bold text-base text-slate-900 mt-0.5 leading-tight group-hover:text-emerald-600 transition-colors truncate" title="${joueur.Nom}">${joueur.Nom}</h3>
+                                <p class="text-xs text-slate-500 font-medium truncate" title="${joueur.Pays}">${joueur.Pays} • ${joueur.Age} ans</p>
+                            </div>
+                        </div>
+                        <div class="mt-4 pt-3 border-t border-slate-50 flex justify-between items-center text-xs">
+                            <div class="w-1/2 overflow-hidden pr-2">
+                                <p class="text-[10px] uppercase tracking-wider text-slate-400 font-semibold">Club</p>
+                                <p class="font-semibold text-slate-700 truncate" title="${joueur.Club}">${joueur.Club}</p>
+                            </div>
+                            <div class="text-right w-1/2">
+                                <p class="text-[10px] uppercase tracking-wider text-slate-400 font-semibold">Valeur</p>
+                                <p class="font-extrabold text-slate-950 text-sm">${joueur.ValeurText}</p>
+                            </div>
+                        </div>
+                    </div>`;
+                grid.appendChild(carte);
+            });
+        }
+
+        function filtrerJoueurs() {
+            const recherche = document.getElementById('searchInput').value.toLowerCase();
+            const tri = document.getElementById('sortSelect').value;
+            
+            let resultats = tousLesJoueurs.filter(j => {
+                const matchPays = (paysSelectionne === 'Tous' || j.Pays === paysSelectionne);
+                const matchPoste = (posteSelectionne === 'Tous' || correspondCategorie(j.Poste, posteSelectionne));
+                const matchTexte = (j.Nom && j.Nom.toLowerCase().includes(recherche)) || (j.Club && j.Club.toLowerCase().includes(recherche)) || (j.Pays && j.Pays.toLowerCase().includes(recherche));
+                return matchPays && matchPoste && matchTexte;
+            });
+
+            if (tri === "valeurDesc") resultats.sort((a, b) => b.ValeurNum - a.ValeurNum);
+            if (tri === "valeurAsc") resultats.sort((a, b) => a.ValeurNum - b.ValeurNum);
+            if (tri === "nom") resultats.sort((a, b) => (a.Nom || "").localeCompare(b.Nom || ""));
+            afficherJoueurs(resultats);
+        }
+    </script>
 </body>
 </html>
