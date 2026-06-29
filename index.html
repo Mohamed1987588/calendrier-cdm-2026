@@ -27,7 +27,7 @@
         .team { font-size: 0.875rem; font-weight: 700; width: 90px; display: flex; align-items: center; gap: 8px; color: #1e293b; }
         .team.right { justify-content: flex-end; text-align: right; }
         .flag { width: 22px; height: auto; border-radius: 3px; box-shadow: 0 1px 2px rgba(0,0,0,0.1); }
-        .score-input { width: 36px; height: 30px; text-align: center; font-size: 0.875rem; font-weight: 800; border: 1px solid #cbd5e1; border-radius: 6px; background-color: #f8fafc; margin: 0 4px; color: #0f172a; transition: all 0.2s; -moz-appearance: textfield;}
+        .score-input { width: 36px; height: 30px; text-align: center; font-size: 0.875rem; font-weight: 800; border: 1px solid #cbd5e1; border-radius: 6px; background-color: #f8fafc; margin: 0 4px; color: #0f172a; }
         .score-input::-webkit-outer-spin-button, .score-input::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
         .score-input:focus { outline: none; border-color: #059669; background-color: #ffffff; box-shadow: 0 0 0 3px rgba(5, 150, 105, 0.1); }
         
@@ -39,13 +39,25 @@
         .qualif-zone { background-color: #ecfdf5; }
 
         .round-section { width: 100%; text-align: center; margin: 2rem 0 1rem; }
-        .round-title { font-size: 1.25rem; color: #0f172a; font-weight: 900; background: white; display: inline-block; padding: 0.5rem 2rem; border-radius: 2rem; box-shadow: 0 2px 10px rgba(0,0,0,0.05); border: 1px solid #f1f5f9; }
+        .round-title { font-size: 1.25rem; color: #0f172a; font-weight: 900; background: white; display: inline-block; padding: 0.5rem 2rem; border-radius: 2rem; box-shadow: 0 2px 10px rgba(0,0,0,0.05); }
         
-        .team-input { width: 100%; height: 30px; text-align: left; font-size: 0.75rem; font-weight: 800; text-transform: uppercase; border: 1px dashed #cbd5e1; border-radius: 6px; color: #0f172a; outline: none; transition: 0.2s; background: white;}
+        .team-input { width: 100%; height: 30px; text-align: left; font-size: 0.75rem; font-weight: 800; text-transform: uppercase; border: 1px dashed #cbd5e1; border-radius: 6px; color: #0f172a; outline: none; }
         .team-input:focus { border-color: #059669; border-style: solid; background: #ecfdf5;}
         
         .finale-card { border: 2px solid #fbbf24; box-shadow: 0 4px 15px rgba(251, 191, 36, 0.15); }
         .finale-card .sim-card-title { color: #d97706; }
+
+        /* Nouveau style pour l'arbre knockout */
+        .knockout-tree { display: flex; gap: 2rem; overflow-x: auto; padding: 2rem 1rem; }
+        .knockout-round { display: flex; flex-direction: column; gap: 1.5rem; min-width: fit-content; }
+        .knockout-match { background: white; border: 1px solid #e2e8f0; border-radius: 0.75rem; padding: 1rem; min-width: 200px; box-shadow: 0 1px 2px rgba(0,0,0,0.05); }
+        .knockout-match.finale { border: 2px solid #fbbf24; box-shadow: 0 4px 15px rgba(251, 191, 36, 0.15); background: #fffbf0; }
+        .knockout-match-title { font-size: 0.75rem; font-weight: 700; color: #94a3b8; text-transform: uppercase; margin-bottom: 0.75rem; text-align: center; }
+        .knockout-team-row { display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.5rem; }
+        .knockout-team-row:last-child { margin-bottom: 0; }
+        .knockout-team-name { flex: 1; font-size: 0.8rem; font-weight: 700; text-transform: uppercase; color: #1e293b; padding: 0.4rem 0.5rem; border: 1px dashed #cbd5e1; border-radius: 0.375rem; text-align: left; background: #f8fafc; }
+        .knockout-score { width: 40px; text-align: center; font-size: 0.875rem; font-weight: 800; }
+        .flag-small { width: 16px; height: 12px; border-radius: 2px; object-fit: cover; }
     </style>
 </head>
 <body class="text-slate-900 antialiased">
@@ -61,7 +73,7 @@
                 <!-- Barre de recherche -->
                 <div class="flex-1 max-w-md mx-8" id="searchContainer" style="visibility: hidden;">
                     <div class="relative">
-                        <input type="text" id="searchInput" oninput="filtrerJoueurs()" placeholder="Rechercher un joueur, un club, un pays..." class="w-full bg-slate-50 border border-slate-200 rounded-xl py-2 px-5 pl-10 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:bg-white transition-all">
+                        <input type="text" id="searchInput" oninput="filtrerJoueurs()" placeholder="Rechercher un joueur, un club, un pays..." class="w-full bg-slate-50 border border-slate-200 rounded-lg px-4 py-2 text-sm focus:outline-none focus:border-emerald-500 focus:ring-2 focus:ring-emerald-100">
                         <div class="absolute left-3 top-2.5 text-slate-400">
                             <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
                         </div>
@@ -81,8 +93,8 @@
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex justify-center gap-4 py-4">
                 <button onclick="switchTab('groupes', this)" class="tab-btn bg-slate-900 text-white px-5 py-2 rounded-full text-sm font-bold shadow-sm transition-all">Calendrier & Groupes</button>
-                <button onclick="switchTab('phase-finale', this)" class="tab-btn bg-white border border-slate-300 text-slate-700 hover:bg-slate-50 px-5 py-2 rounded-full text-sm font-bold transition-all">Tableau Final 🏆</button>
-                <button onclick="switchTab('joueurs', this)" class="tab-btn bg-white border border-slate-300 text-slate-700 hover:bg-slate-50 px-5 py-2 rounded-full text-sm font-bold transition-all">Base de Données Joueurs</button>
+                <button onclick="switchTab('phase-finale', this)" class="tab-btn bg-white border border-slate-300 text-slate-700 hover:bg-slate-50 px-5 py-2 rounded-full text-sm font-bold transition-all">Tableau Final</button>
+                <button onclick="switchTab('joueurs', this)" class="tab-btn bg-white border border-slate-300 text-slate-700 hover:bg-slate-50 px-5 py-2 rounded-full text-sm font-bold transition-all">Base Joueurs</button>
             </div>
         </div>
     </div>
@@ -104,7 +116,7 @@
                 <h2 class="text-2xl font-black text-slate-900">Tableau à Élimination Directe</h2>
                 <p class="text-slate-500 text-sm mt-1">L'arbre respecte à 100% le croisement officiel de la FIFA pour éviter les conflits de groupes.</p>
             </div>
-            <div id="knockout-container" class="flex flex-col items-center"></div>
+            <div id="knockout-container" class="overflow-x-auto bg-white rounded-xl shadow-sm p-4"></div>
         </div>
 
         <!-- ONGLET 3 : BASE DE DONNÉES JOUEURS -->
@@ -164,29 +176,29 @@
         // --- LES VRAIS GROUPES OFFICIELS ---
         const groupMatches = [
             // Groupe A : Mexique, Afrique du Sud, Corée du Sud, Tchéquie
-            { group: 'A', date: '11/06 21:00', t1: 'MEX', t2: 'RSA' }, { group: 'A', date: '12/06 04:00', t1: 'KOR', t2: 'CZE' }, { group: 'A', date: '18/06 18:00', t1: 'CZE', t2: 'RSA' }, { group: 'A', date: '19/06 03:00', t1: 'MEX', t2: 'KOR' }, { group: 'A', date: '25/06 03:00', t1: 'CZE', t2: 'MEX' }, { group: 'A', date: '25/06 03:00', t1: 'RSA', t2: 'KOR' },
+            { group: 'A', date: '11/06 21:00', t1: 'MEX', t2: 'RSA' }, { group: 'A', date: '12/06 04:00', t1: 'KOR', t2: 'CZE' }, { group: 'A', date: '18/06 18:00', t1: 'CZE', t2: 'RSA' }, { group: 'A', date: '18/06 21:00', t1: 'MEX', t2: 'KOR' },
             // Groupe B : Canada, Suisse, Qatar, Bosnie
-            { group: 'B', date: '12/06 21:00', t1: 'CAN', t2: 'SUI' }, { group: 'B', date: '13/06 21:00', t1: 'QAT', t2: 'BIH' }, { group: 'B', date: '18/06 21:00', t1: 'SUI', t2: 'BIH' }, { group: 'B', date: '20/06 03:00', t1: 'CAN', t2: 'QAT' }, { group: 'B', date: '24/06 21:00', t1: 'SUI', t2: 'CAN' }, { group: 'B', date: '24/06 21:00', t1: 'BIH', t2: 'QAT' },
+            { group: 'B', date: '12/06 21:00', t1: 'CAN', t2: 'SUI' }, { group: 'B', date: '13/06 21:00', t1: 'QAT', t2: 'BIH' }, { group: 'B', date: '18/06 21:00', t1: 'SUI', t2: 'BIH' }, { group: 'B', date: '19/06 00:00', t1: 'CAN', t2: 'QAT' },
             // Groupe C : Suède, Maroc, Haïti, Ecosse
-            { group: 'C', date: '13/06 00:00', t1: 'SWE', t2: 'MAR' }, { group: 'C', date: '14/06 03:00', t1: 'HAI', t2: 'SCO' }, { group: 'C', date: '19/06 00:00', t1: 'SWE', t2: 'SCO' }, { group: 'C', date: '20/06 06:00', t1: 'MAR', t2: 'HAI' }, { group: 'C', date: '24/06 00:00', t1: 'SCO', t2: 'MAR' }, { group: 'C', date: '24/06 00:00', t1: 'SWE', t2: 'HAI' },
+            { group: 'C', date: '13/06 00:00', t1: 'SWE', t2: 'MAR' }, { group: 'C', date: '14/06 03:00', t1: 'HAI', t2: 'SCO' }, { group: 'C', date: '19/06 00:00', t1: 'SWE', t2: 'SCO' }, { group: 'C', date: '19/06 03:00', t1: 'MAR', t2: 'HAI' },
             // Groupe D : Brésil, Australie, USA, Turquie
-            { group: 'D', date: '13/06 03:00', t1: 'BRA', t2: 'TUR' }, { group: 'D', date: '14/06 06:00', t1: 'AUS', t2: 'USA' }, { group: 'D', date: '19/06 21:00', t1: 'USA', t2: 'TUR' }, { group: 'D', date: '21/06 02:00', t1: 'BRA', t2: 'AUS' }, { group: 'D', date: '26/06 04:00', t1: 'TUR', t2: 'AUS' }, { group: 'D', date: '26/06 04:00', t1: 'USA', t2: 'BRA' },
+            { group: 'D', date: '13/06 03:00', t1: 'BRA', t2: 'TUR' }, { group: 'D', date: '14/06 06:00', t1: 'AUS', t2: 'USA' }, { group: 'D', date: '19/06 21:00', t1: 'USA', t2: 'TUR' }, { group: 'D', date: '20/06 00:00', t1: 'AUS', t2: 'BRA' },
             // Groupe E : Paraguay, Côte d'Ivoire, Equateur, Allemagne
-            { group: 'E', date: '14/06 19:00', t1: 'PAR', t2: 'CIV' }, { group: 'E', date: '15/06 01:00', t1: 'ECU', t2: 'GER' }, { group: 'E', date: '20/06 22:00', t1: 'GER', t2: 'CIV' }, { group: 'E', date: '21/06 06:00', t1: 'PAR', t2: 'ECU' }, { group: 'E', date: '25/06 22:00', t1: 'ECU', t2: 'CIV' }, { group: 'E', date: '25/06 22:00', t1: 'GER', t2: 'PAR' },
+            { group: 'E', date: '14/06 19:00', t1: 'PAR', t2: 'CIV' }, { group: 'E', date: '15/06 01:00', t1: 'ECU', t2: 'GER' }, { group: 'E', date: '20/06 22:00', t1: 'GER', t2: 'CIV' }, { group: 'E', date: '21/06 01:00', t1: 'ECU', t2: 'PAR' },
             // Groupe F : Curaçao, Japon, Tunisie, Pays-Bas
-            { group: 'F', date: '14/06 22:00', t1: 'CUW', t2: 'JPN' }, { group: 'F', date: '15/06 04:00', t1: 'TUN', t2: 'NED' }, { group: 'F', date: '20/06 19:00', t1: 'NED', t2: 'JPN' }, { group: 'F', date: '21/06 06:00', t1: 'CUW', t2: 'TUN' }, { group: 'F', date: '26/06 01:00', t1: 'JPN', t2: 'TUN' }, { group: 'F', date: '26/06 01:00', t1: 'NED', t2: 'CUW' },
+            { group: 'F', date: '14/06 22:00', t1: 'CUW', t2: 'JPN' }, { group: 'F', date: '15/06 04:00', t1: 'TUN', t2: 'NED' }, { group: 'F', date: '20/06 19:00', t1: 'NED', t2: 'JPN' }, { group: 'F', date: '20/06 22:00', t1: 'TUN', t2: 'CUW' },
             // Groupe G : Belgique, Egypte, Iran, Nouvelle-Zélande
-            { group: 'G', date: '15/06 21:00', t1: 'BEL', t2: 'EGY' }, { group: 'G', date: '16/06 03:00', t1: 'IRN', t2: 'NZL' }, { group: 'G', date: '21/06 21:00', t1: 'BEL', t2: 'IRN' }, { group: 'G', date: '22/06 03:00', t1: 'NZL', t2: 'EGY' }, { group: 'G', date: '27/06 05:00', t1: 'EGY', t2: 'IRN' }, { group: 'G', date: '27/06 05:00', t1: 'NZL', t2: 'BEL' },
+            { group: 'G', date: '15/06 21:00', t1: 'BEL', t2: 'EGY' }, { group: 'G', date: '16/06 03:00', t1: 'IRN', t2: 'NZL' }, { group: 'G', date: '21/06 21:00', t1: 'BEL', t2: 'IRN' }, { group: 'G', date: '22/06 00:00', t1: 'EGY', t2: 'NZL' },
             // Groupe H : Espagne, Arabie Saoudite, Uruguay, Cap-Vert
-            { group: 'H', date: '15/06 18:00', t1: 'ESP', t2: 'CPV' }, { group: 'H', date: '16/06 00:00', t1: 'KSA', t2: 'URU' }, { group: 'H', date: '21/06 18:00', t1: 'ESP', t2: 'KSA' }, { group: 'H', date: '22/06 00:00', t1: 'URU', t2: 'CPV' }, { group: 'H', date: '27/06 02:00', t1: 'CPV', t2: 'KSA' }, { group: 'H', date: '27/06 02:00', t1: 'URU', t2: 'ESP' },
+            { group: 'H', date: '15/06 18:00', t1: 'ESP', t2: 'CPV' }, { group: 'H', date: '16/06 00:00', t1: 'KSA', t2: 'URU' }, { group: 'H', date: '21/06 18:00', t1: 'ESP', t2: 'KSA' }, { group: 'H', date: '21/06 21:00', t1: 'URU', t2: 'CPV' },
             // Groupe I : France, Senegal, Norvege, Irak
-            { group: 'I', date: '16/06 21:00', t1: 'FRA', t2: 'SEN' }, { group: 'I', date: '17/06 00:00', t1: 'IRQ', t2: 'NOR' }, { group: 'I', date: '22/06 23:00', t1: 'FRA', t2: 'IRQ' }, { group: 'I', date: '23/06 02:00', t1: 'NOR', t2: 'SEN' }, { group: 'I', date: '26/06 21:00', t1: 'NOR', t2: 'FRA' }, { group: 'I', date: '26/06 21:00', t1: 'SEN', t2: 'IRQ' },
+            { group: 'I', date: '16/06 21:00', t1: 'FRA', t2: 'SEN' }, { group: 'I', date: '17/06 00:00', t1: 'IRQ', t2: 'NOR' }, { group: 'I', date: '22/06 23:00', t1: 'FRA', t2: 'IRQ' }, { group: 'I', date: '23/06 02:00', t1: 'SEN', t2: 'NOR' },
             // Groupe J : Argentine, Algerie, Autriche, Jordanie
-            { group: 'J', date: '17/06 03:00', t1: 'ARG', t2: 'ALG' }, { group: 'J', date: '17/06 06:00', t1: 'AUT', t2: 'JOR' }, { group: 'J', date: '22/06 19:00', t1: 'ARG', t2: 'AUT' }, { group: 'J', date: '23/06 05:00', t1: 'JOR', t2: 'ALG' }, { group: 'J', date: '28/06 04:00', t1: 'ALG', t2: 'AUT' }, { group: 'J', date: '28/06 04:00', t1: 'JOR', t2: 'ARG' },
+            { group: 'J', date: '17/06 03:00', t1: 'ARG', t2: 'ALG' }, { group: 'J', date: '17/06 06:00', t1: 'AUT', t2: 'JOR' }, { group: 'J', date: '22/06 19:00', t1: 'ARG', t2: 'AUT' }, { group: 'J', date: '22/06 22:00', t1: 'ALG', t2: 'JOR' },
             // Groupe K : Portugal, Ouzbekistan, Colombie, RD Congo
-            { group: 'K', date: '17/06 19:00', t1: 'POR', t2: 'DRC' }, { group: 'K', date: '18/06 04:00', t1: 'UZB', t2: 'COL' }, { group: 'K', date: '23/06 19:00', t1: 'POR', t2: 'UZB' }, { group: 'K', date: '24/06 04:00', t1: 'COL', t2: 'DRC' }, { group: 'K', date: '28/06 01:30', t1: 'COL', t2: 'POR' }, { group: 'K', date: '28/06 01:30', t1: 'DRC', t2: 'UZB' },
+            { group: 'K', date: '17/06 19:00', t1: 'POR', t2: 'DRC' }, { group: 'K', date: '18/06 04:00', t1: 'UZB', t2: 'COL' }, { group: 'K', date: '23/06 19:00', t1: 'POR', t2: 'UZB' }, { group: 'K', date: '23/06 22:00', t1: 'COL', t2: 'DRC' },
             // Groupe L : Angleterre, Croatie, Ghana, Panama
-            { group: 'L', date: '17/06 22:00', t1: 'ENG', t2: 'CRO' }, { group: 'L', date: '18/06 01:00', t1: 'GHA', t2: 'PAN' }, { group: 'L', date: '23/06 22:00', t1: 'ENG', t2: 'GHA' }, { group: 'L', date: '24/06 01:00', t1: 'PAN', t2: 'CRO' }, { group: 'L', date: '27/06 23:00', t1: 'PAN', t2: 'ENG' }, { group: 'L', date: '27/06 23:00', t1: 'CRO', t2: 'GHA' }
+            { group: 'L', date: '17/06 22:00', t1: 'ENG', t2: 'CRO' }, { group: 'L', date: '18/06 01:00', t1: 'GHA', t2: 'PAN' }, { group: 'L', date: '23/06 22:00', t1: 'ENG', t2: 'GHA' }, { group: 'L', date: '24/06 01:00', t1: 'CRO', t2: 'PAN' }
         ];
 
         // --- ARBRE OFFICIEL (CALQUE SUR VOTRE CAPTURE ET LES RÈGLES FIFA) ---
@@ -264,7 +276,7 @@
         // ==========================================
         document.addEventListener("DOMContentLoaded", () => {
             renderGroups();
-            renderKnockout();
+            renderKnockoutTree();
             chargerTousLesFichiersCSV();
             setTimeout(loadData, 500);
         });
@@ -315,44 +327,47 @@
             });
         }
 
-        function renderKnockout() {
+        function renderKnockoutTree() {
             const container = document.getElementById('knockout-container');
+            container.innerHTML = '';
+            
+            const tree = document.createElement('div');
+            tree.className = 'knockout-tree';
+
             knockoutRounds.forEach(round => {
-                const section = document.createElement('div');
-                section.className = 'round-section';
-                section.innerHTML = `<div class="round-title">${round.title}</div>`;
+                const roundDiv = document.createElement('div');
+                roundDiv.className = 'knockout-round';
                 
-                const grid = document.createElement('div');
-                grid.className = "flex flex-wrap justify-center gap-6 w-full mt-6";
+                const roundLabel = document.createElement('div');
+                roundLabel.className = 'text-center font-bold text-sm text-slate-700 mb-2 px-2';
+                roundLabel.textContent = round.title;
+                roundDiv.appendChild(roundLabel);
 
                 round.matches.forEach(match => {
-                    const isFinale = match.id === 'M104';
-                    grid.innerHTML += `
-                        <div class="sim-card ${isFinale ? 'finale-card' : ''}">
-                            <div class="sim-card-title" style="font-size:1rem; margin-bottom:0.5rem; border:none; padding:0;">${isFinale ? '🏆 ' : ''}${match.date}</div>
-                            <div class="match-row" style="border:none; padding:0; margin:0;">
-                                <div class="flex flex-col gap-3 mt-3">
-                                    <div class="flex justify-between items-center w-full gap-2">
-                                        <div class="relative flex-1 group focus-within:ring-2 focus-within:ring-emerald-500 rounded-md">
-                                            <img id="flag-${match.id}-t1" src="" class="absolute left-2 top-1/2 -translate-y-1/2 w-[18px] h-[13px] rounded-[2px] object-cover hidden shadow-sm z-10">
-                                            <input type="text" id="${match.id}-t1" class="team-input saveData w-full pl-8 pr-2 relative" placeholder="${match.p1}" oninput="updateKnockoutProgression(); saveAndCalculate()">
-                                        </div>
-                                        <input type="number" min="0" id="${match.id}-s1" class="score-input saveData" oninput="updateKnockoutProgression(); saveAndCalculate()">
-                                    </div>
-                                    <div class="flex justify-between items-center w-full gap-2">
-                                        <div class="relative flex-1 group focus-within:ring-2 focus-within:ring-emerald-500 rounded-md">
-                                            <img id="flag-${match.id}-t2" src="" class="absolute left-2 top-1/2 -translate-y-1/2 w-[18px] h-[13px] rounded-[2px] object-cover hidden shadow-sm z-10">
-                                            <input type="text" id="${match.id}-t2" class="team-input saveData w-full pl-8 pr-2 relative" placeholder="${match.p2}" oninput="updateKnockoutProgression(); saveAndCalculate()">
-                                        </div>
-                                        <input type="number" min="0" id="${match.id}-s2" class="score-input saveData" oninput="updateKnockoutProgression(); saveAndCalculate()">
-                                    </div>
-                                </div>
-                            </div>
-                        </div>`;
+                    const matchDiv = document.createElement('div');
+                    matchDiv.className = `knockout-match ${match.id === 'M104' ? 'finale' : ''}`;
+                    
+                    let matchHTML = `<div class="knockout-match-title">${match.date}</div>`;
+                    
+                    matchHTML += `
+                        <div class="knockout-team-row">
+                            <input type="text" id="${match.id}-t1" class="knockout-team-name saveData" placeholder="${match.p1}" oninput="updateKnockoutProgression(); saveAndCalculate()">
+                            <input type="number" min="0" id="${match.id}-s1" class="knockout-score saveData" oninput="updateKnockoutProgression(); saveAndCalculate()">
+                        </div>
+                        <div class="knockout-team-row">
+                            <input type="text" id="${match.id}-t2" class="knockout-team-name saveData" placeholder="${match.p2}" oninput="updateKnockoutProgression(); saveAndCalculate()">
+                            <input type="number" min="0" id="${match.id}-s2" class="knockout-score saveData" oninput="updateKnockoutProgression(); saveAndCalculate()">
+                        </div>
+                    `;
+                    
+                    matchDiv.innerHTML = matchHTML;
+                    roundDiv.appendChild(matchDiv);
                 });
-                section.appendChild(grid);
-                container.appendChild(section);
+
+                tree.appendChild(roundDiv);
             });
+
+            container.appendChild(tree);
         }
 
         // ==========================================
@@ -481,23 +496,6 @@
         }
 
         function updateKnockoutProgression() {
-            document.querySelectorAll('.team-input').forEach(input => {
-                let teamName = input.value.trim().toUpperCase();
-                let code = flagCodes[teamName];
-                let imgEl = document.getElementById('flag-' + input.id);
-                
-                if (imgEl) {
-                    if (code) {
-                        imgEl.src = `https://flagcdn.com/w20/${code}.png`;
-                        imgEl.classList.remove('hidden');
-                        input.classList.remove('pl-2');
-                    } else {
-                        imgEl.classList.add('hidden');
-                        input.classList.add('pl-2');
-                    }
-                }
-            });
-
             for (let matchId in knockoutProgression) {
                 let s1 = parseInt(document.getElementById(`${matchId}-s1`)?.value);
                 let s2 = parseInt(document.getElementById(`${matchId}-s2`)?.value);
@@ -522,12 +520,6 @@
                     }
                 }
             }
-            
-            document.querySelectorAll('.team-input').forEach(input => {
-                let code = flagCodes[input.value.trim().toUpperCase()];
-                let imgEl = document.getElementById('flag-' + input.id);
-                if (imgEl && code) { imgEl.src = `https://flagcdn.com/w20/${code}.png`; imgEl.classList.remove('hidden'); }
-            });
         }
 
         // ==========================================
@@ -592,7 +584,7 @@
                                     } else if (nameCol && String(nameCol).trim() !== '') {
                                         if (currentStats) {
                                             let nomAffiche = String(nameCol).trim().replace(/(Blessure|Suspendu|Carton).*/i, '').trim();
-                                            records.push({ Nom: nomAffiche, Pays: paysFormatter, Poste: currentStats.Poste, Club: currentStats.Club, Age: currentStats.Age, SelectionNumero: currentStats.SelectionNumero, ValeurText: (currentStats.ValeurText === '-' || !currentStats.ValeurText) ? 'N/A' : currentStats.ValeurText, ValeurNum: currentStats.ValeurNum });
+                                            records.push({ Nom: nomAffiche, Pays: paysFormatter, Poste: currentStats.Poste, Club: currentStats.Club, Age: currentStats.Age, SelectionNumero: currentStats.SelectionNumero, ValeurText: currentStats.ValeurText, ValeurNum: currentStats.ValeurNum });
                                             currentStats = null;
                                         }
                                     }
