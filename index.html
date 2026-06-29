@@ -12,63 +12,59 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;900&display=swap" rel="stylesheet">
     
     <style>
-        body { font-family: 'Inter', sans-serif; background-color: #f8fafc; }
+        body { font-family: 'Inter', sans-serif; background-color: #0f172a; color: white; }
         
-        /* Cacher les pages non actives */
         .page-content { display: none; }
         .page-content.active { display: block; }
 
-        .sim-card { background: white; border-radius: 1rem; border: 1px solid #f1f5f9; box-shadow: 0 1px 3px rgba(0,0,0,0.05); padding: 1.5rem; width: 100%; max-width: 340px; display: flex; flex-direction: column; }
-        .sim-card-title { font-size: 1.25rem; font-weight: 900; color: #0f172a; text-align: center; margin-bottom: 1rem; padding-bottom: 0.75rem; border-bottom: 2px solid #f8fafc; }
-        .match-row { margin-bottom: 0.75rem; padding-bottom: 0.75rem; border-bottom: 1px dashed #e2e8f0; }
+        .sim-card { background: #1e293b; border-radius: 1rem; border: 1px solid #334155; padding: 1.5rem; width: 100%; max-width: 340px; display: flex; flex-direction: column; }
+        .sim-card-title { font-size: 1.25rem; font-weight: 900; color: #f8fafc; text-align: center; margin-bottom: 1rem; padding-bottom: 0.75rem; border-bottom: 2px solid #334155; }
+        .match-row { margin-bottom: 0.75rem; padding-bottom: 0.75rem; border-bottom: 1px dashed #475569; }
         .match-row:last-of-type { border-bottom: none; margin-bottom: 0; padding-bottom: 0; }
         .date-time { font-size: 0.65rem; color: #94a3b8; text-align: center; margin-bottom: 0.5rem; display: block; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; }
         .teams-scores { display: flex; align-items: center; justify-content: space-between; }
-        .team { font-size: 0.875rem; font-weight: 700; width: 90px; display: flex; align-items: center; gap: 8px; color: #1e293b; }
+        .team { font-size: 0.875rem; font-weight: 700; width: 90px; display: flex; align-items: center; gap: 8px; color: #f8fafc; }
         .team.right { justify-content: flex-end; text-align: right; }
-        .flag { width: 22px; height: auto; border-radius: 3px; box-shadow: 0 1px 2px rgba(0,0,0,0.1); }
-        .score-input { width: 36px; height: 30px; text-align: center; font-size: 0.875rem; font-weight: 800; border: 1px solid #cbd5e1; border-radius: 6px; background-color: #f8fafc; margin: 0 4px; color: #0f172a; transition: all 0.2s; -moz-appearance: textfield;}
-        .score-input::-webkit-outer-spin-button, .score-input::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
-        .score-input:focus { outline: none; border-color: #059669; background-color: #ffffff; box-shadow: 0 0 0 3px rgba(5, 150, 105, 0.1); }
         
-        .standings-table { width: 100%; border-collapse: collapse; font-size: 0.75rem; margin-top: 1rem; border-top: 2px solid #0f172a; padding-top: 0.5rem; }
-        .standings-table th, .standings-table td { padding: 0.5rem 0.2rem; text-align: center; border-bottom: 1px solid #f1f5f9; color: #475569; }
+        input[type="number"]::-webkit-inner-spin-button, input[type="number"]::-webkit-outer-spin-button { -webkit-appearance: none; margin: 0; }
+        input[type="number"] { -moz-appearance: textfield; }
+        
+        .score-input { width: 36px; height: 30px; text-align: center; font-size: 0.875rem; font-weight: 800; border: 1px solid #475569; border-radius: 6px; background-color: #0f172a; margin: 0 4px; color: #f8fafc; transition: all 0.2s;}
+        .score-input:focus { outline: none; border-color: #059669; box-shadow: 0 0 0 3px rgba(5, 150, 105, 0.2); }
+        
+        .standings-table { width: 100%; border-collapse: collapse; font-size: 0.75rem; margin-top: 1rem; border-top: 2px solid #cbd5e1; padding-top: 0.5rem; }
+        .standings-table th, .standings-table td { padding: 0.5rem 0.2rem; text-align: center; border-bottom: 1px solid #334155; color: #cbd5e1; }
         .standings-table th { font-size: 0.65rem; font-weight: 700; text-transform: uppercase; color: #94a3b8; }
-        .standings-table .team-cell { text-align: left; display: flex; align-items: center; gap: 6px; font-weight: 700; color: #1e293b; }
-        .pts-col { font-weight: 900; color: #0f172a; font-size: 0.875rem; }
-        .qualif-zone { background-color: #ecfdf5; }
+        .standings-table .team-cell { text-align: left; display: flex; align-items: center; gap: 6px; font-weight: 700; color: #f8fafc; }
+        .pts-col { font-weight: 900; color: #f8fafc; font-size: 0.875rem; }
+        .qualif-zone { background-color: rgba(5, 150, 105, 0.1); }
 
-        .round-section { width: 100%; text-align: center; margin: 2rem 0 1rem; }
-        .round-title { font-size: 1.25rem; color: #0f172a; font-weight: 900; background: white; display: inline-block; padding: 0.5rem 2rem; border-radius: 2rem; box-shadow: 0 2px 10px rgba(0,0,0,0.05); border: 1px solid #f1f5f9; }
-        
-        .team-input { width: 100%; height: 30px; text-align: left; font-size: 0.75rem; font-weight: 800; text-transform: uppercase; border: 1px dashed #cbd5e1; border-radius: 6px; color: #0f172a; outline: none; transition: 0.2s; background: white;}
-        .team-input:focus { border-color: #059669; border-style: solid; background: #ecfdf5;}
-        
-        .finale-card { border: 2px solid #fbbf24; box-shadow: 0 4px 15px rgba(251, 191, 36, 0.15); }
-        .finale-card .sim-card-title { color: #d97706; }
+        /* BRACKET TREE DESIGN */
+        .bracket-scroll { overflow-x: auto; padding-bottom: 2rem; cursor: grab; }
+        .bracket-box { background: #1e293b; border: 1px solid #334155; border-radius: 8px; padding: 8px; box-shadow: 0 2px 6px rgba(0,0,0,0.1); width: 100%; transition: 0.2s;}
+        .bracket-box:hover { border-color: #cbd5e1; }
+        .b-input { width: 100%; font-size: 0.7rem; font-weight: 800; background: transparent; color: white; outline: none; text-transform: uppercase;}
+        .b-score { width: 24px; text-align: center; font-size: 0.75rem; font-weight: 900; background: #0f172a; border: 1px solid #475569; border-radius: 4px; color: white; outline: none;}
+        .b-score:focus { border-color: #059669; }
     </style>
 </head>
-<body class="text-slate-900 antialiased">
+<body class="antialiased">
 
     <!-- BARRE DE NAVIGATION -->
-    <nav class="bg-white border-b border-slate-200 sticky top-0 z-50">
+    <nav class="bg-slate-900 border-b border-slate-800 sticky top-0 z-50">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex justify-between h-16 items-center">
                 <div class="flex-shrink-0 flex items-center">
-                    <span class="text-xl font-black tracking-wider text-slate-950">FOOT<span class="text-emerald-600">MARKET</span></span>
-                    <span class="ml-2 bg-emerald-100 text-emerald-800 text-[10px] font-bold px-2 py-0.5 rounded-full">WC 2026</span>
+                    <span class="text-xl font-black tracking-wider text-white">FOOT<span class="text-emerald-500">MARKET</span></span>
+                    <span class="ml-2 bg-emerald-900 text-emerald-300 text-[10px] font-bold px-2 py-0.5 rounded-full">WC 2026</span>
                 </div>
-                <!-- Barre de recherche -->
                 <div class="flex-1 max-w-md mx-8" id="searchContainer" style="visibility: hidden;">
                     <div class="relative">
-                        <input type="text" id="searchInput" oninput="filtrerJoueurs()" placeholder="Rechercher un joueur, un club, un pays..." class="w-full bg-slate-50 border border-slate-200 rounded-xl py-2 px-5 pl-10 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:bg-white transition-all">
-                        <div class="absolute left-3 top-2.5 text-slate-400">
-                            <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
-                        </div>
+                        <input type="text" id="searchInput" oninput="filtrerJoueurs()" placeholder="Rechercher un joueur..." class="w-full bg-slate-800 border border-slate-700 rounded-xl py-2 px-5 pl-10 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500 text-white placeholder-slate-400">
                     </div>
                 </div>
                 <div>
-                    <button onclick="resetAll()" class="bg-rose-500 hover:bg-rose-600 text-white text-xs font-bold px-4 py-2 rounded-lg transition-colors shadow-sm">
+                    <button onclick="resetAll()" class="bg-rose-600 hover:bg-rose-500 text-white text-xs font-bold px-4 py-2 rounded-lg transition-colors shadow-sm">
                         🗑️ Effacer Scores
                     </button>
                 </div>
@@ -77,67 +73,64 @@
     </nav>
 
     <!-- ONGLETS -->
-    <div class="bg-white border-b border-slate-200">
+    <div class="bg-slate-900 border-b border-slate-800">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex justify-center gap-4 py-4">
-                <button onclick="switchTab('groupes', this)" class="tab-btn bg-slate-900 text-white px-5 py-2 rounded-full text-sm font-bold shadow-sm transition-all">Calendrier & Groupes</button>
-                <button onclick="switchTab('phase-finale', this)" class="tab-btn bg-white border border-slate-300 text-slate-700 hover:bg-slate-50 px-5 py-2 rounded-full text-sm font-bold transition-all">Tableau Final 🏆</button>
-                <button onclick="switchTab('joueurs', this)" class="tab-btn bg-white border border-slate-300 text-slate-700 hover:bg-slate-50 px-5 py-2 rounded-full text-sm font-bold transition-all">Base de Données Joueurs</button>
+                <button onclick="switchTab('phase-finale', this)" class="tab-btn bg-emerald-600 text-white px-5 py-2 rounded-full text-sm font-bold shadow-sm transition-all border border-emerald-500">Tableau Final 🏆</button>
+                <button onclick="switchTab('groupes', this)" class="tab-btn bg-slate-800 border border-slate-700 text-slate-300 hover:bg-slate-700 px-5 py-2 rounded-full text-sm font-bold transition-all">Calendrier & Groupes</button>
+                <button onclick="switchTab('joueurs', this)" class="tab-btn bg-slate-800 border border-slate-700 text-slate-300 hover:bg-slate-700 px-5 py-2 rounded-full text-sm font-bold transition-all">Base de Données Joueurs</button>
             </div>
         </div>
     </div>
 
-    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <main class="max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8 py-8">
         
-        <!-- ONGLET 1 : GROUPES ET CALENDRIER -->
-        <div id="page-groupes" class="page-content active">
+        <!-- ONGLET 1 : TABLEAU FINAL (ARBRE VISUEL) -->
+        <div id="page-phase-finale" class="page-content active">
+            <div class="mb-6 text-center">
+                <h2 class="text-2xl font-black text-white">L'Arbre de la Coupe du Monde</h2>
+                <p class="text-slate-400 text-sm mt-1">Le vrai croisement du tournoi. Les scores propulsent les équipes au tour suivant.</p>
+            </div>
+            
+            <!-- CONTENEUR DU BRACKET HORIZONTAL -->
+            <div class="bracket-scroll">
+                <div id="knockout-container" class="flex flex-nowrap justify-between w-full min-w-[1200px] gap-4">
+                    <!-- Généré par JS -->
+                </div>
+            </div>
+        </div>
+
+        <!-- ONGLET 2 : GROUPES ET CALENDRIER -->
+        <div id="page-groupes" class="page-content">
             <div class="mb-8 text-center">
-                <h2 class="text-2xl font-black text-slate-900">Phase de Groupes</h2>
-                <p class="text-slate-500 text-sm mt-1">Les 1ers, 2èmes et les 8 Meilleurs 3èmes s'envoient automatiquement dans le Tableau Final (Règles Officielles).</p>
+                <h2 class="text-2xl font-black text-white">Phase de Groupes</h2>
+                <p class="text-slate-400 text-sm mt-1">Remplissez les scores, le classement génère automatiquement l'arbre final.</p>
             </div>
             <div id="groupes-container" class="flex flex-wrap justify-center gap-6"></div>
         </div>
 
-        <!-- ONGLET 2 : TABLEAU FINAL -->
-        <div id="page-phase-finale" class="page-content">
-            <div class="mb-8 text-center">
-                <h2 class="text-2xl font-black text-slate-900">Tableau à Élimination Directe</h2>
-                <p class="text-slate-500 text-sm mt-1">L'arbre respecte à 100% le croisement officiel de la FIFA pour éviter les conflits de groupes.</p>
-            </div>
-            <div id="knockout-container" class="flex flex-col items-center"></div>
-        </div>
-
         <!-- ONGLET 3 : BASE DE DONNÉES JOUEURS -->
         <div id="page-joueurs" class="page-content">
-            <div class="mb-8 bg-slate-950 text-white rounded-2xl p-8 md:p-12 relative overflow-hidden shadow-lg">
-                <div class="relative z-10 max-w-lg">
-                    <span class="text-xs font-bold uppercase tracking-widest text-emerald-400">Valeurs Marchandes</span>
-                    <h1 class="text-3xl md:text-4xl font-black mt-2 mb-4 leading-tight">Les Équipes de la Coupe du Monde</h1>
-                    <p class="text-slate-400 text-sm">Explorez les effectifs des 48 nations, analysez les stats et comparez les valeurs marchandes des joueurs sélectionnés.</p>
-                </div>
-            </div>
-
             <div class="flex flex-col lg:flex-row gap-8">
                 <aside class="w-full lg:w-64 flex-shrink-0">
-                    <div class="bg-white p-6 rounded-xl border border-slate-200 sticky top-24 shadow-sm">
+                    <div class="bg-slate-800 p-6 rounded-xl border border-slate-700 sticky top-24 shadow-sm">
                         <h2 class="text-xs font-bold uppercase tracking-wider text-slate-400 mb-3">Filtrer par Pays</h2>
-                        <div class="space-y-1 mb-6 max-h-60 overflow-y-auto pr-2 custom-scrollbar" id="paysFilters"></div>
-                        <hr class="my-4 border-slate-100">
+                        <div class="space-y-1 mb-6 max-h-60 overflow-y-auto pr-2" id="paysFilters"></div>
+                        <hr class="my-4 border-slate-700">
                         <h2 class="text-xs font-bold uppercase tracking-wider text-slate-400 mb-3">Poste</h2>
                         <div class="space-y-1" id="posteFilters"></div>
                     </div>
                 </aside>
-
                 <section class="flex-1">
                     <div class="flex justify-between items-center mb-6">
-                        <p class="text-sm text-slate-500"><span id="joueurCount" class="font-bold text-slate-950">0</span> joueurs trouvés</p>
-                        <select id="sortSelect" onchange="filtrerJoueurs()" class="bg-transparent text-sm font-semibold text-slate-700 focus:outline-none cursor-pointer">
+                        <p class="text-sm text-slate-400"><span id="joueurCount" class="font-bold text-white">0</span> joueurs trouvés</p>
+                        <select id="sortSelect" onchange="filtrerJoueurs()" class="bg-slate-800 border border-slate-700 text-white rounded px-3 py-1 text-sm outline-none">
                             <option value="valeurDesc">Valeur : Élevée à Faible</option>
                             <option value="valeurAsc">Valeur : Faible à Élevée</option>
                             <option value="nom">Nom (A-Z)</option>
                         </select>
                     </div>
-                    <div id="joueursGrid" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
+                    <div id="joueursGrid" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-4">
                         <div class="col-span-full text-center py-12 text-slate-400 text-sm">Extraction des joueurs en cours...</div>
                     </div>
                 </section>
@@ -146,7 +139,6 @@
 
     </main>
 
-    <!-- LOGIQUE JAVASCRIPT GLOBALE -->
     <script>
         let tousLesJoueurs = [];
         let paysSelectionne = 'Tous';
@@ -161,7 +153,6 @@
             POR: 'pt', UZB: 'uz', COL: 'co', DRC: 'cd', ENG: 'gb-eng', GHA: 'gh', PAN: 'pa', CRO: 'hr'
         };
 
-        // --- LES VRAIS GROUPES OFFICIELS ---
         const groupMatches = [
             { group: 'A', date: '11/06 21:00', t1: 'MEX', t2: 'RSA' }, { group: 'A', date: '12/06 04:00', t1: 'KOR', t2: 'CZE' }, { group: 'A', date: '18/06 18:00', t1: 'CZE', t2: 'RSA' }, { group: 'A', date: '19/06 03:00', t1: 'MEX', t2: 'KOR' }, { group: 'A', date: '25/06 03:00', t1: 'CZE', t2: 'MEX' }, { group: 'A', date: '25/06 03:00', t1: 'RSA', t2: 'KOR' },
             { group: 'B', date: '12/06 21:00', t1: 'CAN', t2: 'SUI' }, { group: 'B', date: '13/06 21:00', t1: 'QAT', t2: 'BIH' }, { group: 'B', date: '18/06 21:00', t1: 'SUI', t2: 'BIH' }, { group: 'B', date: '20/06 03:00', t1: 'CAN', t2: 'QAT' }, { group: 'B', date: '24/06 21:00', t1: 'SUI', t2: 'CAN' }, { group: 'B', date: '24/06 21:00', t1: 'BIH', t2: 'QAT' },
@@ -177,79 +168,46 @@
             { group: 'L', date: '17/06 22:00', t1: 'ENG', t2: 'CRO' }, { group: 'L', date: '18/06 01:00', t1: 'GHA', t2: 'PAN' }, { group: 'L', date: '23/06 22:00', t1: 'ENG', t2: 'GHA' }, { group: 'L', date: '24/06 01:00', t1: 'PAN', t2: 'CRO' }, { group: 'L', date: '27/06 23:00', t1: 'PAN', t2: 'ENG' }, { group: 'L', date: '27/06 23:00', t1: 'CRO', t2: 'GHA' }
         ];
 
-        // --- ARBRE OFFICIEL (CALQUÉ SUR LES REGLES OFFICIELLES) ---
-        const knockoutRounds = [
-            { title: "Seizièmes de finale", matches: [
-                { id: 'M73', date: 'N°73 (28 juin)', p1: '2A', p2: '2B' },
-                { id: 'M74', date: 'N°74 (29 juin)', p1: '1C', p2: '2F' },
-                { id: 'M75', date: 'N°75 (30 juin)', p1: '1F', p2: '2C' },
-                { id: 'M76', date: 'N°76 (29 juin)', p1: '1E', p2: '3ème' },
-                { id: 'M77', date: 'N°77 (30 juin)', p1: '2E', p2: '2I' },
-                { id: 'M78', date: 'N°78 (30 juin)', p1: '1I', p2: '3ème' },
-                { id: 'M79', date: 'N°79 (1 juillet)', p1: '1A', p2: '3ème' },
-                { id: 'M80', date: 'N°80 (1 juillet)', p1: '1L', p2: '3ème' },
-                { id: 'M81', date: 'N°81 (2 juillet)', p1: '1D', p2: '3ème' },
-                { id: 'M82', date: 'N°82 (1 juillet)', p1: '1G', p2: '3ème' },
-                { id: 'M83', date: 'N°83 (3 juillet)', p1: '2K', p2: '2L' },
-                { id: 'M84', date: 'N°84 (2 juillet)', p1: '1H', p2: '2J' },
-                { id: 'M85', date: 'N°85 (3 juillet)', p1: '1B', p2: '3ème' },
-                { id: 'M86', date: 'N°86 (4 juillet)', p1: '1J', p2: '2H' },
-                { id: 'M87', date: 'N°87 (4 juillet)', p1: '1K', p2: '3ème' },
-                { id: 'M88', date: 'N°88 (3 juillet)', p1: '2D', p2: '2G' }
-            ]},
-            { title: "Huitièmes de finale", matches: [
-                { id: 'M89', date: 'N°89', p1: 'Vainq. N°74', p2: 'Vainq. N°76' },
-                { id: 'M90', date: 'N°90', p1: 'Vainq. N°73', p2: 'Vainq. N°75' },
-                { id: 'M91', date: 'N°91', p1: 'Vainq. N°77', p2: 'Vainq. N°78' },
-                { id: 'M92', date: 'N°92', p1: 'Vainq. N°79', p2: 'Vainq. N°80' },
-                { id: 'M93', date: 'N°93', p1: 'Vainq. N°83', p2: 'Vainq. N°84' },
-                { id: 'M94', date: 'N°94', p1: 'Vainq. N°81', p2: 'Vainq. N°82' },
-                { id: 'M95', date: 'N°95', p1: 'Vainq. N°86', p2: 'Vainq. N°88' },
-                { id: 'M96', date: 'N°96', p1: 'Vainq. N°85', p2: 'Vainq. N°87' }
-            ]},
-            { title: "Quarts de finale", matches: [
-                { id: 'M97', date: 'N°97', p1: 'Vainq. N°89', p2: 'Vainq. N°90' },
-                { id: 'M98', date: 'N°98', p1: 'Vainq. N°93', p2: 'Vainq. N°94' },
-                { id: 'M99', date: 'N°99', p1: 'Vainq. N°91', p2: 'Vainq. N°92' },
-                { id: 'M100', date: 'N°100', p1: 'Vainq. N°95', p2: 'Vainq. N°96' }
-            ]},
-            { title: "Demi-finales", matches: [
-                { id: 'M101', date: 'N°101', p1: 'Vainq. N°97', p2: 'Vainq. N°98' },
-                { id: 'M102', date: 'N°102', p1: 'Vainq. N°99', p2: 'Vainq. N°100' }
-            ]},
-            { title: "Match pour la 3e place", matches: [
-                { id: 'M103', date: 'N°103 (Petite Finale)', p1: 'Perdant N°101', p2: 'Perdant N°102' }
-            ]},
-            { title: "Finale 🏆", matches: [
-                { id: 'M104', date: 'N°104 (Grande Finale)', p1: 'Vainq. N°101', p2: 'Vainq. N°102' }
-            ]}
+        // --- MAPPING EXACT POUR REPRODUIRE L'IMAGE "FABRIZIO ROMANO" ---
+        const leftR32 = [
+            { id: 'M1', p1: '1E', p2: '2E' }, { id: 'M2', p1: '1I', p2: '1C' }, { id: 'M3', p1: '2A', p2: '1B' }, { id: 'M4', p1: '1F', p2: '2C' },
+            { id: 'M5', p1: '1K', p2: '2L' }, { id: 'M6', p1: '1H', p2: '3ème' }, { id: 'M7', p1: '2D', p2: '3ème' }, { id: 'M8', p1: '1G', p2: '2I' }
         ];
+        const rightR32 = [
+            { id: 'M9', p1: '1D', p2: '2F' }, { id: 'M10', p1: '3ème', p2: '3ème' }, { id: 'M11', p1: '1A', p2: '3ème' }, { id: 'M12', p1: '1L', p2: '3ème' },
+            { id: 'M13', p1: '1J', p2: '2H' }, { id: 'M14', p1: '3ème', p2: '2G' }, { id: 'M15', p1: '2B', p2: '2J' }, { id: 'M16', p1: '2K', p2: '3ème' }
+        ];
+        const leftR16 = ['M17', 'M18', 'M19', 'M20'];
+        const rightR16 = ['M21', 'M22', 'M23', 'M24'];
+        const leftQF = ['M25', 'M26'];
+        const rightQF = ['M27', 'M28'];
+        const leftSF = ['M29'];
+        const rightSF = ['M30'];
 
-        // Transfert des groupes vers les Seizièmes
+        // Envoi des équipes des groupes vers les Seizièmes
         const groupToR32 = {
-            'A': { '1': 'M79-t1', '2': 'M73-t1' }, 'B': { '1': 'M85-t1', '2': 'M73-t2' },
-            'C': { '1': 'M74-t1', '2': 'M75-t2' }, 'D': { '1': 'M81-t1', '2': 'M88-t1' },
-            'E': { '1': 'M76-t1', '2': 'M77-t1' }, 'F': { '1': 'M75-t1', '2': 'M74-t2' },
-            'G': { '1': 'M82-t1', '2': 'M88-t2' }, 'H': { '1': 'M84-t1', '2': 'M86-t2' },
-            'I': { '1': 'M78-t1', '2': 'M77-t2' }, 'J': { '1': 'M86-t1', '2': 'M84-t2' },
-            'K': { '1': 'M87-t1', '2': 'M83-t1' }, 'L': { '1': 'M80-t1', '2': 'M83-t2' }
+            'A': { '1': 'M11-t1', '2': 'M3-t1' }, 'B': { '1': 'M3-t2', '2': 'M15-t1' },
+            'C': { '1': 'M2-t2', '2': 'M4-t2' }, 'D': { '1': 'M9-t1', '2': 'M7-t1' },
+            'E': { '1': 'M1-t1', '2': 'M1-t2' }, 'F': { '1': 'M4-t1', '2': 'M9-t2' },
+            'G': { '1': 'M8-t1', '2': 'M14-t2' }, 'H': { '1': 'M6-t1', '2': 'M13-t2' },
+            'I': { '1': 'M2-t1', '2': 'M8-t2' }, 'J': { '1': 'M13-t1', '2': 'M15-t2' },
+            'K': { '1': 'M5-t1', '2': 'M16-t1' }, 'L': { '1': 'M12-t1', '2': 'M5-t2' }
         };
 
-        // Progression de l'arbre
         const knockoutProgression = {
-            'M74': 'M89-t1', 'M76': 'M89-t2', 'M73': 'M90-t1', 'M75': 'M90-t2',
-            'M77': 'M91-t1', 'M78': 'M91-t2', 'M79': 'M92-t1', 'M80': 'M92-t2',
-            'M83': 'M93-t1', 'M84': 'M93-t2', 'M81': 'M94-t1', 'M82': 'M94-t2',
-            'M86': 'M95-t1', 'M88': 'M95-t2', 'M85': 'M96-t1', 'M87': 'M96-t2',
-            'M89': 'M97-t1', 'M90': 'M97-t2', 'M93': 'M98-t1', 'M94': 'M98-t2',
-            'M91': 'M99-t1', 'M92': 'M99-t2', 'M95': 'M100-t1', 'M96': 'M100-t2',
-            'M97': 'M101-t1', 'M98': 'M101-t2', 'M99': 'M102-t1', 'M100': 'M102-t2',
-            'M101': 'M104-t1', 'M102': 'M104-t2'
+            'M1': 'M17-t1', 'M2': 'M17-t2', 'M3': 'M18-t1', 'M4': 'M18-t2',
+            'M5': 'M19-t1', 'M6': 'M19-t2', 'M7': 'M20-t1', 'M8': 'M20-t2',
+            'M9': 'M21-t1', 'M10': 'M21-t2', 'M11': 'M22-t1', 'M12': 'M22-t2',
+            'M13': 'M23-t1', 'M14': 'M23-t2', 'M15': 'M24-t1', 'M16': 'M24-t2',
+            'M17': 'M25-t1', 'M18': 'M25-t2', 'M19': 'M26-t1', 'M20': 'M26-t2',
+            'M21': 'M27-t1', 'M22': 'M27-t2', 'M23': 'M28-t1', 'M24': 'M28-t2',
+            'M25': 'M29-t1', 'M26': 'M29-t2', 'M27': 'M30-t1', 'M28': 'M30-t2',
+            'M29': 'M32-t1', 'M30': 'M32-t2'
         };
 
         document.addEventListener("DOMContentLoaded", () => {
             renderGroups();
-            renderKnockout();
+            renderKnockoutTree();
             chargerTousLesFichiersCSV();
             setTimeout(loadData, 500);
         });
@@ -257,11 +215,74 @@
         function switchTab(tabId, btnElement) {
             document.querySelectorAll('.page-content').forEach(page => page.classList.remove('active'));
             document.querySelectorAll('.tab-btn').forEach(btn => {
-                btn.className = 'tab-btn bg-white border border-slate-300 text-slate-700 hover:bg-slate-50 px-5 py-2 rounded-full text-sm font-bold transition-all';
+                btn.className = 'tab-btn bg-slate-800 border border-slate-700 text-slate-300 hover:bg-slate-700 px-5 py-2 rounded-full text-sm font-bold transition-all';
             });
             document.getElementById('page-' + tabId).classList.add('active');
-            btnElement.className = 'tab-btn bg-slate-900 border border-slate-900 text-white px-5 py-2 rounded-full text-sm font-bold shadow-sm transition-all';
+            btnElement.className = 'tab-btn bg-emerald-600 text-white px-5 py-2 rounded-full text-sm font-bold shadow-sm transition-all border border-emerald-500';
             document.getElementById('searchContainer').style.visibility = (tabId === 'joueurs') ? 'visible' : 'hidden';
+        }
+
+        function createMatchBox(id, label) {
+            return `
+            <div class="bracket-box">
+                <div class="text-[9px] text-center text-slate-400 font-bold mb-1">${label}</div>
+                <div class="flex flex-col gap-1">
+                    <div class="flex items-center gap-1 bg-slate-800 rounded px-1 py-0.5">
+                        <img id="flag-${id}-t1" src="" class="w-4 h-3 rounded-[2px] hidden">
+                        <input type="text" id="${id}-t1" class="b-input saveData" placeholder="Equipe" oninput="updateKnockoutProgression(); saveAndCalculate()">
+                        <input type="number" id="${id}-s1" class="b-score saveData" oninput="updateKnockoutProgression(); saveAndCalculate()">
+                    </div>
+                    <div class="flex items-center gap-1 bg-slate-800 rounded px-1 py-0.5">
+                        <img id="flag-${id}-t2" src="" class="w-4 h-3 rounded-[2px] hidden">
+                        <input type="text" id="${id}-t2" class="b-input saveData" placeholder="Equipe" oninput="updateKnockoutProgression(); saveAndCalculate()">
+                        <input type="number" id="${id}-s2" class="b-score saveData" oninput="updateKnockoutProgression(); saveAndCalculate()">
+                    </div>
+                </div>
+            </div>`;
+        }
+
+        function renderKnockoutTree() {
+            const container = document.getElementById('knockout-container');
+            let html = `
+                <!-- GAUCHE 1/16 -->
+                <div class="flex flex-col justify-between w-40 shrink-0 space-y-2 py-2">
+                    ${leftR32.map(m => createMatchBox(m.id, '1/16 Finale')).join('')}
+                </div>
+                <!-- GAUCHE 1/8 -->
+                <div class="flex flex-col justify-around w-40 shrink-0 py-10">
+                    ${leftR16.map(m => createMatchBox(m, '1/8 Finale')).join('')}
+                </div>
+                <!-- GAUCHE 1/4 -->
+                <div class="flex flex-col justify-around w-40 shrink-0 py-24">
+                    ${leftQF.map(m => createMatchBox(m, 'Quart de Finale')).join('')}
+                </div>
+                <!-- GAUCHE 1/2 -->
+                <div class="flex flex-col justify-around w-40 shrink-0 py-48">
+                    ${leftSF.map(m => createMatchBox(m, 'Demi-Finale')).join('')}
+                </div>
+                <!-- CENTRE (FINALE) -->
+                <div class="flex flex-col justify-center items-center w-52 shrink-0 space-y-8">
+                    ${createMatchBox('M32', '🏆 GRANDE FINALE 🏆')}
+                    ${createMatchBox('M31', '🥉 Petite Finale')}
+                </div>
+                <!-- DROITE 1/2 -->
+                <div class="flex flex-col justify-around w-40 shrink-0 py-48">
+                    ${rightSF.map(m => createMatchBox(m, 'Demi-Finale')).join('')}
+                </div>
+                <!-- DROITE 1/4 -->
+                <div class="flex flex-col justify-around w-40 shrink-0 py-24">
+                    ${rightQF.map(m => createMatchBox(m, 'Quart de Finale')).join('')}
+                </div>
+                <!-- DROITE 1/8 -->
+                <div class="flex flex-col justify-around w-40 shrink-0 py-10">
+                    ${rightR16.map(m => createMatchBox(m, '1/8 Finale')).join('')}
+                </div>
+                <!-- DROITE 1/16 -->
+                <div class="flex flex-col justify-between w-40 shrink-0 space-y-2 py-2">
+                    ${rightR32.map(m => createMatchBox(m.id, '1/16 Finale')).join('')}
+                </div>
+            `;
+            container.innerHTML = html;
         }
 
         function renderGroups() {
@@ -285,7 +306,7 @@
                                 <span class="team">${flag1 ? `<img src="${flag1}" class="flag">` : ''} ${match.t1}</span>
                                 <div class="flex items-center">
                                     <input type="number" min="0" id="${match.id}-1" class="score-input saveData" oninput="saveAndCalculate()">
-                                    <span class="text-slate-300 font-bold mx-1">-</span>
+                                    <span class="text-slate-500 font-bold mx-1">-</span>
                                     <input type="number" min="0" id="${match.id}-2" class="score-input saveData" oninput="saveAndCalculate()">
                                 </div>
                                 <span class="team right">${match.t2} ${flag2 ? `<img src="${flag2}" class="flag">` : ''}</span>
@@ -294,46 +315,6 @@
                 });
                 card.innerHTML += `<div id="standings-${groupLetter}"></div>`;
                 container.appendChild(card);
-            });
-        }
-
-        function renderKnockout() {
-            const container = document.getElementById('knockout-container');
-            knockoutRounds.forEach(round => {
-                const section = document.createElement('div');
-                section.className = 'round-section';
-                section.innerHTML = `<div class="round-title">${round.title}</div>`;
-                
-                const grid = document.createElement('div');
-                grid.className = "flex flex-wrap justify-center gap-6 w-full mt-6";
-
-                round.matches.forEach(match => {
-                    const isFinale = match.id === 'M104';
-                    grid.innerHTML += `
-                        <div class="sim-card ${isFinale ? 'finale-card' : ''}">
-                            <div class="sim-card-title" style="font-size:1rem; margin-bottom:0.5rem; border:none; padding:0;">${isFinale ? '🏆 ' : ''}${match.date}</div>
-                            <div class="match-row" style="border:none; padding:0; margin:0;">
-                                <div class="flex flex-col gap-3 mt-3">
-                                    <div class="flex justify-between items-center w-full gap-2">
-                                        <div class="relative flex-1 group focus-within:ring-2 focus-within:ring-emerald-500 rounded-md">
-                                            <img id="flag-${match.id}-t1" src="" class="absolute left-2 top-1/2 -translate-y-1/2 w-[18px] h-[13px] rounded-[2px] object-cover hidden shadow-sm z-10">
-                                            <input type="text" id="${match.id}-t1" class="team-input saveData w-full pl-8 pr-2 relative" placeholder="${match.p1}" oninput="updateKnockoutProgression(); saveAndCalculate()">
-                                        </div>
-                                        <input type="number" min="0" id="${match.id}-s1" class="score-input saveData" oninput="updateKnockoutProgression(); saveAndCalculate()">
-                                    </div>
-                                    <div class="flex justify-between items-center w-full gap-2">
-                                        <div class="relative flex-1 group focus-within:ring-2 focus-within:ring-emerald-500 rounded-md">
-                                            <img id="flag-${match.id}-t2" src="" class="absolute left-2 top-1/2 -translate-y-1/2 w-[18px] h-[13px] rounded-[2px] object-cover hidden shadow-sm z-10">
-                                            <input type="text" id="${match.id}-t2" class="team-input saveData w-full pl-8 pr-2 relative" placeholder="${match.p2}" oninput="updateKnockoutProgression(); saveAndCalculate()">
-                                        </div>
-                                        <input type="number" min="0" id="${match.id}-s2" class="score-input saveData" oninput="updateKnockoutProgression(); saveAndCalculate()">
-                                    </div>
-                                </div>
-                            </div>
-                        </div>`;
-                });
-                section.appendChild(grid);
-                container.appendChild(section);
             });
         }
 
@@ -412,7 +393,7 @@
                 let html = `<table class="standings-table"><tr><th>Équipe</th><th>Pts</th><th>J</th><th>G</th><th>N</th><th>P</th><th>Diff</th></tr>`;
                 tArray.forEach((t, i) => {
                     const flagImg = t.flag ? `<img src="https://flagcdn.com/w20/${t.flag}.png" class="flag">` : '';
-                    let rowClass = i < 2 ? 'qualif-zone' : (i === 2 ? 'bg-amber-50' : ''); 
+                    let rowClass = i < 2 ? 'qualif-zone' : (i === 2 ? 'bg-slate-800' : ''); 
                     html += `<tr class="${rowClass}">
                         <td class="team-cell">${flagImg} ${t.name}</td>
                         <td class="pts-col">${t.pts}</td><td>${t.p}</td><td>${t.w}</td><td>${t.d}</td><td>${t.l}</td><td>${t.gd > 0 ? '+'+t.gd : t.gd}</td>
@@ -421,58 +402,23 @@
                 document.getElementById(`standings-${gLetter}`).innerHTML = html + `</table>`;
             });
 
-            // GESTION INTELLIGENTE DES 8 MEILLEURS 3ÈMES 
             thirdPlacedTeams.sort((a, b) => b.pts !== a.pts ? b.pts - a.pts : (b.gd !== a.gd ? b.gd - a.gd : b.gf - a.gf));
             let top8Thirds = thirdPlacedTeams.slice(0, 8);
             
-            // Les règles strictes pour empêcher qu'une équipe repêchée joue contre le 1er de son propre groupe
-            const thirdPlaceConfig = [
-                { id: 'M76-t2', forbidden: 'E', team: null }, 
-                { id: 'M78-t2', forbidden: 'I', team: null }, 
-                { id: 'M79-t2', forbidden: 'A', team: null }, 
-                { id: 'M80-t2', forbidden: 'L', team: null }, 
-                { id: 'M82-t2', forbidden: 'G', team: null }, 
-                { id: 'M81-t2', forbidden: 'D', team: null }, 
-                { id: 'M85-t2', forbidden: 'B', team: null }, 
-                { id: 'M87-t2', forbidden: 'K', team: null }  
-            ];
-
-            // Réinitialiser les inputs des 3èmes
-            thirdPlaceConfig.forEach(conf => { let el = document.getElementById(conf.id); if (el) el.value = ''; });
-
-            // Algorithme d'assignation sécurisé
-            let unassigned = [...top8Thirds];
-            for (let i = 0; i < thirdPlaceConfig.length; i++) {
-                let slot = thirdPlaceConfig[i];
-                let idx = unassigned.findIndex(t => t.group !== slot.forbidden);
-                
-                if (idx !== -1) {
-                    slot.team = unassigned[idx];
-                    unassigned.splice(idx, 1);
-                } else if (unassigned.length > 0) {
-                    // S'il ne reste qu'une équipe et qu'elle tombe contre son groupe, on l'échange avec une précédente !
-                    for (let j = 0; j < i; j++) {
-                        if (thirdPlaceConfig[j].team.group !== slot.forbidden && unassigned[0].group !== thirdPlaceConfig[j].forbidden) {
-                            slot.team = thirdPlaceConfig[j].team;
-                            thirdPlaceConfig[j].team = unassigned[0];
-                            unassigned.splice(0, 1);
-                            break;
-                        }
-                    }
-                }
-            }
-
-            // Mettre à jour l'affichage
-            thirdPlaceConfig.forEach(slot => {
-                let el = document.getElementById(slot.id);
-                if (el) el.value = slot.team ? slot.team.name : '';
+            // Les 8 emplacements pour les 3èmes (correspondent aux "cases" de l'image)
+            let thirdPlaceSlots = ['M6-t2', 'M7-t2', 'M10-t1', 'M10-t2', 'M11-t2', 'M12-t2', 'M14-t1', 'M16-t2'];
+            
+            thirdPlaceSlots.forEach(id => { let el = document.getElementById(id); if (el) el.value = ''; });
+            thirdPlaceSlots.forEach((id, idx) => {
+                let el = document.getElementById(id);
+                if (el && top8Thirds[idx]) { el.value = top8Thirds[idx].name; }
             });
             
             updateKnockoutProgression();
         }
 
         function updateKnockoutProgression() {
-            document.querySelectorAll('.team-input').forEach(input => {
+            document.querySelectorAll('.b-input').forEach(input => {
                 let teamName = input.value.trim().toUpperCase();
                 let code = flagCodes[teamName];
                 let imgEl = document.getElementById('flag-' + input.id);
@@ -481,10 +427,12 @@
                     if (code) {
                         imgEl.src = `https://flagcdn.com/w20/${code}.png`;
                         imgEl.classList.remove('hidden');
-                        input.classList.remove('pl-2');
+                        input.classList.remove('pl-1');
+                        input.classList.add('pl-6');
                     } else {
                         imgEl.classList.add('hidden');
-                        input.classList.add('pl-2');
+                        input.classList.remove('pl-6');
+                        input.classList.add('pl-1');
                     }
                 }
             });
@@ -499,8 +447,8 @@
                 let nextInput = document.getElementById(nextInputId);
                 
                 let thirdPlaceInputId = null;
-                if (matchId === 'M101') thirdPlaceInputId = 'M103-t1';
-                if (matchId === 'M102') thirdPlaceInputId = 'M103-t2';
+                if (matchId === 'M29') thirdPlaceInputId = 'M31-t1';
+                if (matchId === 'M30') thirdPlaceInputId = 'M31-t2';
                 let thirdPlaceInput = thirdPlaceInputId ? document.getElementById(thirdPlaceInputId) : null;
 
                 if (nextInput && !isNaN(s1) && !isNaN(s2) && t1 && t2) {
@@ -514,10 +462,15 @@
                 }
             }
             
-            document.querySelectorAll('.team-input').forEach(input => {
+            document.querySelectorAll('.b-input').forEach(input => {
                 let code = flagCodes[input.value.trim().toUpperCase()];
                 let imgEl = document.getElementById('flag-' + input.id);
-                if (imgEl && code) { imgEl.src = `https://flagcdn.com/w20/${code}.png`; imgEl.classList.remove('hidden'); }
+                if (imgEl && code) { 
+                    imgEl.src = `https://flagcdn.com/w20/${code}.png`; 
+                    imgEl.classList.remove('hidden'); 
+                    input.classList.remove('pl-1');
+                    input.classList.add('pl-6');
+                }
             });
         }
 
@@ -611,7 +564,7 @@
             pays.forEach(p => {
                 const b = document.createElement('button');
                 b.textContent = p;
-                b.className = `w-full text-left px-3 py-1.5 rounded-lg text-sm transition-all ${paysSelectionne === p ? 'bg-emerald-600 text-white font-semibold' : 'text-slate-600 hover:bg-slate-100'}`;
+                b.className = `w-full text-left px-3 py-1.5 rounded-lg text-sm transition-all ${paysSelectionne === p ? 'bg-emerald-600 text-white font-semibold' : 'text-slate-400 hover:bg-slate-700'}`;
                 b.onclick = () => { paysSelectionne = p; genererFiltresPays(); filtrerJoueurs(); };
                 conteneur.appendChild(b);
             });
@@ -624,7 +577,7 @@
             grandesFamilles.forEach(famille => {
                 const b = document.createElement('button');
                 b.textContent = famille;
-                b.className = `w-full text-left px-3 py-1.5 rounded-lg text-sm transition-all ${posteSelectionne === famille ? 'bg-emerald-600 text-white font-semibold' : 'text-slate-600 hover:bg-slate-100'}`;
+                b.className = `w-full text-left px-3 py-1.5 rounded-lg text-sm transition-all ${posteSelectionne === famille ? 'bg-emerald-600 text-white font-semibold' : 'text-slate-400 hover:bg-slate-700'}`;
                 b.onclick = () => { posteSelectionne = famille; genererFiltresPostes(); filtrerJoueurs(); };
                 conteneur.appendChild(b);
             });
@@ -644,31 +597,31 @@
             grid.innerHTML = '';
 
             if(liste.length === 0) {
-                grid.innerHTML = `<div class="col-span-full text-center py-12 text-slate-400 text-sm">Aucun joueur ne correspond aux filtres.</div>`; return;
+                grid.innerHTML = `<div class="col-span-full text-center py-12 text-slate-500 text-sm">Aucun joueur ne correspond aux filtres.</div>`; return;
             }
 
             liste.forEach(joueur => {
                 const carte = document.createElement('div');
-                carte.className = "bg-white border border-slate-100 rounded-2xl overflow-hidden shadow-sm hover:shadow-md transition-all duration-300 relative group";
+                carte.className = "bg-slate-800 border border-slate-700 rounded-2xl overflow-hidden shadow-sm hover:border-slate-500 transition-all duration-300 relative group";
                 carte.innerHTML = `
-                    <div class="absolute top-3 right-3 bg-slate-100 text-slate-700 font-bold text-xs w-7 h-7 rounded-full flex items-center justify-center z-10 shadow-sm">N°${joueur.SelectionNumero}</div>
+                    <div class="absolute top-3 right-3 bg-slate-900 text-slate-300 font-bold text-xs w-7 h-7 rounded-full flex items-center justify-center z-10 shadow-sm border border-slate-700">N°${joueur.SelectionNumero}</div>
                     <div class="p-5">
                         <div class="flex items-center gap-4">
-                            <div class="w-12 h-12 rounded-full bg-emerald-50 border border-emerald-100 flex-shrink-0 flex items-center justify-center font-bold text-emerald-600 text-lg">${joueur.Nom ? joueur.Nom.charAt(0) : '?'}</div>
+                            <div class="w-12 h-12 rounded-full bg-emerald-900/50 border border-emerald-800 flex-shrink-0 flex items-center justify-center font-bold text-emerald-400 text-lg">${joueur.Nom ? joueur.Nom.charAt(0) : '?'}</div>
                             <div class="overflow-hidden">
-                                <span class="text-[10px] font-extrabold uppercase tracking-widest text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded">${joueur.Poste}</span>
-                                <h3 class="font-bold text-base text-slate-900 mt-0.5 leading-tight group-hover:text-emerald-600 transition-colors truncate" title="${joueur.Nom}">${joueur.Nom}</h3>
-                                <p class="text-xs text-slate-500 font-medium truncate" title="${joueur.Pays}">${joueur.Pays} • ${joueur.Age} ans</p>
+                                <span class="text-[10px] font-extrabold uppercase tracking-widest text-emerald-400 bg-emerald-900/30 border border-emerald-800/50 px-2 py-0.5 rounded">${joueur.Poste}</span>
+                                <h3 class="font-bold text-base text-white mt-1 leading-tight group-hover:text-emerald-400 transition-colors truncate" title="${joueur.Nom}">${joueur.Nom}</h3>
+                                <p class="text-xs text-slate-400 font-medium truncate" title="${joueur.Pays}">${joueur.Pays} • ${joueur.Age} ans</p>
                             </div>
                         </div>
-                        <div class="mt-4 pt-3 border-t border-slate-50 flex justify-between items-center text-xs">
+                        <div class="mt-4 pt-3 border-t border-slate-700 flex justify-between items-center text-xs">
                             <div class="w-1/2 overflow-hidden pr-2">
-                                <p class="text-[10px] uppercase tracking-wider text-slate-400 font-semibold">Club</p>
-                                <p class="font-semibold text-slate-700 truncate" title="${joueur.Club}">${joueur.Club}</p>
+                                <p class="text-[10px] uppercase tracking-wider text-slate-500 font-semibold">Club</p>
+                                <p class="font-semibold text-slate-300 truncate" title="${joueur.Club}">${joueur.Club}</p>
                             </div>
                             <div class="text-right w-1/2">
-                                <p class="text-[10px] uppercase tracking-wider text-slate-400 font-semibold">Valeur</p>
-                                <p class="font-extrabold text-slate-950 text-sm">${joueur.ValeurText}</p>
+                                <p class="text-[10px] uppercase tracking-wider text-slate-500 font-semibold">Valeur</p>
+                                <p class="font-extrabold text-white text-sm">${joueur.ValeurText}</p>
                             </div>
                         </div>
                     </div>`;
