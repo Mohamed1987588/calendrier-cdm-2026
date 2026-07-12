@@ -4,8 +4,11 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Footmarket | Simulateur Coupe du Monde 2026</title>
+    <!-- Tailwind CSS pour le design -->
     <script src="https://cdn.tailwindcss.com"></script>
+    <!-- PapaParse pour lire les CSV -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
+    <!-- Police Inter -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;900&display=swap" rel="stylesheet">
     
     <style>
@@ -48,6 +51,7 @@
 </head>
 <body class="text-slate-900 antialiased">
 
+    <!-- BARRE DE NAVIGATION -->
     <nav class="bg-white border-b border-slate-200 sticky top-0 z-50">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex justify-between h-16 items-center">
@@ -69,6 +73,7 @@
         </div>
     </nav>
 
+    <!-- ONGLETS -->
     <div class="bg-white border-b border-slate-200">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex justify-center gap-4 py-4">
@@ -81,6 +86,7 @@
 
     <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         
+        <!-- ONGLET 1 : GROUPES ET CALENDRIER -->
         <div id="page-groupes" class="page-content active">
             <div class="mb-8 text-center">
                 <h2 class="text-2xl font-black text-slate-900">Phase de Groupes</h2>
@@ -89,6 +95,7 @@
             <div id="groupes-container" class="flex flex-wrap justify-center gap-6"></div>
         </div>
 
+        <!-- ONGLET 2 : TABLEAU FINAL -->
         <div id="page-phase-finale" class="page-content">
             <div class="mb-8 text-center">
                 <h2 class="text-2xl font-black text-slate-900">Tableau à Élimination Directe</h2>
@@ -97,6 +104,7 @@
             <div id="knockout-container" class="flex flex-col items-center"></div>
         </div>
 
+        <!-- ONGLET 3 : BASE DE DONNÉES JOUEURS -->
         <div id="page-joueurs" class="page-content">
             <div class="mb-8 bg-slate-950 text-white rounded-2xl p-8 md:p-12 relative overflow-hidden shadow-lg">
                 <div class="relative z-10 max-w-lg">
@@ -107,6 +115,7 @@
             </div>
 
             <div class="flex flex-col lg:flex-row gap-8">
+                <!-- FILTRES LATERAUX -->
                 <aside class="w-full lg:w-64 flex-shrink-0">
                     <div class="bg-white p-6 rounded-xl border border-slate-200 sticky top-24 shadow-sm">
                         <h2 class="text-xs font-bold uppercase tracking-wider text-slate-400 mb-3">Filtrer par Pays</h2>
@@ -117,6 +126,7 @@
                     </div>
                 </aside>
 
+                <!-- GRILLE DES JOUEURS -->
                 <section class="flex-1">
                     <div class="flex justify-between items-center mb-6">
                         <p class="text-sm text-slate-500"><span id="joueurCount" class="font-bold text-slate-950">0</span> joueurs trouvés</p>
@@ -135,6 +145,7 @@
 
     </main>
 
+    <!-- LOGIQUE JAVASCRIPT GLOBALE -->
     <script>
         // ==========================================
         // VARIABLES GLOBALES & MAPPING
@@ -152,23 +163,24 @@
             POR: 'pt', UZB: 'uz', COL: 'co', DRC: 'cd', ENG: 'gb-eng', GHA: 'gh', PAN: 'pa', CRO: 'hr'
         };
 
+        // --- LES BONS GROUPES BASÉS SUR VOTRE IMAGE OFFICIELLE ---
         const groupMatches = [
-            { group: 'A', date: '11/06 21:00', t1: 'MEX', t2: 'RSA' }, { group: 'A', date: '12/06 04:00', t1: 'KOR', t2: 'CZE' }, { group: 'A', date: '18/06 18:00', t1: 'CZE', t2: 'RSA' }, { group: 'A', date: '19/06 03:00', t1: 'MEX', t2: 'KOR' }, { group: 'A', date: '25/06 03:00', t1: 'CZE', t2: 'MEX' }, { group: 'A', date: '25/06 03:00', t1: 'RSA', t2: 'KOR' },
-            { group: 'B', date: '12/06 21:00', t1: 'CAN', t2: 'SUI' }, { group: 'B', date: '13/06 21:00', t1: 'QAT', t2: 'BIH' }, { group: 'B', date: '18/06 21:00', t1: 'SUI', t2: 'BIH' }, { group: 'B', date: '20/06 03:00', t1: 'CAN', t2: 'QAT' }, { group: 'B', date: '24/06 21:00', t1: 'SUI', t2: 'CAN' }, { group: 'B', date: '24/06 21:00', t1: 'BIH', t2: 'QAT' },
-            { group: 'C', date: '13/06 00:00', t1: 'SWE', t2: 'MAR' }, { group: 'C', date: '14/06 03:00', t1: 'HAI', t2: 'SCO' }, { group: 'C', date: '19/06 00:00', t1: 'SWE', t2: 'SCO' }, { group: 'C', date: '20/06 06:00', t1: 'MAR', t2: 'HAI' }, { group: 'C', date: '24/06 00:00', t1: 'SCO', t2: 'MAR' }, { group: 'C', date: '24/06 00:00', t1: 'SWE', t2: 'HAI' },
-            { group: 'D', date: '13/06 03:00', t1: 'BRA', t2: 'TUR' }, { group: 'D', date: '14/06 06:00', t1: 'AUS', t2: 'USA' }, { group: 'D', date: '19/06 21:00', t1: 'USA', t2: 'TUR' }, { group: 'D', date: '21/06 02:00', t1: 'BRA', t2: 'AUS' }, { group: 'D', date: '26/06 04:00', t1: 'TUR', t2: 'AUS' }, { group: 'D', date: '26/06 04:00', t1: 'USA', t2: 'BRA' },
-            { group: 'E', date: '14/06 19:00', t1: 'PAR', t2: 'CIV' }, { group: 'E', date: '15/06 01:00', t1: 'ECU', t2: 'GER' }, { group: 'E', date: '20/06 22:00', t1: 'GER', t2: 'CIV' }, { group: 'E', date: '21/06 06:00', t1: 'PAR', t2: 'ECU' }, { group: 'E', date: '25/06 22:00', t1: 'ECU', t2: 'CIV' }, { group: 'E', date: '25/06 22:00', t1: 'GER', t2: 'PAR' },
-            { group: 'F', date: '14/06 22:00', t1: 'CUW', t2: 'JPN' }, { group: 'F', date: '15/06 04:00', t1: 'TUN', t2: 'NED' }, { group: 'F', date: '20/06 19:00', t1: 'NED', t2: 'JPN' }, { group: 'F', date: '21/06 06:00', t1: 'CUW', t2: 'TUN' }, { group: 'F', date: '26/06 01:00', t1: 'JPN', t2: 'TUN' }, { group: 'F', date: '26/06 01:00', t1: 'NED', t2: 'CUW' },
+            { group: 'A', date: '11/06 21:00', t1: 'RSA', t2: 'KOR' }, { group: 'A', date: '12/06 04:00', t1: 'MEX', t2: 'CZE' }, { group: 'A', date: '18/06 18:00', t1: 'RSA', t2: 'MEX' }, { group: 'A', date: '19/06 03:00', t1: 'KOR', t2: 'CZE' }, { group: 'A', date: '25/06 03:00', t1: 'CZE', t2: 'RSA' }, { group: 'A', date: '25/06 03:00', t1: 'MEX', t2: 'KOR' },
+            { group: 'B', date: '12/06 21:00', t1: 'BIH', t2: 'CAN' }, { group: 'B', date: '13/06 21:00', t1: 'QAT', t2: 'SUI' }, { group: 'B', date: '18/06 21:00', t1: 'BIH', t2: 'QAT' }, { group: 'B', date: '20/06 03:00', t1: 'CAN', t2: 'SUI' }, { group: 'B', date: '24/06 21:00', t1: 'SUI', t2: 'BIH' }, { group: 'B', date: '24/06 21:00', t1: 'CAN', t2: 'QAT' },
+            { group: 'C', date: '13/06 00:00', t1: 'BRA', t2: 'SCO' }, { group: 'C', date: '14/06 03:00', t1: 'HAI', t2: 'MAR' }, { group: 'C', date: '19/06 00:00', t1: 'BRA', t2: 'HAI' }, { group: 'C', date: '20/06 06:00', t1: 'SCO', t2: 'MAR' }, { group: 'C', date: '24/06 00:00', t1: 'MAR', t2: 'BRA' }, { group: 'C', date: '24/06 00:00', t1: 'SCO', t2: 'HAI' },
+            { group: 'D', date: '13/06 03:00', t1: 'AUS', t2: 'USA' }, { group: 'D', date: '14/06 06:00', t1: 'PAR', t2: 'TUR' }, { group: 'D', date: '19/06 21:00', t1: 'AUS', t2: 'PAR' }, { group: 'D', date: '21/06 02:00', t1: 'USA', t2: 'TUR' }, { group: 'D', date: '26/06 04:00', t1: 'TUR', t2: 'AUS' }, { group: 'D', date: '26/06 04:00', t1: 'USA', t2: 'PAR' },
+            { group: 'E', date: '14/06 19:00', t1: 'GER', t2: 'CIV' }, { group: 'E', date: '15/06 01:00', t1: 'CUW', t2: 'ECU' }, { group: 'E', date: '20/06 22:00', t1: 'GER', t2: 'CUW' }, { group: 'E', date: '21/06 06:00', t1: 'CIV', t2: 'ECU' }, { group: 'E', date: '25/06 22:00', t1: 'ECU', t2: 'GER' }, { group: 'E', date: '25/06 22:00', t1: 'CIV', t2: 'CUW' },
+            { group: 'F', date: '14/06 22:00', t1: 'JPN', t2: 'NED' }, { group: 'F', date: '15/06 04:00', t1: 'SWE', t2: 'TUN' }, { group: 'F', date: '20/06 19:00', t1: 'JPN', t2: 'SWE' }, { group: 'F', date: '21/06 06:00', t1: 'NED', t2: 'TUN' }, { group: 'F', date: '26/06 01:00', t1: 'TUN', t2: 'JPN' }, { group: 'F', date: '26/06 01:00', t1: 'NED', t2: 'SWE' },
             { group: 'G', date: '15/06 21:00', t1: 'BEL', t2: 'EGY' }, { group: 'G', date: '16/06 03:00', t1: 'IRN', t2: 'NZL' }, { group: 'G', date: '21/06 21:00', t1: 'BEL', t2: 'IRN' }, { group: 'G', date: '22/06 03:00', t1: 'NZL', t2: 'EGY' }, { group: 'G', date: '27/06 05:00', t1: 'EGY', t2: 'IRN' }, { group: 'G', date: '27/06 05:00', t1: 'NZL', t2: 'BEL' },
-            { group: 'H', date: '15/06 18:00', t1: 'ESP', t2: 'CPV' }, { group: 'H', date: '16/06 00:00', t1: 'KSA', t2: 'URU' }, { group: 'H', date: '21/06 18:00', t1: 'ESP', t2: 'KSA' }, { group: 'H', date: '22/06 00:00', t1: 'URU', t2: 'CPV' }, { group: 'H', date: '27/06 02:00', t1: 'CPV', t2: 'KSA' }, { group: 'H', date: '27/06 02:00', t1: 'URU', t2: 'ESP' },
-            { group: 'I', date: '16/06 21:00', t1: 'FRA', t2: 'SEN' }, { group: 'I', date: '17/06 00:00', t1: 'IRQ', t2: 'NOR' }, { group: 'I', date: '22/06 23:00', t1: 'FRA', t2: 'IRQ' }, { group: 'I', date: '23/06 02:00', t1: 'NOR', t2: 'SEN' }, { group: 'I', date: '26/06 21:00', t1: 'NOR', t2: 'FRA' }, { group: 'I', date: '26/06 21:00', t1: 'SEN', t2: 'IRQ' },
-            { group: 'J', date: '17/06 03:00', t1: 'ARG', t2: 'ALG' }, { group: 'J', date: '17/06 06:00', t1: 'AUT', t2: 'JOR' }, { group: 'J', date: '22/06 19:00', t1: 'ARG', t2: 'AUT' }, { group: 'J', date: '23/06 05:00', t1: 'JOR', t2: 'ALG' }, { group: 'J', date: '28/06 04:00', t1: 'ALG', t2: 'AUT' }, { group: 'J', date: '28/06 04:00', t1: 'JOR', t2: 'ARG' },
-            { group: 'K', date: '17/06 19:00', t1: 'POR', t2: 'DRC' }, { group: 'K', date: '18/06 04:00', t1: 'UZB', t2: 'COL' }, { group: 'K', date: '23/06 19:00', t1: 'POR', t2: 'UZB' }, { group: 'K', date: '24/06 04:00', t1: 'COL', t2: 'DRC' }, { group: 'K', date: '28/06 01:30', t1: 'COL', t2: 'POR' }, { group: 'K', date: '28/06 01:30', t1: 'DRC', t2: 'UZB' },
-            { group: 'L', date: '17/06 22:00', t1: 'ENG', t2: 'CRO' }, { group: 'L', date: '18/06 01:00', t1: 'GHA', t2: 'PAN' }, { group: 'L', date: '23/06 22:00', t1: 'ENG', t2: 'GHA' }, { group: 'L', date: '24/06 01:00', t1: 'PAN', t2: 'CRO' }, { group: 'L', date: '27/06 23:00', t1: 'PAN', t2: 'ENG' }, { group: 'L', date: '27/06 23:00', t1: 'CRO', t2: 'GHA' }
+            { group: 'H', date: '15/06 18:00', t1: 'KSA', t2: 'CPV' }, { group: 'H', date: '16/06 00:00', t1: 'ESP', t2: 'URU' }, { group: 'H', date: '21/06 18:00', t1: 'KSA', t2: 'ESP' }, { group: 'H', date: '22/06 00:00', t1: 'CPV', t2: 'URU' }, { group: 'H', date: '27/06 02:00', t1: 'URU', t2: 'KSA' }, { group: 'H', date: '27/06 02:00', t1: 'CPV', t2: 'ESP' },
+            { group: 'I', date: '16/06 21:00', t1: 'FRA', t2: 'IRQ' }, { group: 'I', date: '17/06 00:00', t1: 'NOR', t2: 'SEN' }, { group: 'I', date: '22/06 23:00', t1: 'FRA', t2: 'NOR' }, { group: 'I', date: '23/06 02:00', t1: 'IRQ', t2: 'SEN' }, { group: 'I', date: '26/06 21:00', t1: 'SEN', t2: 'FRA' }, { group: 'I', date: '26/06 21:00', t1: 'IRQ', t2: 'NOR' },
+            { group: 'J', date: '17/06 03:00', t1: 'ALG', t2: 'ARG' }, { group: 'J', date: '17/06 06:00', t1: 'AUT', t2: 'JOR' }, { group: 'J', date: '22/06 19:00', t1: 'ALG', t2: 'AUT' }, { group: 'J', date: '23/06 05:00', t1: 'ARG', t2: 'JOR' }, { group: 'J', date: '28/06 04:00', t1: 'JOR', t2: 'ALG' }, { group: 'J', date: '28/06 04:00', t1: 'ARG', t2: 'AUT' },
+            { group: 'K', date: '17/06 19:00', t1: 'COL', t2: 'UZB' }, { group: 'K', date: '18/06 04:00', t1: 'POR', t2: 'DRC' }, { group: 'K', date: '23/06 19:00', t1: 'COL', t2: 'POR' }, { group: 'K', date: '24/06 04:00', t1: 'UZB', t2: 'DRC' }, { group: 'K', date: '28/06 01:30', t1: 'DRC', t2: 'COL' }, { group: 'K', date: '28/06 01:30', t1: 'UZB', t2: 'POR' },
+            { group: 'L', date: '17/06 22:00', t1: 'ENG', t2: 'CRO' }, { group: 'L', date: '18/06 01:00', t1: 'GHA', t2: 'PAN' }, { group: 'L', date: '23/06 22:00', t1: 'ENG', t2: 'GHA' }, { group: 'L', date: '24/06 01:00', t1: 'CRO', t2: 'PAN' }, { group: 'L', date: '27/06 23:00', t1: 'PAN', t2: 'ENG' }, { group: 'L', date: '27/06 23:00', t1: 'CRO', t2: 'GHA' }
         ];
 
         // --- ARBRE OFFICIEL (CALQUÉ SUR VOTRE PDF FOOTMERCATO) ---
-        // Vos indications pour les 3èmes (3D, 3B, etc.) sont respectées
+        // Vos indications pour les 3èmes (3D, 3B, etc.) sont respectées et ne seront pas écrasées
         const knockoutRounds = [
             { title: "Seizièmes de finale", matches: [
                 { id: 'R32-1', date: '29/06 22:30', p1: '1E', p2: '3D' }, 
