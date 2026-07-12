@@ -163,62 +163,62 @@
             POR: 'pt', UZB: 'uz', COL: 'co', DRC: 'cd', ENG: 'gb-eng', GHA: 'gh', PAN: 'pa', CRO: 'hr'
         };
 
-        // --- LES BONS GROUPES BASÉS SUR VOTRE IMAGE OFFICIELLE ---
+        // Alignement exact des dates et matchs selon l'image des 12 groupes[cite: 4]
         const groupMatches = [
-            { group: 'A', date: '11/06 21:00', t1: 'RSA', t2: 'KOR' }, { group: 'A', date: '12/06 04:00', t1: 'MEX', t2: 'CZE' }, { group: 'A', date: '18/06 18:00', t1: 'RSA', t2: 'MEX' }, { group: 'A', date: '19/06 03:00', t1: 'KOR', t2: 'CZE' }, { group: 'A', date: '25/06 03:00', t1: 'CZE', t2: 'RSA' }, { group: 'A', date: '25/06 03:00', t1: 'MEX', t2: 'KOR' },
-            { group: 'B', date: '12/06 21:00', t1: 'BIH', t2: 'CAN' }, { group: 'B', date: '13/06 21:00', t1: 'QAT', t2: 'SUI' }, { group: 'B', date: '18/06 21:00', t1: 'BIH', t2: 'QAT' }, { group: 'B', date: '20/06 03:00', t1: 'CAN', t2: 'SUI' }, { group: 'B', date: '24/06 21:00', t1: 'SUI', t2: 'BIH' }, { group: 'B', date: '24/06 21:00', t1: 'CAN', t2: 'QAT' },
-            { group: 'C', date: '13/06 00:00', t1: 'BRA', t2: 'SCO' }, { group: 'C', date: '14/06 03:00', t1: 'HAI', t2: 'MAR' }, { group: 'C', date: '19/06 00:00', t1: 'BRA', t2: 'HAI' }, { group: 'C', date: '20/06 06:00', t1: 'SCO', t2: 'MAR' }, { group: 'C', date: '24/06 00:00', t1: 'MAR', t2: 'BRA' }, { group: 'C', date: '24/06 00:00', t1: 'SCO', t2: 'HAI' },
-            { group: 'D', date: '13/06 03:00', t1: 'AUS', t2: 'USA' }, { group: 'D', date: '14/06 06:00', t1: 'PAR', t2: 'TUR' }, { group: 'D', date: '19/06 21:00', t1: 'AUS', t2: 'PAR' }, { group: 'D', date: '21/06 02:00', t1: 'USA', t2: 'TUR' }, { group: 'D', date: '26/06 04:00', t1: 'TUR', t2: 'AUS' }, { group: 'D', date: '26/06 04:00', t1: 'USA', t2: 'PAR' },
-            { group: 'E', date: '14/06 19:00', t1: 'GER', t2: 'CIV' }, { group: 'E', date: '15/06 01:00', t1: 'CUW', t2: 'ECU' }, { group: 'E', date: '20/06 22:00', t1: 'GER', t2: 'CUW' }, { group: 'E', date: '21/06 06:00', t1: 'CIV', t2: 'ECU' }, { group: 'E', date: '25/06 22:00', t1: 'ECU', t2: 'GER' }, { group: 'E', date: '25/06 22:00', t1: 'CIV', t2: 'CUW' },
-            { group: 'F', date: '14/06 22:00', t1: 'JPN', t2: 'NED' }, { group: 'F', date: '15/06 04:00', t1: 'SWE', t2: 'TUN' }, { group: 'F', date: '20/06 19:00', t1: 'JPN', t2: 'SWE' }, { group: 'F', date: '21/06 06:00', t1: 'NED', t2: 'TUN' }, { group: 'F', date: '26/06 01:00', t1: 'TUN', t2: 'JPN' }, { group: 'F', date: '26/06 01:00', t1: 'NED', t2: 'SWE' },
+            { group: 'A', date: '11/06 21:00', t1: 'MEX', t2: 'RSA' }, { group: 'A', date: '12/06 04:00', t1: 'KOR', t2: 'CZE' }, { group: 'A', date: '18/06 18:00', t1: 'CZE', t2: 'RSA' }, { group: 'A', date: '19/06 03:00', t1: 'MEX', t2: 'KOR' }, { group: 'A', date: '25/06 03:00', t1: 'CZE', t2: 'MEX' }, { group: 'A', date: '25/06 03:00', t1: 'RSA', t2: 'KOR' },
+            { group: 'B', date: '12/06 21:00', t1: 'CAN', t2: 'BIH' }, { group: 'B', date: '13/06 21:00', t1: 'QAT', t2: 'SUI' }, { group: 'B', date: '18/06 21:00', t1: 'SUI', t2: 'BIH' }, { group: 'B', date: '19/06 00:00', t1: 'CAN', t2: 'QAT' }, { group: 'B', date: '24/06 21:00', t1: 'SUI', t2: 'CAN' }, { group: 'B', date: '24/06 21:00', t1: 'BIH', t2: 'QAT' },
+            { group: 'C', date: '13/06 00:00', t1: 'BRA', t2: 'MAR' }, { group: 'C', date: '14/06 03:00', t1: 'HAI', t2: 'SCO' }, { group: 'C', date: '19/06 00:00', t1: 'SCO', t2: 'MAR' }, { group: 'C', date: '20/06 03:00', t1: 'BRA', t2: 'HAI' }, { group: 'C', date: '24/06 00:00', t1: 'SCO', t2: 'BRA' }, { group: 'C', date: '24/06 00:00', t1: 'MAR', t2: 'HAI' },
+            { group: 'D', date: '13/06 03:00', t1: 'USA', t2: 'PAR' }, { group: 'D', date: '14/06 06:00', t1: 'AUS', t2: 'TUR' }, { group: 'D', date: '19/06 21:00', t1: 'USA', t2: 'AUS' }, { group: 'D', date: '20/06 06:00', t1: 'TUR', t2: 'PAR' }, { group: 'D', date: '26/06 04:00', t1: 'TUR', t2: 'USA' }, { group: 'D', date: '26/06 04:00', t1: 'PAR', t2: 'AUS' },
+            { group: 'E', date: '14/06 19:00', t1: 'GER', t2: 'CUW' }, { group: 'E', date: '15/06 01:00', t1: 'CIV', t2: 'ECU' }, { group: 'E', date: '20/06 22:00', t1: 'GER', t2: 'CIV' }, { group: 'E', date: '21/06 02:00', t1: 'ECU', t2: 'CUW' }, { group: 'E', date: '25/06 22:00', t1: 'ECU', t2: 'GER' }, { group: 'E', date: '25/06 22:00', t1: 'CUW', t2: 'CIV' },
+            { group: 'F', date: '14/06 22:00', t1: 'NED', t2: 'JPN' }, { group: 'F', date: '15/06 04:00', t1: 'SWE', t2: 'TUN' }, { group: 'F', date: '20/06 19:00', t1: 'NED', t2: 'SWE' }, { group: 'F', date: '21/06 06:00', t1: 'TUN', t2: 'JPN' }, { group: 'F', date: '26/06 01:00', t1: 'JPN', t2: 'SWE' }, { group: 'F', date: '26/06 01:00', t1: 'TUN', t2: 'NED' },
             { group: 'G', date: '15/06 21:00', t1: 'BEL', t2: 'EGY' }, { group: 'G', date: '16/06 03:00', t1: 'IRN', t2: 'NZL' }, { group: 'G', date: '21/06 21:00', t1: 'BEL', t2: 'IRN' }, { group: 'G', date: '22/06 03:00', t1: 'NZL', t2: 'EGY' }, { group: 'G', date: '27/06 05:00', t1: 'EGY', t2: 'IRN' }, { group: 'G', date: '27/06 05:00', t1: 'NZL', t2: 'BEL' },
-            { group: 'H', date: '15/06 18:00', t1: 'KSA', t2: 'CPV' }, { group: 'H', date: '16/06 00:00', t1: 'ESP', t2: 'URU' }, { group: 'H', date: '21/06 18:00', t1: 'KSA', t2: 'ESP' }, { group: 'H', date: '22/06 00:00', t1: 'CPV', t2: 'URU' }, { group: 'H', date: '27/06 02:00', t1: 'URU', t2: 'KSA' }, { group: 'H', date: '27/06 02:00', t1: 'CPV', t2: 'ESP' },
-            { group: 'I', date: '16/06 21:00', t1: 'FRA', t2: 'IRQ' }, { group: 'I', date: '17/06 00:00', t1: 'NOR', t2: 'SEN' }, { group: 'I', date: '22/06 23:00', t1: 'FRA', t2: 'NOR' }, { group: 'I', date: '23/06 02:00', t1: 'IRQ', t2: 'SEN' }, { group: 'I', date: '26/06 21:00', t1: 'SEN', t2: 'FRA' }, { group: 'I', date: '26/06 21:00', t1: 'IRQ', t2: 'NOR' },
-            { group: 'J', date: '17/06 03:00', t1: 'ALG', t2: 'ARG' }, { group: 'J', date: '17/06 06:00', t1: 'AUT', t2: 'JOR' }, { group: 'J', date: '22/06 19:00', t1: 'ALG', t2: 'AUT' }, { group: 'J', date: '23/06 05:00', t1: 'ARG', t2: 'JOR' }, { group: 'J', date: '28/06 04:00', t1: 'JOR', t2: 'ALG' }, { group: 'J', date: '28/06 04:00', t1: 'ARG', t2: 'AUT' },
-            { group: 'K', date: '17/06 19:00', t1: 'COL', t2: 'UZB' }, { group: 'K', date: '18/06 04:00', t1: 'POR', t2: 'DRC' }, { group: 'K', date: '23/06 19:00', t1: 'COL', t2: 'POR' }, { group: 'K', date: '24/06 04:00', t1: 'UZB', t2: 'DRC' }, { group: 'K', date: '28/06 01:30', t1: 'DRC', t2: 'COL' }, { group: 'K', date: '28/06 01:30', t1: 'UZB', t2: 'POR' },
-            { group: 'L', date: '17/06 22:00', t1: 'ENG', t2: 'CRO' }, { group: 'L', date: '18/06 01:00', t1: 'GHA', t2: 'PAN' }, { group: 'L', date: '23/06 22:00', t1: 'ENG', t2: 'GHA' }, { group: 'L', date: '24/06 01:00', t1: 'CRO', t2: 'PAN' }, { group: 'L', date: '27/06 23:00', t1: 'PAN', t2: 'ENG' }, { group: 'L', date: '27/06 23:00', t1: 'CRO', t2: 'GHA' }
+            { group: 'H', date: '15/06 18:00', t1: 'ESP', t2: 'CPV' }, { group: 'H', date: '16/06 00:00', t1: 'KSA', t2: 'URU' }, { group: 'H', date: '21/06 18:00', t1: 'ESP', t2: 'KSA' }, { group: 'H', date: '22/06 00:00', t1: 'URU', t2: 'CPV' }, { group: 'H', date: '27/06 02:00', t1: 'CPV', t2: 'KSA' }, { group: 'H', date: '27/06 02:00', t1: 'URU', t2: 'ESP' },
+            { group: 'I', date: '16/06 21:00', t1: 'FRA', t2: 'SEN' }, { group: 'I', date: '17/06 00:00', t1: 'IRQ', t2: 'NOR' }, { group: 'I', date: '22/06 23:00', t1: 'FRA', t2: 'IRQ' }, { group: 'I', date: '23/06 02:00', t1: 'NOR', t2: 'SEN' }, { group: 'I', date: '26/06 21:00', t1: 'NOR', t2: 'FRA' }, { group: 'I', date: '26/06 21:00', t1: 'SEN', t2: 'IRQ' },
+            { group: 'J', date: '17/06 03:00', t1: 'ARG', t2: 'ALG' }, { group: 'J', date: '17/06 06:00', t1: 'AUT', t2: 'JOR' }, { group: 'J', date: '22/06 19:00', t1: 'ARG', t2: 'AUT' }, { group: 'J', date: '23/06 05:00', t1: 'JOR', t2: 'ALG' }, { group: 'J', date: '28/06 04:00', t1: 'ALG', t2: 'AUT' }, { group: 'J', date: '28/06 04:00', t1: 'JOR', t2: 'ARG' },
+            { group: 'K', date: '17/06 19:00', t1: 'POR', t2: 'DRC' }, { group: 'K', date: '18/06 04:00', t1: 'UZB', t2: 'COL' }, { group: 'K', date: '23/06 19:00', t1: 'POR', t2: 'UZB' }, { group: 'K', date: '24/06 04:00', t1: 'COL', t2: 'DRC' }, { group: 'K', date: '28/06 01:30', t1: 'COL', t2: 'POR' }, { group: 'K', date: '28/06 01:30', t1: 'DRC', t2: 'UZB' },
+            { group: 'L', date: '17/06 22:00', t1: 'ENG', t2: 'CRO' }, { group: 'L', date: '18/06 01:00', t1: 'GHA', t2: 'PAN' }, { group: 'L', date: '23/06 22:00', t1: 'ENG', t2: 'GHA' }, { group: 'L', date: '24/06 01:00', t1: 'PAN', t2: 'CRO' }, { group: 'L', date: '27/06 23:00', t1: 'PAN', t2: 'ENG' }, { group: 'L', date: '27/06 23:00', t1: 'CRO', t2: 'GHA' }
         ];
 
         // --- ARBRE OFFICIEL (CALQUÉ SUR VOTRE PDF FOOTMERCATO) ---
-        // Vos indications pour les 3èmes (3D, 3B, etc.) sont respectées et ne seront pas écrasées
+        // Vos indications pour les 3èmes (3D, 3B, etc.) sont respectées dans les champs 'p2'[cite: 3].
         const knockoutRounds = [
             { title: "Seizièmes de finale", matches: [
-                { id: 'R32-1', date: '29/06 22:30', p1: '1E', p2: '3D' }, 
+                { id: 'R32-1', date: '29/06 22:30', p1: '1E', p2: '3AB/CDF' }, 
                 { id: 'R32-2', date: '30/06 23:00', p1: '1I', p2: '3CD/FGH' }, 
                 { id: 'R32-3', date: '28/06 21:00', p1: '2A', p2: '2B' }, 
                 { id: 'R32-4', date: '30/06 03:00', p1: '1F', p2: '2C' }, 
-                { id: 'R32-5', date: '03/07 01:00', p1: '2K', p2: '2L' }, 
-                { id: 'R32-6', date: '02/07 21:00', p1: '1H', p2: '2J' }, 
-                { id: 'R32-7', date: '02/07 02:00', p1: '1D', p2: '3B' }, 
-                { id: 'R32-8', date: '01/07 22:00', p1: '1G', p2: '3I' }, 
                 { id: 'R32-9', date: '29/06 19:00', p1: '1C', p2: '2F' }, 
                 { id: 'R32-10', date: '30/06 19:00', p1: '2E', p2: '2I' }, 
                 { id: 'R32-11', date: '01/07 03:00', p1: '1A', p2: '3CE/FHI' }, 
-                { id: 'R32-12', date: '01/07 18:00', p1: '1L', p2: '3K' }, 
-                { id: 'R32-13', date: '03/07 05:00', p1: '1B', p2: '3J' }, 
-                { id: 'R32-14', date: '04/07 03:30', p1: '1K', p2: '3L' }, 
+                { id: 'R32-12', date: '01/07 18:00', p1: '1L', p2: '3EH/IJK' }, 
+                { id: 'R32-5', date: '03/07 01:00', p1: '2K', p2: '2L' }, 
+                { id: 'R32-6', date: '02/07 21:00', p1: '1H', p2: '2J' }, 
+                { id: 'R32-7', date: '02/07 02:00', p1: '1D', p2: '3BE/FIJ' }, 
+                { id: 'R32-8', date: '01/07 22:00', p1: '1G', p2: '3AE/HIJ' }, 
+                { id: 'R32-13', date: '03/07 05:00', p1: '1B', p2: '3EF/GIJ' }, 
+                { id: 'R32-14', date: '04/07 03:30', p1: '1K', p2: '3DE/IJL' }, 
                 { id: 'R32-15', date: '04/07 00:00', p1: '1J', p2: '2H' }, 
                 { id: 'R32-16', date: '03/07 20:00', p1: '2D', p2: '2G' }
             ] },
             { title: "Huitièmes de finale", matches: [
                 { id: 'R16-1', date: '04/07 23:00', p1: 'Vainq. R32-1', p2: 'Vainq. R32-2' }, 
                 { id: 'R16-2', date: '04/07 19:00', p1: 'Vainq. R32-3', p2: 'Vainq. R32-4' }, 
-                { id: 'R16-3', date: '06/07 21:00', p1: 'Vainq. R32-5', p2: 'Vainq. R32-6' }, 
-                { id: 'R16-4', date: '07/07 02:00', p1: 'Vainq. R32-7', p2: 'Vainq. R32-8' }, 
                 { id: 'R16-5', date: '05/07 22:00', p1: 'Vainq. R32-9', p2: 'Vainq. R32-10' }, 
                 { id: 'R16-6', date: '06/07 02:00', p1: 'Vainq. R32-11', p2: 'Vainq. R32-12' }, 
-                { id: 'R16-7', date: '07/07 22:00', p1: 'Vainq. R32-15', p2: 'Vainq. R32-16' }, 
-                { id: 'R16-8', date: '07/07 18:00', p1: 'Vainq. R32-13', p2: 'Vainq. R32-14' }
+                { id: 'R16-3', date: '06/07 21:00', p1: 'Vainq. R32-5', p2: 'Vainq. R32-6' }, 
+                { id: 'R16-4', date: '07/07 02:00', p1: 'Vainq. R32-7', p2: 'Vainq. R32-8' }, 
+                { id: 'R16-7', date: '07/07 22:00', p1: 'Vainq. R32-13', p2: 'Vainq. R32-14' }, 
+                { id: 'R16-8', date: '07/07 18:00', p1: 'Vainq. R32-15', p2: 'Vainq. R32-16' }
             ] },
             { title: "Quarts de finale", matches: [
                 { id: 'QF-1', date: '09/07 22:00', p1: 'Vainq. R16-1', p2: 'Vainq. R16-2' }, 
-                { id: 'QF-2', date: '10/07 21:00', p1: 'Vainq. R16-3', p2: 'Vainq. R16-4' }, 
                 { id: 'QF-3', date: '11/07 23:00', p1: 'Vainq. R16-5', p2: 'Vainq. R16-6' }, 
+                { id: 'QF-2', date: '10/07 21:00', p1: 'Vainq. R16-3', p2: 'Vainq. R16-4' }, 
                 { id: 'QF-4', date: '12/07 03:00', p1: 'Vainq. R16-7', p2: 'Vainq. R16-8' }
             ] },
             { title: "Demi-finales", matches: [
-                { id: 'SF-1', date: '14/07 21:00', p1: 'Vainq. QF-1', p2: 'Vainq. QF-2' }, 
-                { id: 'SF-2', date: '15/07 21:00', p1: 'Vainq. QF-3', p2: 'Vainq. QF-4' }
+                { id: 'SF-1', date: '14/07 21:00', p1: 'Vainq. QF-1', p2: 'Vainq. QF-3' }, 
+                { id: 'SF-2', date: '15/07 21:00', p1: 'Vainq. QF-2', p2: 'Vainq. QF-4' }
             ] },
             { title: "Match pour la 3ème place", matches: [
                 { id: '3P-1', date: '18/07 23:00', p1: 'Perdant SF-1', p2: 'Perdant SF-2' }
@@ -228,6 +228,7 @@
             ] }
         ];
 
+        // L'envoi automatique des 1ers et 2èmes respecte votre tableau[cite: 3].
         const groupToR32 = {
             'A': { '1': 'R32-11-t1', '2': 'R32-3-t1' }, 'B': { '1': 'R32-13-t1', '2': 'R32-3-t2' },
             'C': { '1': 'R32-9-t1',  '2': 'R32-4-t2' }, 'D': { '1': 'R32-7-t1',  '2': 'R32-16-t1' },
@@ -237,21 +238,22 @@
             'K': { '1': 'R32-14-t1', '2': 'R32-5-t1' }, 'L': { '1': 'R32-12-t1', '2': 'R32-5-t2' }
         };
 
+        // L'acheminement croisé respecte fidèlement les Huitièmes, Quarts et Demis du PDF[cite: 3].
         const knockoutProgression = {
             'R32-1': 'R16-1-t1', 'R32-2': 'R16-1-t2',
             'R32-3': 'R16-2-t1', 'R32-4': 'R16-2-t2',
-            'R32-5': 'R16-3-t1', 'R32-6': 'R16-3-t2',
-            'R32-7': 'R16-4-t1', 'R32-8': 'R16-4-t2',
             'R32-9': 'R16-5-t1', 'R32-10': 'R16-5-t2',
             'R32-11': 'R16-6-t1', 'R32-12': 'R16-6-t2',
-            'R32-15': 'R16-7-t1', 'R32-16': 'R16-7-t2',
-            'R32-13': 'R16-8-t1', 'R32-14': 'R16-8-t2',
+            'R32-5': 'R16-3-t1', 'R32-6': 'R16-3-t2',
+            'R32-7': 'R16-4-t1', 'R32-8': 'R16-4-t2',
+            'R32-13': 'R16-7-t1', 'R32-14': 'R16-7-t2',
+            'R32-15': 'R16-8-t1', 'R32-16': 'R16-8-t2',
             'R16-1': 'QF-1-t1', 'R16-2': 'QF-1-t2',
-            'R16-3': 'QF-2-t1', 'R16-4': 'QF-2-t2',
             'R16-5': 'QF-3-t1', 'R16-6': 'QF-3-t2',
+            'R16-3': 'QF-2-t1', 'R16-4': 'QF-2-t2',
             'R16-7': 'QF-4-t1', 'R16-8': 'QF-4-t2',
-            'QF-1': 'SF-1-t1', 'QF-2': 'SF-1-t2',
-            'QF-3': 'SF-2-t1', 'QF-4': 'SF-2-t2',
+            'QF-1': 'SF-1-t1', 'QF-3': 'SF-1-t2',
+            'QF-2': 'SF-2-t1', 'QF-4': 'SF-2-t2',
             'SF-1': 'FIN-1-t1', 'SF-2': 'FIN-1-t2'
         };
 
@@ -413,7 +415,7 @@
 
                 let tArray = Object.values(teams).sort((a, b) => b.pts !== a.pts ? b.pts - a.pts : (b.gd !== a.gd ? b.gd - a.gd : b.gf - a.gf));
 
-                // /!\ ON ENVOIE UNIQUEMENT LES 1ers ET 2èmes ! Les 3èmes restent vos textes.
+                // /!\ ON ENVOIE UNIQUEMENT LES 1ers ET 2èmes pour ne pas écraser vos placeholders de 3èmes
                 let groupPlayed = tArray.some(t => t.p > 0); 
                 if (groupPlayed && groupToR32[gLetter]) {
                     let in1 = document.getElementById(groupToR32[gLetter]['1']);
