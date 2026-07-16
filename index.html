@@ -501,13 +501,19 @@
             "Entraîneurs": ["Entraineur"]
         };
 
-        const fichiersPays = [
-            "mexique", "afrique_du_sud", "coree_du_sud", "tchequie", "canada", "bosnie_herzegovine", "qatar", "suisse",
-            "bresil", "maroc", "haiti", "escoss", "usa", "paraguay", "australie", "turquie",
-            "allemagne", "Curaçao", "Cote_divoire", "equateur", "pays_bas", "japon", "suede", "tunisie",
-            "belgique", "egypte", "iran", "nouvelle_zelande", "espagna", "cap_vert", "arabie_saoudite", "uruguay",
-            "france", "senegal", "irak", "norvege", "argentine", "algerie", "autriche", "jordanie",
-            "portugal", "rdc", "ouzbekistan", "colombie", "angleterre", "croatie", "ghana", "panama"
+       const fichiersPays = [
+            "mexique", "afrique_du_sud", "coree_du_sud", "tchequie",
+            "canada", "bosnie_herzegovine", "qatar", "suisse",
+            "bresil", "maroc", "haïti", "escoss",
+            "usa", "paraguay", "australie", "turquie",
+            "allemagne", "curaçao", "cote_divoire", "equateur",
+            "pays_bas", "japon", "suede", "tunisie",
+            "belgique", "egypte", "iran", "nouvelle_zelande",
+            "espagna", "cap_vert", "arabie_saoudite", "uruguay",
+            "france", "senegal", "irak", "norvege",
+            "argentine", "algerie", "autriche", "jordanie",
+            "portugal", "rdc", "ouzbekistan", "colombie",
+            "angleterre", "croatie", "ghana", "panama"
         ];
 
         function parserValeur(valStr) {
@@ -535,6 +541,7 @@
                                 let currentStats = null;
                                 let paysFormatter = nomFichier.split('_').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ');
                                 if(nomFichier === "usa") paysFormatter = "USA";
+                                if(nomFichier === "rdc") paysFormatter = "RD Congo";
 
                                 for (let row of results.data) {
                                     let keys = Object.keys(row);
